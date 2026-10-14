@@ -1,0 +1,189 @@
+╔════════════════════════════════════════════════════════════╗
+║         MAPA DE ENCHENTES - LAJEADO/RS                    ║
+║              Windows - Guia de Inicio                     ║
+╚════════════════════════════════════════════════════════════╝
+
+PASSO 0: PRE-REQUISITOS
+═══════════════════════════════════════════════════════════
+
+☐ Python 3.9+ instalado
+  - Instale em: https://python.org
+  - IMPORTANTE: Marque "Add Python to PATH"
+  - Teste: python --version
+
+☐ Node.js LTS instalado
+  - Instale em: https://nodejs.org
+  - Teste: node --version
+
+☐ Pasta descompactada em local acessivel
+  - Ex: D:\User_Engenharia06\Documentos\FloodWay
+
+
+PASSO 1: ABRA POWERSHELL
+═══════════════════════════════════════════════════════════
+
+Opcao A (recomendado):
+  1. Pressione: Win + X
+  2. Escolha: Windows PowerShell
+
+Opcao B (alternativo):
+  1. Pressione: Win + R
+  2. Digite: powershell
+  3. Pressione: Enter
+
+
+PASSO 2: NAVEGUE PARA PASTA
+═══════════════════════════════════════════════════════════
+
+Digite (e pressione Enter):
+
+  cd D:\User_Engenharia06\Documentos\FloodWay
+
+Se sua pasta for diferente, substitua pelo caminho certo.
+
+
+PASSO 3: EXECUTE O SETUP
+═══════════════════════════════════════════════════════════
+
+Digite (e pressione Enter):
+
+  .\SETUP.ps1
+
+Vai levar 5-10 minutos. Espere terminar.
+
+
+PASSO 4: ABRA 4 POWERSHELLS
+═══════════════════════════════════════════════════════════
+
+Pressione Win + X e escolha "Windows PowerShell" 4 vezes.
+
+Voce tera 4 janelas abertas.
+
+
+PASSO 5A: TERMINAL 1 - BACKEND
+═══════════════════════════════════════════════════════════
+
+Na primeira janela, copie e cole cada linha (uma por uma):
+
+  cd D:\User_Engenharia06\Documentos\FloodWay\flood-map-backend
+
+  venv\Scripts\activate
+
+  python manage.py runserver
+
+Voce vai ver:
+  Starting development server at http://127.0.0.1:8000/
+
+DEIXE ESTE TERMINAL ABERTO E RODANDO!
+
+
+PASSO 5B: TERMINAL 2 - FRONTEND
+═══════════════════════════════════════════════════════════
+
+Na segunda janela:
+
+  cd D:\User_Engenharia06\Documentos\FloodWay\flood-map-frontend
+
+  npm run dev
+
+Voce vai ver:
+  VITE v5.0.0 ready in XXX ms
+
+DEIXE ESTE TERMINAL ABERTO E RODANDO!
+
+
+PASSO 5C: TERMINAL 3 - CELERY (OPCIONAL)
+═══════════════════════════════════════════════════════════
+
+Na terceira janela:
+
+  cd D:\User_Engenharia06\Documentos\FloodWay\flood-map-backend
+
+  venv\Scripts\activate
+
+  celery -A config worker -l info
+
+DEIXE ESTE TERMINAL ABERTO E RODANDO!
+
+
+PASSO 6: ACESSE O MAPA
+═══════════════════════════════════════════════════════════
+
+Abra seu navegador (Chrome, Firefox, Edge) e acesse:
+
+  http://localhost:5173
+
+Se ver um mapa com ruas de Lajeado, FUNCIONOU! Parabens!
+
+
+ACESSOS IMPORTANTES
+═══════════════════════════════════════════════════════════
+
+Backend: http://localhost:8000
+Admin:   http://localhost:8000/admin
+  User:  admin
+  Senha: admin123
+
+Frontend: http://localhost:5173
+
+
+ERROS COMUNS
+═══════════════════════════════════════════════════════════
+
+Erro: "python command not found"
+  - Python nao esta no PATH
+  - Instale novamente e marque "Add Python to PATH"
+  - Reinicie PowerShell
+
+Erro: "npm command not found"
+  - Node.js nao instalado
+  - Instale em https://nodejs.org
+  - Reinicie PowerShell
+
+Erro: "Port 8000 already in use"
+  - Outra coisa ja esta usando a porta
+  - Use outra porta: python manage.py runserver 8001
+
+Erro: Frontend nao conecta
+  - Verifique se backend esta rodando (Terminal 1)
+  - Recarregue a pagina do navegador (F5)
+  - Reinicie Frontend (Ctrl+C no Terminal 2, depois npm run dev)
+
+
+SE DER PROBLEMA
+═══════════════════════════════════════════════════════════
+
+1. Procure o erro em: TROUBLESHOOTING_RAPIDO.md
+2. Procure em: SETUP_WINDOWS.md
+3. Se nao resolver, tente rodar cada passo manualmente:
+   - Consulte: MANUAL_WINDOWS_SIMPLES.md
+
+
+RESUMO RAPIDO
+═══════════════════════════════════════════════════════════
+
+4 Janelas abertas + 4 comandos rodando = Sistema completo!
+
+Terminal 1: python manage.py runserver
+Terminal 2: npm run dev
+Terminal 3: celery -A config worker -l info
+Terminal 4: (reserve para debugging)
+
+Depois: http://localhost:5173
+
+
+SUCESSO!
+═══════════════════════════════════════════════════════════
+
+Se chegou aqui, parabens! O sistema esta funcionando.
+
+Proximos passos:
+- Explorar o admin: http://localhost:8000/admin
+- Testar as rotas da API
+- Implementar dados reais de altimetria
+- Deploy em producao
+
+
+Duvidas? Consulte os arquivos de documentacao.
+
+Bom projeto! Sucesso!
