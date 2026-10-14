@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { CloudRain, MoreHorizontal, ChevronDown, ChevronUp } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { CloudRain, MoreHorizontal } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
 
 const MetricsBottomSheet = ({
@@ -11,47 +11,90 @@ const MetricsBottomSheet = ({
   temperatura = "13°",
   onAbrirRotas,
 }) => {
-  // 'min' = recolhido, 'mid' = padrão (foto 1 e 2), 'max' = tela quase cheia (foto 3)
-  const [snap, setSnap] = useState("mid");
-  const [touchStartY, setTouchStartY] = useState(null);
+  // Alturas em pixels: min = 60px, mid = 245px, max = 85vh (calculado dinamicamente)
+  const [currentHeight, setCurrentHeight] = useState(245);
+  const [isDragging, setIsDragging] = useState(false);
+  const startYRef = useRef(0);
+  const startHeightRef = useRef(245);
 
   const isInundacao = cotaReal >= cotaInundacao;
   const temBloqueios = dadosRota?.bloqueada || isInundacao;
   const qtdBloqueios = dadosRota?.pontosBloqueio?.length || (isInundacao ? 22 : 0);
 
-  // Manipulação de gesto de arrasto (Swipe)
+  const getMaxHeight = () => Math.round(window.innerHeight * 0.84);
+  const getMidHeight = () => 245;
+  const getMinHeight = () => 60;
+
+  // Início do arrasto com o dedo ou mouse
   const handleTouchStart = (e) => {
-    setTouchStartY(e.touches[0].clientY);
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    startYRef.current = clientY;
+    startHeightRef.current = currentHeight;
+    setIsDragging(true);
   };
 
-  const handleTouchEnd = (e) => {
-    if (touchStartY === null) return;
-    const diff = touchStartY - e.changedTouches[0].clientY;
-    if (diff > 35) {
-      // Arrastou para cima
-      setSnap((prev) => (prev === "min" ? "mid" : "max"));
-    } else if (diff < -35) {
-      // Arrastou para baixo
-      setSnap((prev) => (prev === "max" ? "mid" : "min"));
+  // Movimento de arrasto em tempo real (acompanha o dedo)
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const deltaY = startYRef.current - clientY; // Arrastar para cima = delta positivo
+    const newHeight = Math.min(Math.max(startHeightRef.current + deltaY, getMinHeight()), getMaxHeight());
+    setCurrentHeight(newHeight);
+  };
+
+  // Fim do arrasto (Snap automático para o estado mais próximo)
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    const minH = getMinHeight();
+    const midH = getMidHeight();
+    const maxH = getMaxHeight();
+
+    // Calcula qual estado está mais próximo
+    const distMin = Math.abs(currentHeight - minH);
+    const distMid = Math.abs(currentHeight - midH);
+    const distMax = Math.abs(currentHeight - maxH);
+
+    if (distMax <= distMid && distMax <= distMin) {
+      setCurrentHeight(maxH);
+    } else if (distMin <= distMid) {
+      setCurrentHeight(minH);
+    } else {
+      setCurrentHeight(midH);
     }
-    setTouchStartY(null);
   };
 
+  // Alterna com clique caso o usuário dê apenas um toque
   const toggleSnap = () => {
-    setSnap((prev) => (prev === "max" ? "mid" : prev === "mid" ? "max" : "mid"));
+    const midH = getMidHeight();
+    const maxH = getMaxHeight();
+    const minH = getMinHeight();
+
+    if (currentHeight >= maxH - 20) {
+      setCurrentHeight(midH);
+    } else if (currentHeight >= midH - 20) {
+      setCurrentHeight(maxH);
+    } else {
+      setCurrentHeight(midH);
+    }
   };
+
+  const isExpanded = currentHeight > 380;
+  const isMinimized = currentHeight < 100;
 
   return (
     <div className="pointer-events-none">
       {/* BANNER VERMELHO DE BLOQUEIOS (SE HOUVER) */}
-      {temBloqueios && snap !== "min" && (
+      {temBloqueios && !isMinimized && (
         <div
           style={{
             zIndex: 1150,
-            bottom: snap === "max" ? "calc(88vh - 8px)" : "238px",
+            bottom: `${currentHeight + 46}px`,
+            transition: isDragging ? "none" : "bottom 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
           onClick={onAbrirRotas}
-          className="fixed left-0 right-0 pointer-events-auto bg-red-600 text-white px-5 py-2.5 rounded-t-3xl flex items-center justify-between text-xs font-semibold shadow-lg transition-all duration-300 cursor-pointer"
+          className="fixed left-0 right-0 pointer-events-auto bg-red-600 text-white px-5 py-2.5 rounded-t-3xl flex items-center justify-between text-xs font-semibold shadow-lg cursor-pointer"
         >
           <span className="font-medium text-white tracking-wide">Sua rota está com bloqueios</span>
           <span className="w-5 h-5 rounded-full bg-white text-red-600 flex items-center justify-center text-[11px] font-bold shadow-sm">
@@ -60,24 +103,27 @@ const MetricsBottomSheet = ({
         </div>
       )}
 
-      {/* GAVETA INFERIOR (BOTTOM SHEET) */}
+      {/* GAVETA INFERIOR (BOTTOM SHEET COM DRAG CONTÍNUO) */}
       <div
         style={{
           zIndex: 1140,
-          transform: snap === "min" ? "translateY(calc(100% - 56px))" : "translateY(0)",
-          height: snap === "max" ? "88vh" : "245px",
-          transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+          height: `${currentHeight}px`,
+          transition: isDragging ? "none" : "height 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        className="fixed bottom-14 left-0 right-0 bg-white rounded-t-[30px] shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-gray-100 px-6 pt-2 pb-5 pointer-events-auto select-none"
+        className="fixed bottom-14 left-0 right-0 bg-white rounded-t-[30px] shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-gray-100 px-6 pt-2 pb-5 pointer-events-auto select-none overflow-hidden flex flex-col"
       >
-        {/* PUXADOR DE ARRASTO */}
+        {/* ÁREA DE ARRASTO (HANDLE) */}
         <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleTouchStart}
+          onMouseMove={handleTouchMove}
+          onMouseUp={handleTouchEnd}
           onClick={toggleSnap}
-          className="w-full py-1 flex justify-center cursor-pointer active:opacity-60"
+          className="w-full py-2 flex justify-center cursor-grab active:cursor-grabbing touch-none"
         >
-          <div className="w-12 h-1 bg-gray-300 rounded-full mb-2" />
+          <div className="w-12 h-1.5 bg-gray-300 rounded-full hover:bg-gray-400 transition" />
         </div>
 
         {/* CABEÇALHO (Lajeado RS + Clima) */}
@@ -87,9 +133,9 @@ const MetricsBottomSheet = ({
         >
           <div className="flex items-center gap-2">
             <h2 className="text-[22px] font-bold text-gray-900 tracking-tight">Lajeado RS</h2>
-            {snap === "min" && (
+            {isMinimized && (
               <span className="text-xs text-gray-500 font-semibold ml-1">
-                • {cotaReal ? cotaReal.toFixed(2) : "--"}m ({isInundacao ? "Inundação" : "Normal"})
+                • {cotaReal ? Number(cotaReal).toFixed(2) : "--"}m ({isInundacao ? "Inundação" : "Normal"})
               </span>
             )}
           </div>
@@ -98,14 +144,20 @@ const MetricsBottomSheet = ({
               <CloudRain size={16} className="text-gray-600" />
               <span className="text-sm font-semibold">{temperatura}</span>
             </div>
-            <button className="text-gray-400 hover:text-gray-600 p-1" onClick={(e) => { e.stopPropagation(); toggleSnap(); }}>
+            <button
+              className="text-gray-400 hover:text-gray-600 p-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleSnap();
+              }}
+            >
               <MoreHorizontal size={18} />
             </button>
           </div>
         </div>
 
         {/* GRID DE MÉTRICAS */}
-        {snap !== "min" && (
+        {!isMinimized && (
           <div className="grid grid-cols-2 gap-y-3.5 gap-x-6 text-left pt-1">
             {/* Linha 1 */}
             <div>
@@ -155,9 +207,9 @@ const MetricsBottomSheet = ({
         )}
 
         {/* ESPAÇO DE ANÚNCIO / PATROCÍNIO REGIONAL QUANDO EXPANDIDO */}
-        {snap === "max" && (
-          <div className="mt-4 pt-2 border-t border-gray-100">
-            <BannerPatrocinador 
+        {isExpanded && (
+          <div className="mt-4 pt-2 border-t border-gray-100 overflow-y-auto">
+            <BannerPatrocinador
               titulo="Apoiador Oficial da Prevenção"
               nome="Sicredi Integração RS/MG"
               descricao="Apoiando iniciativas de prevenção e monitoramento no Vale do Taquari."

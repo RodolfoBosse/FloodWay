@@ -23,14 +23,27 @@ function App() {
       const resp = await fetch(`${API_BASE}/api/v1/ruas/`)
       if (resp.ok) {
         const data = await resp.json()
-        if (data.ruas && Array.isArray(data.ruas)) {
-          setRuas(data.ruas)
-        } else if (Array.isArray(data)) {
-          setRuas(data)
+        const lista = data.ruas && Array.isArray(data.ruas) ? data.ruas : Array.isArray(data) ? data : []
+        if (lista.length > 0) {
+          setRuas(lista)
+          return
         }
       }
     } catch (e) {
-      console.error("Erro ao carregar ruas:", e)
+      console.warn("API de ruas indisponível ou vazia, usando base calibrada local:", e)
+    }
+
+    // Fallback: carrega base de ruas calibradas embutida
+    try {
+      const localResp = await fetch('/ruas_calibradas.json')
+      if (localResp.ok) {
+        const localData = await localResp.json()
+        if (Array.isArray(localData) && localData.length > 0) {
+          setRuas(localData)
+        }
+      }
+    } catch (err) {
+      console.error("Erro ao carregar base calibrada local:", err)
     }
   }
 

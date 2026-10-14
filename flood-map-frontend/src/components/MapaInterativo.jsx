@@ -1494,18 +1494,18 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 				</div>
 			)}
 
-			{/* PAINEL DE ROTA */}
-			{painelRotaAberto && usuario && (
+			{/* PAINEL DE ROTA MOBILE / DESKTOP */}
+			{painelRotaAberto && (
 				<div
 					style={{ zIndex: 2000 }}
-					className="hidden sm:block absolute bottom-4 left-3 right-3 sm:bottom-auto sm:right-auto sm:top-24 sm:left-4 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 transition-all">
+					className="fixed inset-x-0 bottom-0 sm:bottom-auto sm:right-auto sm:top-20 sm:left-4 sm:w-96 bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl border border-gray-200 p-5 max-h-[85vh] overflow-y-auto transition-all">
 					<div className="flex justify-between items-center mb-3 border-b pb-2">
-						<h3 className="font-bold text-gray-900 flex items-center gap-1.5 text-xs sm:text-sm">
+						<h3 className="font-bold text-gray-900 flex items-center gap-1.5 text-sm">
 							🚗 Rota Anti-Enchente (Lajeado)
 						</h3>
 						<button
 							onClick={() => setPainelRotaAberto(false)}
-							className="text-gray-400 hover:text-gray-600 font-bold">
+							className="text-gray-400 hover:text-gray-600 font-bold p-1">
 							✕
 						</button>
 					</div>
@@ -1757,10 +1757,80 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 				onAbrirRotas={() => setPainelRotaAberto(true)}
 			/>
 
+			{/* PAINEL DE SIMULAÇÃO DE COTAS (QUANDO SIMULAR ATIVADO) */}
+			{isSimulando && (
+				<div
+					style={{ zIndex: 1250 }}
+					className="fixed inset-x-3 bottom-20 bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.18)] border border-gray-100 flex flex-col gap-3 pointer-events-auto">
+					<div className="flex justify-between items-center">
+						<div className="flex items-center gap-2">
+							<span className="text-xl">🎛️</span>
+							<div>
+								<h4 className="text-xs font-bold text-gray-900 leading-tight">Simulação de Cota do Rio</h4>
+								<p className="text-[10px] text-gray-500">Veja o impacto nas ruas em tempo real</p>
+							</div>
+						</div>
+						<div className="flex items-center gap-2">
+							<span className="text-base font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-xl border border-blue-200">
+								{Number(nivelAtivo).toFixed(2)}m
+							</span>
+							<button
+								onClick={() => {
+									setIsSimulando(false);
+									setCotaSimulada(cotaReal);
+								}}
+								className="text-gray-400 hover:text-gray-600 font-bold p-1">
+								✕
+							</button>
+						</div>
+					</div>
+
+					{/* Slider contínuo */}
+					<div className="flex items-center gap-3">
+						<span className="text-[10px] font-bold text-gray-400">13m</span>
+						<input
+							type="range"
+							min="13.0"
+							max="36.0"
+							step="0.1"
+							value={nivelAtivo}
+							onChange={(e) => setCotaSimulada(parseFloat(e.target.value))}
+							className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+						/>
+						<span className="text-[10px] font-bold text-gray-400">36m</span>
+					</div>
+
+					{/* Cenários Rápidos */}
+					<div className="grid grid-cols-3 gap-2">
+						<button
+							onClick={() => setCotaSimulada(cotaReal)}
+							className="py-1.5 px-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-[11px] font-bold transition">
+							Ao Vivo ({Number(cotaReal).toFixed(1)}m)
+						</button>
+						<button
+							onClick={() => setCotaSimulada(19.0)}
+							className="py-1.5 px-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-xl text-[11px] font-bold transition">
+							Alerta (19.0m)
+						</button>
+						<button
+							onClick={() => setCotaSimulada(29.8)}
+							className="py-1.5 px-2 bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 rounded-xl text-[11px] font-bold transition">
+							Maio/24 (29.8m)
+						</button>
+					</div>
+				</div>
+			)}
+
 			<BottomNavigation 
-				abaAtiva={painelRotaAberto ? "rotas" : "mapa"}
-				onMapaClick={() => setPainelRotaAberto(false)}
-				onRotasClick={() => setPainelRotaAberto(!painelRotaAberto)}
+				abaAtiva={isSimulando ? "simular" : painelRotaAberto ? "rotas" : "mapa"}
+				onMapaClick={() => {
+					setPainelRotaAberto(false);
+					setIsSimulando(false);
+				}}
+				onRotasClick={() => {
+					setIsSimulando(false);
+					setPainelRotaAberto(!painelRotaAberto);
+				}}
 				onGraficosClick={() => {}}
 				onSimularClick={() => setIsSimulando(!isSimulando)}
 				isSimulando={isSimulando}
