@@ -1,5 +1,6 @@
-﻿import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import MapaInterativo from './components/MapaInterativo'
+import { API_BASE } from './services/config'
 
 function App() {
   const [cotaAtual, setCotaAtual] = useState(null)
@@ -7,7 +8,7 @@ function App() {
 
   const carregarCota = async () => {
     try {
-      const resp = await fetch('http://localhost:8000/api/v1/cota/atual-sync/')
+      const resp = await fetch(`${API_BASE}/api/v1/cota/atual-sync/`)
       if (resp.ok) {
         const data = await resp.json()
         setCotaAtual(data)
@@ -19,7 +20,7 @@ function App() {
 
   const carregarRuas = async () => {
     try {
-      const resp = await fetch('http://localhost:8000/api/v1/ruas/')
+      const resp = await fetch(`${API_BASE}/api/v1/ruas/`)
       if (resp.ok) {
         const data = await resp.json()
         if (data.ruas && Array.isArray(data.ruas)) {

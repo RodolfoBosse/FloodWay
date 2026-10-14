@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import TopSearchBar from "./mobile/TopSearchBar";
 import MetricsBottomSheet from "./mobile/MetricsBottomSheet";
 import BottomNavigation from "./mobile/BottomNavigation";
+import { API_BASE } from "../services/config";
 import {
 	MapContainer,
 	TileLayer,
@@ -290,7 +291,7 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 		if (!email) return;
 		try {
 			const resp = await fetch(
-				`http://localhost:8000/api/v1/rotas/listar/?email=${encodeURIComponent(email)}`,
+				`${API_BASE}/api/v1/rotas/listar/?email=${encodeURIComponent(email)}`,
 			);
 			if (resp.ok) {
 				const data = await resp.json();
@@ -459,7 +460,7 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
         }
 
 		try {
-			const resp = await fetch("http://localhost:8000/api/v1/perfil/salvar/", {
+			const resp = await fetch(`${API_BASE}/api/v1/perfil/salvar/`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -520,7 +521,7 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 		const novasCoords = [novaPos.lat, novaPos.lng];
 
 		try {
-			const resp = await fetch("http://localhost:8000/api/v1/perfil/salvar/", {
+			const resp = await fetch(`${API_BASE}/api/v1/perfil/salvar/`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -562,7 +563,7 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 		if (!apelido) return;
 
 		try {
-			const resp = await fetch("http://localhost:8000/api/v1/rotas/salvar/", {
+			const resp = await fetch(`${API_BASE}/api/v1/rotas/salvar/`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -600,7 +601,7 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 		e.stopPropagation();
 		if (!window.confirm("Excluir esta rota salva?")) return;
 		try {
-			await fetch(`http://localhost:8000/api/v1/rotas/${id}/excluir/`, {
+			await fetch(`${API_BASE}/api/v1/rotas/${id}/excluir/`, {
 				method: "POST",
 			});
 			setMinhasRotas(minhasRotas.filter((r) => r.id !== id));
