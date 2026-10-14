@@ -159,6 +159,7 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 		useState(false);
 	const [modalCasaAberto, setModalCasaAberto] = useState(false);
 	const [modalPerfilAberto, setModalPerfilAberto] = useState(false);
+	const [modalRotasSalvasAberto, setModalRotasSalvasAberto] = useState(false);
 	const [abaAuth, setAbaAuth] = useState("entrar");
 	const [minhasRotas, setMinhasRotas] = useState([]);
 
