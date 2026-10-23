@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
  * Suporta formatos responsivos padrão: banner horizontal (display), in-feed ou fluido.
  */
 export default function GoogleAdBlock({
-  client = "ca-pub-XXXXXXXXXXXXXXXX", // Substitua pelo seu ID AdSense quando aprovado
+  client = "ca-pub-3566074526946852", // Substitua pelo seu ID AdSense quando aprovado
   slot = "1234567890",              // ID do bloco criado no AdSense
   format = "auto",
   responsive = "true",
@@ -39,3 +39,4 @@ export default function GoogleAdBlock({
     </div>
   );
 }
+
