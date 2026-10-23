@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import TopSearchBar from "./mobile/TopSearchBar";
 import MetricsBottomSheet from "./mobile/MetricsBottomSheet";
 import BottomNavigation from "./mobile/BottomNavigation";
@@ -49,9 +49,9 @@ const iconeDestino = new L.DivIcon({
 // BASE OFICIAL VERIFICADA DE MARCOS E ESTABELECIMENTOS DE LAJEADO/RS
 const LOCAIS_OFICIAIS_LAJEADO = [
 	{
-		nome: "Col?gio Madre B?rbara",
+		nome: "Colégio Madre Bárbara",
 		tipo: "escola",
-		detalhe: "Rua J?lio May, 340 - Centro",
+		detalhe: "Rua Júlio May, 340 - Centro",
 		coords: [-29.46725, -51.96443],
 	},
 	{
@@ -2088,3 +2088,4 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 };
 
 export default MapaInterativo;
+
