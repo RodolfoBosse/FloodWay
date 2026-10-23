@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { CloudRain, MoreHorizontal } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
+import GoogleAdBlock from "./GoogleAdBlock";
 
 const MetricsBottomSheet = ({
   cotaReal = 13.84,
@@ -206,14 +207,24 @@ const MetricsBottomSheet = ({
           </div>
         )}
 
-        {/* ESPAÇO DE ANÚNCIO / PATROCÍNIO REGIONAL QUANDO EXPANDIDO */}
+        {/* ESPAÇOS DE MONETIZAÇÃO QUANDO A GAVETA FOR EXPANDIDA */}
         {isExpanded && (
-          <div className="mt-4 pt-2 border-t border-gray-100 overflow-y-auto">
+          <div className="mt-4 pt-3 border-t border-gray-100 overflow-y-auto space-y-3 pb-6">
+            {/* 1. Anúncio Patrocinado Oficial (Empresas Locais / Parceiros) */}
             <BannerPatrocinador
               titulo="Apoiador Oficial da Prevenção"
               nome="Sicredi Integração RS/MG"
-              descricao="Apoiando iniciativas de prevenção e monitoramento no Vale do Taquari."
+              descricao="Apoiando iniciativas de prevenção, reconstrução e monitoramento no Vale do Taquari."
               link="https://www.sicredi.com.br"
+              iniciais="SI"
+              corLogo="bg-emerald-600"
+            />
+
+            {/* 2. Bloco Google AdSense (Monetização Automática) */}
+            <GoogleAdBlock
+              client="ca-pub-XXXXXXXXXXXXXXXX"
+              slot="1234567890"
+              format="auto"
             />
           </div>
         )}
