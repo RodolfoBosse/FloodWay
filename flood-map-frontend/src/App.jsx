@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import MapaInterativo from './components/MapaInterativo'
 import { API_BASE } from './services/config'
+import TopSearchBar from './components/mobile/TopSearchBar'
+import MetricsBottomSheet from './components/mobile/MetricsBottomSheet'
+import BottomNavigation from './components/mobile/BottomNavigation'
 
 function App() {
   const [cotaAtual, setCotaAtual] = useState(null)
