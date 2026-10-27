@@ -1,7 +1,4 @@
 ﻿import React, { useState, useEffect, useRef } from "react";
-import TopSearchBar from "./mobile/TopSearchBar";
-import MetricsBottomSheet from "./mobile/MetricsBottomSheet";
-import BottomNavigation from "./mobile/BottomNavigation";
 import { API_BASE } from "../services/config";
 import {
 	MapContainer,
