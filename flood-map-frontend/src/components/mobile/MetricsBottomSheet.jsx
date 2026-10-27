@@ -109,9 +109,9 @@ const MetricsBottomSheet = ({
         style={{
           zIndex: 1140,
           height: `${currentHeight}px`,
-          transition: isDragging ? "none" : "height 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+          transition: isDragging ? "none" : "height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
         }}
-        className="fixed bottom-14 left-0 right-0 bg-white rounded-t-[30px] shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-gray-100 px-6 pt-2 pb-5 pointer-events-auto select-none overflow-hidden flex flex-col"
+        className="fixed bottom-14 left-0 right-0 bg-white/90 backdrop-blur-xl rounded-t-[32px] shadow-[0_-12px_40px_rgba(0,0,0,0.1)] border-t border-white/20 px-6 pt-2 pb-5 pointer-events-auto select-none overflow-hidden flex flex-col"
       >
         {/* ÁREA DE ARRASTO (HANDLE) */}
         <div
@@ -122,26 +122,27 @@ const MetricsBottomSheet = ({
           onMouseMove={handleTouchMove}
           onMouseUp={handleTouchEnd}
           onClick={toggleSnap}
-          className="w-full py-2 flex justify-center cursor-grab active:cursor-grabbing touch-none"
+          className="w-full py-3 flex justify-center cursor-grab active:cursor-grabbing touch-none"
         >
-          <div className="w-12 h-1.5 bg-gray-300 rounded-full hover:bg-gray-400 transition" />
+          <div className={`w-12 h-1.5 rounded-full transition-all duration-300 ${isDragging ? "bg-blue-500 w-16" : "bg-gray-300 hover:bg-gray-400"}`} />
         </div>
 
         {/* CABEÇALHO (Lajeado RS + Clima) */}
         <div
           onClick={toggleSnap}
-          className="w-full flex items-center justify-between cursor-pointer mb-6"
+          className="w-full flex items-center justify-between cursor-pointer mb-6 transition-opacity duration-300"
+          style={{ opacity: isMinimized ? 0.5 : 1 }}
         >
           <div className="flex items-center gap-2">
-            <h2 className="text-[24px] font-bold text-gray-900 tracking-tight">Lajeado RS</h2>
+            <h2 className="text-[26px] font-extrabold text-gray-900 tracking-tight">Lajeado RS</h2>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 text-xs text-gray-700 font-medium bg-gray-100 px-2 py-1 rounded-full">
-              <CloudRain size={16} className="text-gray-600" />
-              <span className="text-sm font-semibold">{temperatura}</span>
+            <div className="flex items-center gap-1.5 text-xs text-gray-700 font-medium bg-white/50 backdrop-blur-sm border border-gray-100 px-3 py-1.5 rounded-full shadow-sm">
+              <CloudRain size={16} className="text-blue-500" />
+              <span className="text-sm font-bold">{temperatura}</span>
             </div>
             <button
-              className="text-gray-400 hover:text-gray-600 p-1"
+              className="text-gray-400 hover:text-gray-600 p-1 bg-gray-100/50 rounded-full transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleSnap();
