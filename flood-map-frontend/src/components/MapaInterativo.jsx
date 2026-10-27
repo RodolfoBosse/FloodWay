@@ -271,7 +271,9 @@ const MapaInterativo = ({
 	const [animando, setAnimando] = useState(false);
 	const animRef = useRef(null);
 
-	const nivelAtivo = isSimulando ? cotaSimulada : (cotaAtual?.nivel || cotaReal || 13.39);
+	const nivelAtivo = isSimulando
+		? cotaSimulada
+		: cotaAtual?.nivel || cotaReal || 13.39;
 
 	const limparRotaAtual = () => {
 		setDadosRota(null);
@@ -706,103 +708,104 @@ const MapaInterativo = ({
 
 	const status = getStatusCor(nivelAtivo);
 
-	let totalTrechos = 0;
-	let trechosAlagados = 0;
-	let trechosRiscoIminente = 0;
-	let trechosCalibradosAsfalto = 0;
-	const trechosPistas = [];
-	const barricadas = [];
-	const pontosBloqueadosGeo = [];
+	const { trechosPistas, barricadas, pontosBloqueadosGeo } =
+		React.useMemo(() => {
+			let totalTrechos = 0;
+			let trechosAlagados = 0;
+			let trechosRiscoIminente = 0;
+			let trechosCalibradosAsfalto = 0;
+			const tPistas = [];
+			const bRicadas = [];
+			const pBloqueados = [];
 
-	// PROCESSA ESTRITAMENTE AS COTAS REAIS CADASTRADAS NO BANCO DE DADOS
-	for (const rua of listaRuas) {
-		if (!rua.coordenadas_json) continue;
-
-		let listaSegmentos = [];
-		let rawCoords = rua.coordenadas_json;
-
-		if (typeof rawCoords === "string") {
-			try {
-				rawCoords = JSON.parse(rawCoords);
-			} catch (e) {
-				continue;
-			}
-		}
-
-		if (!Array.isArray(rawCoords)) continue;
-
-		if (
-			typeof rawCoords[0] === "object" &&
-			!Array.isArray(rawCoords[0]) &&
-			rawCoords[0]?.coords
-		) {
-			for (const seg of rawCoords) {
-				listaSegmentos.push({
-					cota: seg.cota || rua.cota_bloqueio,
-					coords: seg.coords,
-					calibrado_asfalto: Boolean(seg.calibrado_asfalto),
-				});
-			}
-		} else if (Array.isArray(rawCoords[0]) && Array.isArray(rawCoords[0][0])) {
-			for (const coords of rawCoords) {
-				listaSegmentos.push({
-					cota: rua.cota_bloqueio,
-					coords,
-					calibrado_asfalto: false,
-				});
-			}
-		} else {
-			listaSegmentos.push({
-				cota: rua.cota_bloqueio,
-				coords: rawCoords,
-				calibrado_asfalto: false,
-			});
-		}
-
-		listaSegmentos.forEach((t, sIdx) => {
-			if (!t.coords || !Array.isArray(t.coords) || t.coords.length < 2) return;
-			totalTrechos++;
-
-			const cotaTrecho = Number(t.cota || rua.cota_bloqueio || 99.0);
-			const margemAgua = cotaTrecho - nivelAtivo;
-			const isBloqueado = margemAgua <= 0;
-			const isRiscoIminente = !isBloqueado && margemAgua <= 1.0; // Água a menos de 1m da pista
-			const isCalibrado = Boolean(t.calibrado_asfalto);
-
-			if (isCalibrado) trechosCalibradosAsfalto++;
-			if (isBloqueado) trechosAlagados++;
-			else if (isRiscoIminente) trechosRiscoIminente++;
-
-			if (isBloqueado) {
-				const lamina = Math.max(nivelAtivo - cotaTrecho, 0.1);
-
-				for (const pt of t.coords) {
-					pontosBloqueadosGeo.push(pt);
+			for (const rua of listaRuas) {
+				if (!rua.coordenadas_json) continue;
+				let listaSegmentos = [];
+				let rawCoords = rua.coordenadas_json;
+				if (typeof rawCoords === "string") {
+					try {
+						rawCoords = JSON.parse(rawCoords);
+					} catch (e) {
+						continue;
+					}
 				}
-
-				if (sIdx === 0 && barricadas.length < 35) {
-					barricadas.push({
-						pos: t.coords[0],
-						rua: rua.nome,
-						cota: cotaTrecho,
-						lamina: lamina.toFixed(1),
+				if (!Array.isArray(rawCoords)) continue;
+				if (
+					typeof rawCoords[0] === "object" &&
+					!Array.isArray(rawCoords[0]) &&
+					rawCoords[0]?.coords
+				) {
+					for (const seg of rawCoords) {
+						listaSegmentos.push({
+							cota: seg.cota || rua.cota_bloqueio,
+							coords: seg.coords,
+							calibrado_asfalto: Boolean(seg.calibrado_asfalto),
+						});
+					}
+				} else if (
+					Array.isArray(rawCoords[0]) &&
+					Array.isArray(rawCoords[0][0])
+				) {
+					for (const coords of rawCoords) {
+						listaSegmentos.push({
+							cota: rua.cota_bloqueio,
+							coords,
+							calibrado_asfalto: false,
+						});
+					}
+				} else {
+					listaSegmentos.push({
+						cota: rua.cota_bloqueio,
+						coords: rawCoords,
+						calibrado_asfalto: false,
 					});
 				}
-			}
 
-			trechosPistas.push({
-				id: `pista-${rua.id}-${sIdx}`,
-				coords: t.coords,
-				isBloqueado,
-				isRiscoIminente,
-				isCalibrado,
-				cota: cotaTrecho,
-				margem: margemAgua.toFixed(2),
-				nome: rua.nome,
-				lamina: isBloqueado ? (nivelAtivo - cotaTrecho).toFixed(1) : "0",
-			});
-		});
-	}
+				listaSegmentos.forEach((t, sIdx) => {
+					if (!t.coords || !Array.isArray(t.coords) || t.coords.length < 2)
+						return;
+					totalTrechos++;
+					const cotaTrecho = Number(t.cota || rua.cota_bloqueio || 99.0);
+					const margemAgua = cotaTrecho - nivelAtivo;
+					const isBloqueado = margemAgua <= 0;
+					const isRiscoIminente = !isBloqueado && margemAgua <= 1.0;
+					const isCalibrado = Boolean(t.calibrado_asfalto);
+					if (isCalibrado) trechosCalibradosAsfalto++;
+					if (isBloqueado) trechosAlagados++;
+					else if (isRiscoIminente) trechosRiscoIminente++;
+					if (isBloqueado) {
+						const lamina = Math.max(nivelAtivo - cotaTrecho, 0.1);
+						for (const pt of t.coords) {
+							pBloqueados.push(pt);
+						}
+						if (sIdx === 0 && bRicadas.length < 35) {
+							bRicadas.push({
+								pos: t.coords[0],
+								rua: rua.nome,
+								cota: cotaTrecho,
+								lamina: lamina.toFixed(1),
+							});
+						}
+					}
+					tPistas.push({
+						id: `pista-${rua.id}-${sIdx}`,
+						coords: t.coords,
+						isBloqueado,
+						isRiscoIminente,
+						isCalibrado,
+						cota: cotaTrecho,
+						margem: margemAgua.toFixed(2),
+						nome: rua.nome,
+						lamina: isBloqueado ? (nivelAtivo - cotaTrecho).toFixed(1) : "0",
+					});
+				});
+			}
+			return {
+				trechosPistas: tPistas,
+				barricadas: bRicadas,
+				pontosBloqueadosGeo: pBloqueados,
+			};
+		}, [listaRuas, nivelAtivo]);
 
 	const selecionarPontoNoMapa = (coords) => {
 		if (modoSelecao === "origem") {
