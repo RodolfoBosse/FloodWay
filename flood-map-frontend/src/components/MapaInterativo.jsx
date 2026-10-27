@@ -130,6 +130,8 @@ const CapturadorDeCliques = ({ modoSelecao, onPontoSelecionado }) => {
 
 const MapaInterativo = ({
 	cotaAtual,
+	cotaSimulada,
+	cotaReal,
 	ruas,
 	isSimulando,
 	setIsSimulando,
@@ -269,7 +271,7 @@ const MapaInterativo = ({
 	const [animando, setAnimando] = useState(false);
 	const animRef = useRef(null);
 
-	const nivelAtivo = isSimulando ? cotaSimulada : cotaReal;
+	const nivelAtivo = isSimulando ? cotaSimulada : (cotaAtual?.nivel || cotaReal || 13.39);
 
 	const limparRotaAtual = () => {
 		setDadosRota(null);
