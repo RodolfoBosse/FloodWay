@@ -13,9 +13,6 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import TopSearchBar from "./mobile/TopSearchBar";
-import MetricsBottomSheet from "./mobile/MetricsBottomSheet";
-import BottomNavigation from "./mobile/BottomNavigation";
 
 // Ícones Customizados
 const iconeBloqueio = new L.DivIcon({
@@ -131,7 +128,14 @@ const CapturadorDeCliques = ({ modoSelecao, onPontoSelecionado }) => {
 	return null;
 };
 
-const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRotaAberto, setPainelRotaAberto }) => {
+const MapaInterativo = ({
+	cotaAtual,
+	ruas,
+	isSimulando,
+	setIsSimulando,
+	painelRotaAberto,
+	setPainelRotaAberto,
+}) => {
 	const config = {
 		centro: [-29.4669, -51.9611],
 		zoom: 15,
@@ -267,7 +271,6 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 
 	const nivelAtivo = isSimulando ? cotaSimulada : cotaReal;
 
-
 	const limparRotaAtual = () => {
 		setDadosRota(null);
 		setPontoOrigem(null);
@@ -305,7 +308,7 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 
 	const listaRuas = Array.isArray(ruas) ? ruas : [];
 
-		const buscarDestinos = async (termo, setSugestoes) => {
+	const buscarDestinos = async (termo, setSugestoes) => {
 		if (!termo || termo.trim().length < 2) {
 			setSugestoes([]);
 			return;
@@ -317,18 +320,35 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 			.replace(/[̀-ͯ]/g, "")
 			.trim();
 
-		const termoLimpo = tNorm.replace(/[,\.\-\/#??]/g, " ").replace(/\s+/g, " ").trim();
-		const tokens = termoLimpo.split(" ").filter(t => t.length >= 2 && !/^\d+$/.test(t));
+		const termoLimpo = tNorm
+			.replace(/[,\.\-\/#??]/g, " ")
+			.replace(/\s+/g, " ")
+			.trim();
+		const tokens = termoLimpo
+			.split(" ")
+			.filter((t) => t.length >= 2 && !/^\d+$/.test(t));
 
 		const resultados = [];
 
 		// 1. Busca nos Locais Oficiais de Lajeado (Madre B?rbara, Univates, etc.)
 		for (const loc of LOCAIS_OFICIAIS_LAJEADO) {
-			const nNorm = (loc.nome || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-			const dNorm = (loc.detalhe || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+			const nNorm = (loc.nome || "")
+				.toLowerCase()
+				.normalize("NFD")
+				.replace(/[̀-ͯ]/g, "");
+			const dNorm = (loc.detalhe || "")
+				.toLowerCase()
+				.normalize("NFD")
+				.replace(/[̀-ͯ]/g, "");
 
-			const matchDireto = nNorm.includes(tNorm) || tNorm.includes(nNorm) || dNorm.includes(tNorm) || tNorm.includes(dNorm);
-			const matchTokens = tokens.length > 0 && tokens.every(tok => nNorm.includes(tok) || dNorm.includes(tok));
+			const matchDireto =
+				nNorm.includes(tNorm) ||
+				tNorm.includes(nNorm) ||
+				dNorm.includes(tNorm) ||
+				tNorm.includes(dNorm);
+			const matchTokens =
+				tokens.length > 0 &&
+				tokens.every((tok) => nNorm.includes(tok) || dNorm.includes(tok));
 
 			if (matchDireto || matchTokens) {
 				resultados.push({
@@ -336,27 +356,36 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 					tipo: loc.tipo || "local",
 					detalhe: loc.detalhe || "",
 					coords: loc.coords,
-					cota: loc.cota || null
+					cota: loc.cota || null,
 				});
 			}
 		}
 
 		// 2. Busca na Lista de Ruas de Lajeado (com suporte a n?mero e pontua??o)
 		for (const rua of listaRuas) {
-			const rNorm = (rua.nome || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-			const bNorm = (rua.bairro || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+			const rNorm = (rua.nome || "")
+				.toLowerCase()
+				.normalize("NFD")
+				.replace(/[̀-ͯ]/g, "");
+			const bNorm = (rua.bairro || "")
+				.toLowerCase()
+				.normalize("NFD")
+				.replace(/[̀-ͯ]/g, "");
 
 			const matchDireto = rNorm.includes(tNorm) || tNorm.includes(rNorm);
-			const matchTokens = tokens.length > 0 && tokens.every(tok => rNorm.includes(tok) || bNorm.includes(tok));
+			const matchTokens =
+				tokens.length > 0 &&
+				tokens.every((tok) => rNorm.includes(tok) || bNorm.includes(tok));
 
 			if (matchDireto || matchTokens) {
-				const coordsRua = rua.coords || (rua.pontos && rua.pontos[0]) || [-29.4668, -51.9614];
+				const coordsRua = rua.coords ||
+					(rua.pontos && rua.pontos[0]) || [-29.4668, -51.9614];
 				resultados.push({
 					nome: rua.nome,
 					tipo: "rua",
 					detalhe: rua.bairro ? `Bairro ${rua.bairro}` : "Lajeado",
 					coords: coordsRua,
-					cota: rua.cota || null
+					cota: rua.cota || null,
 				});
 			}
 		}
@@ -367,17 +396,19 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 		if (resultados.length < 3) {
 			try {
 				const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(termoLimpo + ", Lajeado, RS, Brasil")}&limit=3&viewbox=-52.05,-29.40,-51.90,-29.52`;
-				const resp = await fetch(url, { headers: { "Accept-Language": "pt-BR" } });
+				const resp = await fetch(url, {
+					headers: { "Accept-Language": "pt-BR" },
+				});
 				if (resp.ok) {
 					const dados = await resp.json();
-					const adicionais = dados.map(d => ({
+					const adicionais = dados.map((d) => ({
 						nome: d.display_name.split(",")[0],
 						tipo: "endereco",
 						detalhe: d.display_name,
 						coords: [parseFloat(d.lat), parseFloat(d.lon)],
-						cota: null
+						cota: null,
 					}));
-					setSugestoes(prev => [...prev, ...adicionais].slice(0, 7));
+					setSugestoes((prev) => [...prev, ...adicionais].slice(0, 7));
 				}
 			} catch (_) {}
 		}
@@ -421,42 +452,68 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 
 		if (!coordsFinais && casaEndereco) {
 			// Localiza??o autom?tica caso o usu?rio tenha digitado sem clicar na sugest?o
-			const termoNorm = casaEndereco.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-			const matchLocal = LOCAIS_OFICIAIS_LAJEADO.find(l => (l.nome || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(termoNorm));
+			const termoNorm = casaEndereco
+				.toLowerCase()
+				.normalize("NFD")
+				.replace(/[\u0300-\u036f]/g, "")
+				.trim();
+			const matchLocal = LOCAIS_OFICIAIS_LAJEADO.find((l) =>
+				(l.nome || "")
+					.toLowerCase()
+					.normalize("NFD")
+					.replace(/[\u0300-\u036f]/g, "")
+					.includes(termoNorm),
+			);
 			if (matchLocal) {
 				coordsFinais = matchLocal.coords;
 			} else {
-				const matchRua = listaRuas.find(r => (r.nome || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(termoNorm));
+				const matchRua = listaRuas.find((r) =>
+					(r.nome || "")
+						.toLowerCase()
+						.normalize("NFD")
+						.replace(/[\u0300-\u036f]/g, "")
+						.includes(termoNorm),
+				);
 				if (matchRua) {
-					coordsFinais = matchRua.coords || (matchRua.pontos && matchRua.pontos[0]) || [-29.4668, -51.9614];
+					coordsFinais = matchRua.coords ||
+						(matchRua.pontos && matchRua.pontos[0]) || [-29.4668, -51.9614];
 				}
 			}
 		}
 
 		if (!coordsFinais) {
-            const normalizar = (txt) => (txt || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/^(rua|avenida|av\.?|travessa|alameda)\s+/i, "").trim();
-            const endLimpo = normalizar(casaEndereco.replace(/,\s*\d+.*$/, "").replace(/\d+/g, ""));
-            
-            const ruaEncontrada = listaRuas.find(r => {
-                const n = normalizar(r.nome || r.name || (r.tags && r.tags.name) || "");
-                return n.length > 2 && (n.includes(endLimpo) || endLimpo.includes(n));
-            });
+			const normalizar = (txt) =>
+				(txt || "")
+					.toLowerCase()
+					.normalize("NFD")
+					.replace(/[\u0300-\u036f]/g, "")
+					.replace(/^(rua|avenida|av\.?|travessa|alameda)\s+/i, "")
+					.trim();
+			const endLimpo = normalizar(
+				casaEndereco.replace(/,\s*\d+.*$/, "").replace(/\d+/g, ""),
+			);
 
-            if (ruaEncontrada) {
-                if (ruaEncontrada.coords) coordsFinais = ruaEncontrada.coords;
-                else if (ruaEncontrada.lat && ruaEncontrada.lng) coordsFinais = [ruaEncontrada.lat, ruaEncontrada.lng];
-                else if (ruaEncontrada.bounds) {
-                    coordsFinais = [
-                        (ruaEncontrada.bounds.minlat + ruaEncontrada.bounds.maxlat) / 2,
-                        (ruaEncontrada.bounds.minlon + ruaEncontrada.bounds.maxlon) / 2
-                    ];
-                }
-            }
+			const ruaEncontrada = listaRuas.find((r) => {
+				const n = normalizar(r.nome || r.name || (r.tags && r.tags.name) || "");
+				return n.length > 2 && (n.includes(endLimpo) || endLimpo.includes(n));
+			});
 
-            if (!coordsFinais) {
-                coordsFinais = [-29.46738, -51.96263];
-            }
-        }
+			if (ruaEncontrada) {
+				if (ruaEncontrada.coords) coordsFinais = ruaEncontrada.coords;
+				else if (ruaEncontrada.lat && ruaEncontrada.lng)
+					coordsFinais = [ruaEncontrada.lat, ruaEncontrada.lng];
+				else if (ruaEncontrada.bounds) {
+					coordsFinais = [
+						(ruaEncontrada.bounds.minlat + ruaEncontrada.bounds.maxlat) / 2,
+						(ruaEncontrada.bounds.minlon + ruaEncontrada.bounds.maxlon) / 2,
+					];
+				}
+			}
+
+			if (!coordsFinais) {
+				coordsFinais = [-29.46738, -51.96263];
+			}
+		}
 
 		try {
 			const resp = await fetch(`${API_BASE}/api/v1/perfil/salvar/`, {
@@ -775,35 +832,39 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 				latB = pontoDestino[0];
 
 			const rotaTemAlagamento = (coordsGeoJson) => {
-                if (!pontosBloqueadosGeo || pontosBloqueadosGeo.length === 0) return false;
-                
-                // Raio de seguran?a: ~18 metros (0.00016 graus)
-                const LIMITE_GRAUS = 0.00025;
-                const RAIO_QUADRADO = 18 * 18;
+				if (!pontosBloqueadosGeo || pontosBloqueadosGeo.length === 0)
+					return false;
 
-                for (let i = 0; i < coordsGeoJson.length; i++) {
-                    const lonRota = coordsGeoJson[i][0];
-                    const latRota = coordsGeoJson[i][1];
+				// Raio de seguran?a: ~18 metros (0.00016 graus)
+				const LIMITE_GRAUS = 0.00025;
+				const RAIO_QUADRADO = 18 * 18;
 
-                    for (let j = 0; j < pontosBloqueadosGeo.length; j++) {
-                        const pt = pontosBloqueadosGeo[j];
-                        const latBloq = pt[0];
-                        const lonBloq = pt[1];
+				for (let i = 0; i < coordsGeoJson.length; i++) {
+					const lonRota = coordsGeoJson[i][0];
+					const latRota = coordsGeoJson[i][1];
 
-                        // Filtro r?pido por caixa delimitadora antes do c?lculo m?trico
-                        if (Math.abs(latBloq - latRota) < LIMITE_GRAUS && Math.abs(lonBloq - lonRota) < LIMITE_GRAUS) {
-                            const dLatM = (latBloq - latRota) * 110850;
-                            const dLonM = (lonBloq - lonRota) * 96700;
-                            if ((dLatM * dLatM + dLonM * dLonM) <= RAIO_QUADRADO) {
-                                return true; // Rota interceptou ponto de alagamento!
-                            }
-                        }
-                    }
-                }
-                return false;
-            };
+					for (let j = 0; j < pontosBloqueadosGeo.length; j++) {
+						const pt = pontosBloqueadosGeo[j];
+						const latBloq = pt[0];
+						const lonBloq = pt[1];
 
-      let urlDireta = `https://router.project-osrm.org/route/v1/driving/${lonA},${latA};${lonB},${latB}?overview=full&geometries=geojson&alternatives=true`;
+						// Filtro r?pido por caixa delimitadora antes do c?lculo m?trico
+						if (
+							Math.abs(latBloq - latRota) < LIMITE_GRAUS &&
+							Math.abs(lonBloq - lonRota) < LIMITE_GRAUS
+						) {
+							const dLatM = (latBloq - latRota) * 110850;
+							const dLonM = (lonBloq - lonRota) * 96700;
+							if (dLatM * dLatM + dLonM * dLonM <= RAIO_QUADRADO) {
+								return true; // Rota interceptou ponto de alagamento!
+							}
+						}
+					}
+				}
+				return false;
+			};
+
+			let urlDireta = `https://router.project-osrm.org/route/v1/driving/${lonA},${latA};${lonB},${latB}?overview=full&geometries=geojson&alternatives=true`;
 			let resp = await fetch(urlDireta);
 			let data = await resp.json();
 
@@ -984,8 +1045,6 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 
 	return (
 		<div className="w-full h-screen flex flex-col font-sans select-none relative overflow-hidden bg-gray-100">
-
-
 			{/* MODAL: MINHAS ROTAS SALVAS */}
 			{modalRotasSalvasAberto && (
 				<div
@@ -1120,7 +1179,9 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 									<span className="text-2xl">🏠</span>
 									<div>
 										<p className="text-xs font-bold text-gray-900">
-											{usuario.residencia ? "Configuração da Minha Casa" : "Cadastrar Minha Residência"}
+											{usuario.residencia
+												? "Configuração da Minha Casa"
+												: "Cadastrar Minha Residência"}
 										</p>
 										<p className="text-[11px] text-gray-500">
 											{usuario.residencia
@@ -1142,7 +1203,9 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 								<div className="flex items-center gap-3">
 									<span className="text-2xl">⭐</span>
 									<div>
-										<p className="text-xs font-bold text-gray-900">Minhas Rotas Salvas</p>
+										<p className="text-xs font-bold text-gray-900">
+											Minhas Rotas Salvas
+										</p>
 										<p className="text-[11px] text-gray-500">
 											{minhasRotas.length > 0
 												? `${minhasRotas.length} rotas monitoradas`
@@ -1160,15 +1223,22 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 								<div className="flex items-center gap-3">
 									<span className="text-2xl">🔔</span>
 									<div>
-										<p className="text-xs font-bold text-gray-900">Notificações Push no Celular</p>
+										<p className="text-xs font-bold text-gray-900">
+											Notificações Push no Celular
+										</p>
 										<p className="text-[11px] text-gray-500">
-											{permissaoPush === "granted" ? "Ativadas com sucesso" : "Clique para permitir avisos"}
+											{permissaoPush === "granted"
+												? "Ativadas com sucesso"
+												: "Clique para permitir avisos"}
 										</p>
 									</div>
 								</div>
-								<span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-									permissaoPush === "granted" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
-								}`}>
+								<span
+									className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+										permissaoPush === "granted"
+											? "bg-emerald-100 text-emerald-800"
+											: "bg-amber-100 text-amber-800"
+									}`}>
 									{permissaoPush === "granted" ? "Ativo" : "Ativar"}
 								</span>
 							</div>
@@ -1200,7 +1270,9 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 									<h3 className="font-bold text-gray-900 text-base leading-tight">
 										Sentinela Lajeado
 									</h3>
-									<p className="text-[11px] text-gray-500">Monitore sua casa e rotas de fuga</p>
+									<p className="text-[11px] text-gray-500">
+										Monitore sua casa e rotas de fuga
+									</p>
 								</div>
 							</div>
 							<button
@@ -1211,7 +1283,9 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 						</div>
 
 						<p className="text-xs text-gray-600 mt-3 mb-4 leading-relaxed">
-							Acesse sua conta para salvar a localização exata da sua casa, calcular rotas seguras e receber avisos de inundação em tempo real.
+							Acesse sua conta para salvar a localização exata da sua casa,
+							calcular rotas seguras e receber avisos de inundação em tempo
+							real.
 						</p>
 
 						<button
@@ -1735,74 +1809,7 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 
 			{/* MAPA */}
 			<div className="flex-1 w-full relative z-0">
-
-			{/* COMPONENTES MODULARES MOBILE DA FOTO */}
-
-
-			{/* PAINEL DE SIMULAÇÃO DE COTAS (QUANDO SIMULAR ATIVADO) */}
-			{isSimulando && (
-				<div
-					style={{ zIndex: 1250 }}
-					className="fixed inset-x-3 bottom-20 bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.18)] border border-gray-100 flex flex-col gap-3 pointer-events-auto">
-					<div className="flex justify-between items-center">
-						<div className="flex items-center gap-2">
-							<span className="text-xl">🎛️</span>
-							<div>
-								<h4 className="text-xs font-bold text-gray-900 leading-tight">Simulação de Cota do Rio</h4>
-								<p className="text-[10px] text-gray-500">Veja o impacto nas ruas em tempo real</p>
-							</div>
-						</div>
-						<div className="flex items-center gap-2">
-							<span className="text-base font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-xl border border-blue-200">
-								{Number(nivelAtivo).toFixed(2)}m
-							</span>
-							<button
-								onClick={() => {
-									setIsSimulando(false);
-									setCotaSimulada(cotaReal);
-								}}
-								className="text-gray-400 hover:text-gray-600 font-bold p-1">
-								✕
-							</button>
-						</div>
-					</div>
-
-					{/* Slider contínuo */}
-					<div className="flex items-center gap-3">
-						<span className="text-[10px] font-bold text-gray-400">13m</span>
-						<input
-							type="range"
-							min="13.0"
-							max="36.0"
-							step="0.1"
-							value={nivelAtivo}
-							onChange={(e) => setCotaSimulada(parseFloat(e.target.value))}
-							className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-						/>
-						<span className="text-[10px] font-bold text-gray-400">36m</span>
-					</div>
-
-					{/* Cenários Rápidos */}
-					<div className="grid grid-cols-3 gap-2">
-						<button
-							onClick={() => setCotaSimulada(cotaReal)}
-							className="py-1.5 px-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-[11px] font-bold transition">
-							Ao Vivo ({Number(cotaReal).toFixed(1)}m)
-						</button>
-						<button
-							onClick={() => setCotaSimulada(19.0)}
-							className="py-1.5 px-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-xl text-[11px] font-bold transition">
-							Alerta (19.0m)
-						</button>
-						<button
-							onClick={() => setCotaSimulada(29.8)}
-							className="py-1.5 px-2 bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 rounded-xl text-[11px] font-bold transition">
-							Maio/24 (29.8m)
-						</button>
-					</div>
-				</div>
-			)}
-
+				{/* COMPONENTES MODULARES MOBILE DA FOTO */}
 
 				{dadosRota && (
 					<div className="absolute top-4 right-14 z-[999]">
@@ -1814,70 +1821,6 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 						</button>
 					</div>
 				)}
-
-				 {/* PAINEL DE SIMULAÇÃO DE COTAS (SÓ AQUI PARA NÃO DUPLICAR) */}
-                                {isSimulando && (
-                                        <div
-                                                style={{ zIndex: 1250 }}
-                                                className="fixed inset-x-3 bottom-20 bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-[0_8px_30px_rgba(0,0,0,0.18)] border border-gray-100 flex flex-col gap-3 pointer-events-auto">
-                                                <div className="flex justify-between items-center">
-                                                        <div className="flex items-center gap-2">
-                                                                <span className="text-xl">🎛️</span>
-                                                                <div>
-                                                                        <h4 className="text-xs font-bold text-gray-900 leading-tight">Simulação de Cota do Rio</h4>
-                                                                        <p className="text-[10px] text-gray-500">Veja o impacto nas ruas em tempo real</p>
-                                                                </div>
-                                                        </div>
-                                                        <div className="flex items-center gap-2">
-                                                                <span className="text-base font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-xl border border-blue-200">
-                                                                        {Number(nivelAtivo).toFixed(2)}m
-                                                                </span>
-                                                                <button
-                                                                        onClick={() => {
-                                                                                setIsSimulando(false);
-                                                                                setCotaSimulada(cotaReal);
-                                                                        }}
-                                                                        className="text-gray-400 hover:text-gray-600 font-bold p-1">
-                                                                        ✕
-                                                                </button>
-                                                        </div>
-                                                </div>
-
-                                                {/* Slider contínuo */}
-                                                <div className="flex items-center gap-3">
-                                                        <span className="text-[10px] font-bold text-gray-400">13m</span>
-                                                        <input
-                                                                type="range"
-                                                                min="13.0"
-                                                                max="36.0"
-                                                                step="0.1"
-                                                                value={nivelAtivo}
-                                                                onChange={(e) => setCotaSimulada(parseFloat(e.target.value))}
-                                                                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                                                        />
-                                                        <span className="text-[10px] font-bold text-gray-400">36m</span>
-                                                </div>
-
-                                                {/* Cenários Rápidos */}
-                                                <div className="grid grid-cols-3 gap-2">
-                                                        <button
-                                                                onClick={() => setCotaSimulada(cotaReal)}
-                                                                className="py-1.5 px-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-[11px] font-bold transition">
-                                                                Ao Vivo ({Number(cotaReal).toFixed(1)}m)
-                                                        </button>
-                                                        <button
-                                                                onClick={() => setCotaSimulada(19.0)}
-                                                                className="py-1.5 px-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-xl text-[11px] font-bold transition">
-                                                                Alerta (19.0m)
-                                                        </button>
-                                                        <button
-                                                                onClick={() => setCotaSimulada(29.8)}
-                                                                className="py-1.5 px-2 bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 rounded-xl text-[11px] font-bold transition">
-                                                                Maio/24 (29.8m)
-                                                        </button>
-                                                </div>
-                                        </div>
-                                )}
 
 				<MapContainer
 					center={config.centro}
@@ -1923,9 +1866,9 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 							cor = "#ea580c";
 							peso = 5.0;
 							opacidade = 0.95;
-                                           }
+						}
 
-                                           return (
+						return (
 							<Polyline
 								key={`${p.id}-${p.isBloqueado ? "alagada" : p.isRiscoIminente ? "risco" : p.isCalibrado ? "calibrada" : "livre"}`}
 								positions={p.coords}
@@ -2060,25 +2003,27 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 						</Marker>
 					)}
 
-										{usuario?.residencia?.coords && (
+					{usuario?.residencia?.coords && (
 						<Marker
-										position={usuario.residencia.coords}
-										icon={iconeCasa}
-										draggable={true}
-										eventHandlers={{
-											dragend: (e) => {
-												const pos = e.target.getLatLng();
-												const novasCoords = [parseFloat(pos.lat.toFixed(6)), parseFloat(pos.lng.toFixed(6))];
-												setCasaCoords(novasCoords);
-												if (typeof setUsuario === "function" && usuario) {
-													setUsuario(prev => ({
-														...prev,
-														residencia: { ...prev.residencia, coords: novasCoords }
-													}));
-												}
-											}
-										}}
-									>
+							position={usuario.residencia.coords}
+							icon={iconeCasa}
+							draggable={true}
+							eventHandlers={{
+								dragend: (e) => {
+									const pos = e.target.getLatLng();
+									const novasCoords = [
+										parseFloat(pos.lat.toFixed(6)),
+										parseFloat(pos.lng.toFixed(6)),
+									];
+									setCasaCoords(novasCoords);
+									if (typeof setUsuario === "function" && usuario) {
+										setUsuario((prev) => ({
+											...prev,
+											residencia: { ...prev.residencia, coords: novasCoords },
+										}));
+									}
+								},
+							}}>
 							<Popup>
 								<div className="text-xs p-1 font-sans min-w-[200px]">
 									<h4 className="font-bold text-gray-900 text-sm">
@@ -2089,12 +2034,24 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 									)}
 									<div className="mt-1.5 pt-1.5 border-t border-gray-100 flex flex-col gap-0.5">
 										<p className="text-gray-700">
-											Cota Terreno: <strong className="text-emerald-700">{usuario.residencia.cota}m</strong>
+											Cota Terreno:{" "}
+											<strong className="text-emerald-700">
+												{usuario.residencia.cota}m
+											</strong>
 										</p>
 										<p className="text-gray-700">
 											Margem Atual:{" "}
-											<strong className={margemCasa > 1 ? "text-emerald-600" : margemCasa > 0 ? "text-amber-600" : "text-red-600"}>
-												{margemCasa > 0 ? `+${margemCasa}m livres` : `${Math.abs(margemCasa)}m submerso`}
+											<strong
+												className={
+													margemCasa > 1
+														? "text-emerald-600"
+														: margemCasa > 0
+															? "text-amber-600"
+															: "text-red-600"
+												}>
+												{margemCasa > 0
+													? `+${margemCasa}m livres`
+													: `${Math.abs(margemCasa)}m submerso`}
 											</strong>
 										</p>
 									</div>
@@ -2112,11 +2069,8 @@ const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRo
 					))}
 				</MapContainer>
 			</div>
-
-
 		</div>
 	);
 };
 
 export default MapaInterativo;
-

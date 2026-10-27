@@ -11,6 +11,17 @@ function App() {
 	const [isSimulando, setIsSimulando] = useState(false);
 	const [painelRotaAberto, setPainelRotaAberto] = useState(false);
 	const [modalPerfilAberto, setModalPerfilAberto] = useState(false);
+	// Estados de Simulação
+	const [cotaReal, setCotaReal] = useState(13.84);
+	const [cotaSimulada, setCotaSimulada] = useState(13.84);
+
+	// Estados de Rotas
+	const [textoOrigem, setTextoOrigem] = useState("");
+	const [textoDestino, setTextoDestino] = useState("");
+	const [pontoOrigem, setPontoOrigem] = useState(null);
+	const [pontoDestino, setPontoDestino] = useState(null);
+	const [dadosRota, setDadosRota] = useState(null);
+	const [calculandoRota, setCalculandoRota] = useState(false);
 
 	const carregarCota = async () => {
 		try {
@@ -84,10 +95,34 @@ function App() {
 				setIsSimulando={setIsSimulando}
 				painelRotaAberto={painelRotaAberto}
 				setPainelRotaAberto={setPainelRotaAberto}
+				// Novas props de sincronização com a gaveta
+				pontoOrigem={pontoOrigem}
+				pontoDestino={pontoDestino}
+				dadosRota={dadosRota}
+				setDadosRota={setDadosRota}
 			/>
 			<TopSearchBar className="absolute top-4 left-0 right-0 z-10 px-4" />
 			<MetricsBottomSheet
-				cotaReal={cotaAtual?.cota || 13.84}
+				cotaReal={cotaAtual?.nivel || 13.84}
+				cotaSimulada={cotaSimulada}
+				setCotaSimulada={setCotaSimulada}
+				isSimulando={isSimulando}
+				setIsSimulando={setIsSimulando}
+				// Props de Rotas
+				textoOrigem={textoOrigem}
+				setTextoOrigem={setTextoOrigem}
+				textoDestino={textoDestino}
+				setTextoDestino={setTextoDestino}
+				pontoOrigem={pontoOrigem}
+				setPontoOrigem={setPontoOrigem}
+				pontoDestino={pontoDestino}
+				setPontoDestino={setPontoDestino}
+				dadosRota={dadosRota}
+				setDadosRota={setDadosRota}
+				calculandoRota={calculandoRota}
+				setCalculandoRota={setCalculandoRota}
+				// Controle de Vista
+				abaAtiva={isSimulando ? "simular" : painelRotaAberto ? "rotas" : "mapa"}
 				className="absolute bottom-0 left-0 right-0 z-20"
 			/>
 			<BottomNavigation
