@@ -130,18 +130,13 @@ const MetricsBottomSheet = ({
         {/* CABEÇALHO (Lajeado RS + Clima) */}
         <div
           onClick={toggleSnap}
-          className="w-full flex items-center justify-between cursor-pointer mb-3"
+          className="w-full flex items-center justify-between cursor-pointer mb-6"
         >
           <div className="flex items-center gap-2">
-            <h2 className="text-[22px] font-bold text-gray-900 tracking-tight">Lajeado RS</h2>
-            {isMinimized && (
-              <span className="text-xs text-gray-500 font-semibold ml-1">
-                • {cotaReal ? Number(cotaReal).toFixed(2) : "--"}m ({isInundacao ? "Inundação" : "Normal"})
-              </span>
-            )}
+            <h2 className="text-[24px] font-bold text-gray-900 tracking-tight">Lajeado RS</h2>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 text-xs text-gray-700 font-medium">
+            <div className="flex items-center gap-1 text-xs text-gray-700 font-medium bg-gray-100 px-2 py-1 rounded-full">
               <CloudRain size={16} className="text-gray-600" />
               <span className="text-sm font-semibold">{temperatura}</span>
             </div>
@@ -157,52 +152,52 @@ const MetricsBottomSheet = ({
           </div>
         </div>
 
-        {/* GRID DE MÉTRICAS */}
+        {/* MÉTRICAS PRINCIPAIS (ESTILO NOVO LAYOUT) */}
         {!isMinimized && (
-          <div className="grid grid-cols-2 gap-y-3.5 gap-x-6 text-left pt-1">
-            {/* Linha 1 */}
-            <div>
-              <p className="text-[12px] text-gray-500 font-medium">Cota atual</p>
-              <p className="text-[22px] font-bold text-gray-900 leading-tight">
-                {cotaReal ? Number(cotaReal).toFixed(2) : "13.84"}m
-              </p>
-            </div>
-
-            <div>
-              <p className="text-[12px] text-transparent select-none font-medium">Status</p>
-              <p className={`text-[20px] font-bold leading-tight ${isInundacao ? "text-red-500" : "text-emerald-500"}`}>
+          <div className="flex flex-col gap-y-6 pt-1">
+            {/* Cota Atual em Destaque */}
+            <div className="flex justify-between items-end">
+              <div>
+                <p className="text-[12px] text-gray-500 font-medium mb-1">Cota atual</p>
+                <p className="text-[48px] font-black text-gray-900 leading-none tracking-tighter">
+                  {cotaReal ? Number(cotaReal).toFixed(2) : "13.84"}m
+                </p>
+              </div>
+              <div className={`px-4 py-1.5 rounded-full text-sm font-bold ${isInundacao ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>
                 {isInundacao ? "Inundação" : "Normal"}
-              </p>
+              </div>
             </div>
 
-            {/* Linha 2 */}
-            <div>
-              <p className="text-[12px] text-gray-500 font-medium">Cota de inundação</p>
-              <p className="text-base font-bold text-gray-900 leading-tight">
-                {Number(cotaInundacao).toFixed(2)}m
-              </p>
+            {/* BARRA DE RISCO GRADIENTE */}
+            <div className="relative w-full h-3 bg-gradient-to-r from-emerald-500 via-yellow-400 to-red-500 rounded-full overflow-visible">
+              {/* Marcadores de Referência */}
+              <div className="absolute top-5 left-[40%] text-[10px] font-bold text-gray-400">16.00m</div>
+              <div className="absolute top-5 left-[60%] text-[10px] font-bold text-gray-400">19.00m</div>
+              <div className="absolute top-5 right-0 text-[10px] font-bold text-gray-400">26.00m (Casa)</div>
+
+              {/* Indicador da Cota Atual (Bolinha) */}
+              <div
+                className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-gray-800 rounded-full shadow-md transition-all duration-500"
+                style={{
+                  left: `${Math.min(Math.max(((Number(cotaReal) - 13) / (26 - 13)) * 100, 0), 100)}%`,
+                  marginLeft: '-8px'
+                }}
+              />
             </div>
 
-            <div>
-              <p className="text-[12px] text-gray-500 font-medium">Ruas bloqueadas</p>
-              <p className={`text-base font-bold leading-tight ${temBloqueios && qtdBloqueios > 0 ? "text-red-500" : "text-gray-900"}`}>
-                {qtdBloqueios}
-              </p>
-            </div>
-
-            {/* Linha 3 */}
-            <div>
-              <p className="text-[12px] text-gray-500 font-medium">Sua cota</p>
-              <p className="text-base font-bold text-gray-900 leading-tight">
-                {typeof suaCota === "number" ? suaCota.toFixed(2) + "m" : suaCota}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-[12px] text-gray-500 font-medium">Nível de alerta</p>
-              <p className="text-base font-bold text-gray-900 leading-tight">
-                {Number(cotaAlerta).toFixed(2)}m
-              </p>
+            {/* TRENDS & STATUS */}
+            <div className="grid grid-cols-2 gap-4 items-center">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500 font-medium">Última hora</span>
+                <span className="text-lg font-bold text-gray-900">+0,35m</span>
+                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full">Rio estável</span>
+              </div>
+              <div className="flex items-center justify-end gap-2">
+                <span className="text-sm text-gray-500 font-medium">Ruas bloqueadas</span>
+                <span className={`text-lg font-bold ${temBloqueios ? "text-red-600" : "text-gray-900"}`}>
+                  {qtdBloqueios}
+                </span>
+              </div>
             </div>
           </div>
         )}

@@ -61,8 +61,11 @@ function App() {
   }, [])
 
   return (
-    <div className="w-full h-screen overflow-hidden bg-gray-900 select-none">
-      <MapaInterativo cotaAtual={cotaAtual} ruas={ruas} />
+    <div className="relative w-full h-screen overflow-hidden bg-gray-900 select-none">
+      <MapaInterativo cotaAtual={cotaAtual} ruas={ruas} className="absolute inset-0 z-0" />
+      <TopSearchBar className="absolute top-4 left-0 right-0 z-10 px-4" />
+      <MetricsBottomSheet cotaReal={cotaAtual?.cota || 13.84} className="absolute bottom-0 left-0 right-0 z-20" />
+      <BottomNavigation className="absolute bottom-0 left-0 right-0 z-30" />
     </div>
   )
 }
