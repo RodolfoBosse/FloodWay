@@ -1739,23 +1739,7 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 			<div className="flex-1 w-full relative z-0">
 
 			{/* COMPONENTES MODULARES MOBILE DA FOTO */}
-			<TopSearchBar 
-				textoBusca={textoDestino || textoOrigem || ""}
-				onBuscarClick={() => setPainelRotaAberto(true)}
-				onNotifClick={() => setPainelRotaAberto(!painelRotaAberto)}
-				onPerfilClick={() => usuario ? setModalPerfilAberto(true) : setModalAuthAberto(true)}
-				usuario={usuario}
-			/>
 
-			<MetricsBottomSheet 
-				cotaReal={cotaReal}
-				cotaInundacao={19.0}
-				cotaAlerta={23.0}
-				suaCota={casaCoords?.cotaTerreno || 26.0}
-				dadosRota={dadosRota}
-				temperatura="13°"
-				onAbrirRotas={() => setPainelRotaAberto(true)}
-			/>
 
 			{/* PAINEL DE SIMULAÇÃO DE COTAS (QUANDO SIMULAR ATIVADO) */}
 			{isSimulando && (
@@ -1821,21 +1805,6 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 				</div>
 			)}
 
-			<BottomNavigation 
-				abaAtiva={isSimulando ? "simular" : painelRotaAberto ? "rotas" : "mapa"}
-				onMapaClick={() => {
-					setPainelRotaAberto(false);
-					setIsSimulando(false);
-				}}
-				onRotasClick={() => {
-					setIsSimulando(false);
-					setPainelRotaAberto(!painelRotaAberto);
-				}}
-				onGraficosClick={() => {}}
-				onSimularClick={() => setIsSimulando(!isSimulando)}
-				isSimulando={isSimulando}
-				painelRotaAberto={painelRotaAberto}
-			/>
 
 				{dadosRota && (
 					<div className="absolute top-4 right-14 z-[999]">
