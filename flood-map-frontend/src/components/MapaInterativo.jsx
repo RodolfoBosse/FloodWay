@@ -13,6 +13,9 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import TopSearchBar from "./mobile/TopSearchBar";
+import MetricsBottomSheet from "./mobile/MetricsBottomSheet";
+import BottomNavigation from "./mobile/BottomNavigation";
 
 // Ícones Customizados
 const iconeBloqueio = new L.DivIcon({
