@@ -241,11 +241,11 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 	const testarNotificacaoEmergencia = () => {
 		const horasTexto =
 			estimativaHorasCasa !== null
-				? `Impacto estimado em ~${estimativaHorasCasa}h.`
+				? \`Impacto estimado em ~\${estimativaHorasCasa}h.\`
 				: "Rio em monitoramento ativo.";
 		dispararNotificacaoLocal(
-			`🚨 ALERTA: RIO TAQUARI EM ${Number(nivelAtivo).toFixed(2)}m`,
-			`Margem para sua casa (${usuario?.residencia?.endereco || "Residência"}): +${margemCasa}m livres. ${horasTexto}`,
+			\`🚨 ALERTA: RIO TAQUARI EM \${Number(nivelAtivo).toFixed(2)}m\`,
+			\`Margem para sua casa (\${usuario?.residencia?.endereco || "Residência"}): +\${margemCasa}m livres. \${horasTexto}\`,
 		);
 	};
 
@@ -289,7 +289,7 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 		if (!email) return;
 		try {
 			const resp = await fetch(
-				`${API_BASE}/api/v1/rotas/listar/?email=${encodeURIComponent(email)}`,
+				\${API_BASE}/api/v1/rotas/listar/?email=\${encodeURIComponent(email)},
 			);
 			if (resp.ok) {
 				const data = await resp.json();
@@ -688,14 +688,14 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 				listaSegmentos.push({
 					cota: rua.cota_bloqueio,
 					coords,
-					calibrado_asfalto: false,
+					calibrad_asfalto: false,
 				});
 			}
 		} else {
 			listaSegmentos.push({
 				cota: rua.cota_bloqueio,
 				coords: rawCoords,
-				calibrado_asfalto: false,
+				calibrad_asfalto: false,
 			});
 		}
 
@@ -707,7 +707,7 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 			const margemAgua = cotaTrecho - nivelAtivo;
 			const isBloqueado = margemAgua <= 0;
 			const isRiscoIminente = !isBloqueado && margemAgua <= 1.0; // Água a menos de 1m da pista
-			const isCalibrado = Boolean(t.calibrado_asfalto);
+			const isCalibrado = Boolean(t.calibrad_asfalto);
 
 			if (isCalibrado) trechosCalibradosAsfalto++;
 			if (isBloqueado) trechosAlagados++;
