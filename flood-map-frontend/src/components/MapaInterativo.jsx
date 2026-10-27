@@ -131,7 +131,7 @@ const CapturadorDeCliques = ({ modoSelecao, onPontoSelecionado }) => {
 	return null;
 };
 
-const MapaInterativo = ({ cotaAtual, ruas }) => {
+const MapaInterativo = ({ cotaAtual, ruas, isSimulando, setIsSimulando, painelRotaAberto, setPainelRotaAberto }) => {
 	const config = {
 		centro: [-29.4669, -51.9611],
 		zoom: 15,
@@ -262,13 +262,11 @@ const MapaInterativo = ({ cotaAtual, ruas }) => {
 	const isSubindo = velocidadeCmH > 0;
 
 	const [cotaSimulada, setCotaSimulada] = useState(cotaReal);
-	const [isSimulando, setIsSimulando] = useState(false);
 	const [animando, setAnimando] = useState(false);
 	const animRef = useRef(null);
 
 	const nivelAtivo = isSimulando ? cotaSimulada : cotaReal;
 
-	const [painelRotaAberto, setPainelRotaAberto] = useState(false);
 
 	const limparRotaAtual = () => {
 		setDadosRota(null);
