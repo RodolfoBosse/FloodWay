@@ -267,7 +267,7 @@ const MapaInterativo = ({
 		cotaAtual?.velocidade_formatada || "▼ Descendo a 5,3 cm/h";
 	const isSubindo = velocidadeCmH > 0;
 
-	const [cotaSimulada, setCotaSimulada] = useState(cotaReal);
+	// const [cotaSimulada, setCotaSimulada] = useState(cotaReal);
 	const [animando, setAnimando] = useState(false);
 	const animRef = useRef(null);
 
