@@ -27,8 +27,8 @@ function App() {
 	const [modalCasaAberto, setModalCasaAberto] = useState(false);
 
 	// Estados de Simulação
-	const [cotaReal, setCotaReal] = useState(13.84);
-	const [cotaSimulada, setCotaSimulada] = useState(13.84);
+	const [cotaReal, setCotaReal] = useState(12.86);
+	const [cotaSimulada, setCotaSimulada] = useState(12.86);
 
 	// Estados de Rotas
 	const [textoOrigem, setTextoOrigem] = useState("");
@@ -40,17 +40,37 @@ function App() {
 
 	const carregarCota = async () => {
 		try {
-			const resp = await fetch(`${API_BASE}/api/v1/cota/atual-sync/`);
+			// Tenta buscar endpoint padrão
+			let resp = await fetch(`${API_BASE}/api/v1/cota/atual-sync/`);
+			if (!resp.ok) {
+				resp = await fetch('/api/cota');
+			}
 			if (resp.ok) {
 				const data = await resp.json();
-				setCotaAtual(data);
-				if (data.nivel) {
+				if (data && data.nivel) {
+					setCotaAtual(data);
 					setCotaReal(data.nivel);
 					setCotaSimulada(data.nivel);
+					return;
 				}
 			}
 		} catch (e) {
-			console.error("Erro ao sincronizar cota:", e);
+			console.warn("Erro ao sincronizar cota via API principal, tentando fallback:", e);
+		}
+
+		// Fallback direto caso o backend esteja indisponível
+		try {
+			const fallbackResp = await fetch('/api/cota');
+			if (fallbackResp.ok) {
+				const fbData = await fallbackResp.json();
+				setCotaAtual(fbData);
+				if (fbData.nivel) {
+					setCotaReal(fbData.nivel);
+					setCotaSimulada(fbData.nivel);
+				}
+			}
+		} catch (err) {
+			console.error("Falha ao obter cota:", err);
 		}
 	};
 

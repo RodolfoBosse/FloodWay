@@ -1,9 +1,16 @@
 {
   "rewrites": [
     {
+      "source": "/api/v1/cota/(.*)",
+      "destination": "/api/cota"
+    },
+    {
+      "source": "/api/cota",
+      "destination": "/api/cota"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
 }
-
