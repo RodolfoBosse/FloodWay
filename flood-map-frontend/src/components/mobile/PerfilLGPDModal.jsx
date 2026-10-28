@@ -151,3 +151,4 @@ export default function PerfilLGPDModal({ isOpen, onClose, usuario, onLogout, on
     </div>
   );
 }
+

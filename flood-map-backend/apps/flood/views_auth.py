@@ -1,10 +1,14 @@
 import json
+import base64
+import requests
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from apps.flood.models import PerfilSentinela
+
+GOOGLE_CLIENT_ID = "805141222292-s107aoun4h2d5vgrl2381t1iseivj28v.apps.googleusercontent.com"
 
 def obter_ip_cliente(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -153,6 +157,96 @@ def api_login(request):
 
     except Exception as e:
         return JsonResponse({'erro': f'Erro ao realizar login: {str(e)}'}, status=500)
+
+
+@csrf_exempt
+def api_google_login(request):
+    """
+    Login / Cadastro oficial via Google Identity Services (One Tap & Google Sign-In)
+    Valida o token JWT emitido pelo Google
+    """
+    if request.method != 'POST':
+        return JsonResponse({'erro': 'Método não permitido'}, status=405)
+
+    try:
+        dados = json.loads(request.body)
+        credential = dados.get('credential')
+
+        if not credential:
+            return JsonResponse({'erro': 'Token do Google não informado.'}, status=400)
+
+        # Validação do token na API oficial de verificação do Google
+        google_verify_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}"
+        resp = requests.get(google_verify_url, timeout=10)
+        
+        if resp.status_code != 200:
+            return JsonResponse({'erro': 'Token do Google inválido ou expirado.'}, status=401)
+
+        payload = resp.json()
+        email = (payload.get('email') or '').strip().lower()
+        nome = payload.get('name') or payload.get('given_name') or email.split('@')[0]
+        google_aud = payload.get('aud')
+
+        # Validação de segurança: verificar se o token foi emitido para o nosso Client ID
+        if google_aud != GOOGLE_CLIENT_ID:
+            return JsonResponse({'erro': 'Token não pertence a esta aplicação.'}, status=403)
+
+        if not email:
+            return JsonResponse({'erro': 'E-mail não fornecido pelo Google.'}, status=400)
+
+        # 1. Obtém ou cria o usuário Django
+        user = User.objects.filter(username=email).first() or User.objects.filter(email=email).first()
+        criado = False
+        if not user:
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                first_name=nome
+            )
+            user.set_unusable_password()
+            user.save()
+            criado = True
+
+        # 2. Obtém ou cria o Perfil Sentinela com consentimento LGPD
+        ip = obter_ip_cliente(request)
+        perfil, _ = PerfilSentinela.objects.get_or_create(
+            user=user,
+            defaults={
+                'email': email,
+                'nome': nome,
+                'aceitou_termos_lgpd': True,
+                'ip_aceite_lgpd': ip,
+                'versao_termos_lgpd': '1.0-google-2024'
+            }
+        )
+
+        token, _ = Token.objects.get_or_create(user=user)
+
+        return JsonResponse({
+            'status': 'sucesso',
+            'token': token.key,
+            'usuario': {
+                'id': user.id,
+                'nome': perfil.nome or user.first_name,
+                'email': perfil.email,
+                'whatsapp': perfil.whatsapp,
+                'cota_terreno': perfil.cota_terreno,
+                'endereco': perfil.endereco_completo,
+                'bairro': perfil.bairro,
+                'latitude': perfil.latitude,
+                'longitude': perfil.longitude,
+                'residencia': {
+                    'endereco': perfil.endereco_completo,
+                    'bairro': perfil.bairro,
+                    'lat': perfil.latitude,
+                    'lon': perfil.longitude,
+                    'cota': perfil.cota_terreno
+                } if perfil.latitude and perfil.longitude else None
+            }
+        })
+
+    except Exception as e:
+        return JsonResponse({'erro': f'Erro ao autenticar com Google: {str(e)}'}, status=500)
 
 
 @csrf_exempt

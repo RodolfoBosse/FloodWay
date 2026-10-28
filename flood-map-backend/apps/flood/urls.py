@@ -3,6 +3,7 @@ from apps.flood import views, views_api, views_auth
 
 urlpatterns = [
     # Autenticação Real e LGPD
+    path('v1/auth/google/', views_auth.api_google_login, name='api_google_login'),
     path('v1/auth/cadastro/', views_auth.api_cadastro, name='api_cadastro'),
     path('v1/auth/login/', views_auth.api_login, name='api_login'),
     path('v1/auth/me/', views_auth.api_me, name='api_me'),

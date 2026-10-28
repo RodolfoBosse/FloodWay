@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ShieldCheck, Mail, Lock, User, Phone, CheckCircle, AlertCircle, X, ChevronRight, FileText } from 'lucide-react';
 import { API_BASE } from '../../services/config';
+
+const GOOGLE_CLIENT_ID = "805141222292-s107aoun4h2d5vgrl2381t1iseivj28v.apps.googleusercontent.com";
 
 export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
   const [modo, setModo] = useState('login'); // 'login' | 'cadastro' | 'termos'
@@ -14,7 +16,86 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
 
+  const googleBtnRef = useRef(null);
+
+  // Inicialização e Renderização do Google One Tap e Botão Oficial
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const setupGoogle = () => {
+      if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+        try {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleCallback,
+            auto_select: false,
+            cancel_on_tap_outside: true,
+          });
+
+          // Renderiza o botão nativo do Google
+          if (googleBtnRef.current) {
+            window.google.accounts.id.renderButton(googleBtnRef.current, {
+              type: 'standard',
+              theme: 'outline',
+              size: 'large',
+              text: 'continue_with',
+              shape: 'pill',
+              width: '100%',
+              logo_alignment: 'center',
+            });
+          }
+
+          // Ativa o prompt One Tap nativo (aquele que sobe no celular)
+          window.google.accounts.id.prompt();
+        } catch (e) {
+          console.warn('Erro ao inicializar Google Sign-In:', e);
+        }
+      }
+    };
+
+    const timer = setTimeout(setupGoogle, 300);
+    return () => clearTimeout(timer);
+  }, [isOpen, modo]);
+
   if (!isOpen) return null;
+
+  const handleGoogleCallback = async (response) => {
+    if (!response.credential) return;
+    setCarregando(true);
+    setErro('');
+
+    try {
+      const resp = await fetch(`${API_BASE}/api/v1/auth/google/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential: response.credential }),
+      });
+
+      const data = await resp.json();
+      if (!resp.ok) {
+        throw new Error(data.erro || 'Falha ao autenticar com o Google.');
+      }
+
+      if (data.token) {
+        localStorage.setItem('sentinela_token', data.token);
+      }
+      if (data.usuario) {
+        localStorage.setItem('usuario_sentinela', JSON.stringify(data.usuario));
+        if (onLoginSucesso) onLoginSucesso(data.usuario);
+      }
+
+      setSucesso(`Bem-vindo, ${data.usuario.nome}!`);
+      setTimeout(() => {
+        resetForm();
+        onClose();
+      }, 700);
+
+    } catch (err) {
+      setErro(err.message || 'Erro ao conectar com Google.');
+    } finally {
+      setCarregando(false);
+    }
+  };
 
   const resetForm = () => {
     setErro('');
@@ -64,7 +145,6 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
         throw new Error(data.erro || 'Falha ao processar a requisição.');
       }
 
-      // Salva sessão localmente
       if (data.token) {
         localStorage.setItem('sentinela_token', data.token);
       }
@@ -144,8 +224,26 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
         ) : (
           /* MODO LOGIN OU CADASTRO */
           <div className="mt-4">
+            
+            {/* BOTÃO OFICIAL GOOGLE SIGN-IN */}
+            <div className="mb-4">
+              <p className="text-[11px] text-gray-500 font-medium text-center mb-2">
+                Acesse instantaneamente com a conta do seu aparelho
+              </p>
+              <div ref={googleBtnRef} className="flex justify-center w-full min-h-[44px]"></div>
+            </div>
+
+            <div className="relative my-4 text-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <span className="relative bg-white px-3 text-[10px] text-gray-400 font-semibold uppercase tracking-wider">
+                ou com seu e-mail
+              </span>
+            </div>
+
             {/* Seletor de Abas */}
-            <div className="flex bg-gray-100 p-1 rounded-xl mb-4">
+            <div className="flex bg-gray-100 p-1 rounded-xl mb-3">
               <button
                 type="button"
                 onClick={() => handleTrocaModo('login')}
@@ -285,7 +383,7 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
                   <span>Processando...</span>
                 ) : modo === 'login' ? (
                   <>
-                    <span>Entrar na Minha Conta</span>
+                    <span>Entrar com E-mail</span>
                     <ChevronRight className="w-4 h-4" />
                   </>
                 ) : (
