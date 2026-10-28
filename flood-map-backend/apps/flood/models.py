@@ -1,4 +1,4 @@
-﻿from django.db import models
+from django.db import models
 from django.utils import timezone
 from django.db.models import signals
 from django.dispatch import receiver
@@ -304,7 +304,15 @@ class PerfilSentinela(models.Model):
     # Preferências de Alerta
     margem_aviso_metros = models.FloatField(default=1.5, help_text="Avisar quando o rio chegar a X metros da cota")
     alerta_ativo = models.BooleanField(default=True)
+
+    # Conformidade LGPD (Lei Geral de Proteção de Dados - Lei 13.709/2018)
+    aceitou_termos_lgpd = models.BooleanField(default=True, help_text="Consentimento informado para monitoramento de risco e rotas")
+    data_aceite_lgpd = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    ip_aceite_lgpd = models.GenericIPAddressField(null=True, blank=True)
+    versao_termos_lgpd = models.CharField(max_length=20, default="1.0-2024")
+
     criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.nome} - {self.endereco_completo} ({self.cota_terreno}m)"

@@ -1,7 +1,13 @@
-﻿from django.urls import path
-from apps.flood import views, views_api
+from django.urls import path
+from apps.flood import views, views_api, views_auth
 
 urlpatterns = [
+    # Autenticação Real e LGPD
+    path('v1/auth/cadastro/', views_auth.api_cadastro, name='api_cadastro'),
+    path('v1/auth/login/', views_auth.api_login, name='api_login'),
+    path('v1/auth/me/', views_auth.api_me, name='api_me'),
+    path('v1/auth/excluir-conta/', views_auth.api_excluir_conta, name='api_excluir_conta'),
+
     path('v1/cota/atual/', views_api.api_cota_atual, name='api_cota_atual'),
     path('v1/cota/atual-sync/', views_api.api_cota_atual, name='api_cota_atual_sync'),
     path('v1/cota/lajeado/', views_api.api_cota_atual, name='api_cota_lajeado'),

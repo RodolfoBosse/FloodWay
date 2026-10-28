@@ -4,13 +4,27 @@ import { API_BASE } from "./services/config";
 import TopSearchBar from "./components/mobile/TopSearchBar";
 import MetricsBottomSheet from "./components/mobile/MetricsBottomSheet";
 import BottomNavigation from "./components/mobile/BottomNavigation";
+import AuthLGPDModal from "./components/mobile/AuthLGPDModal";
+import PerfilLGPDModal from "./components/mobile/PerfilLGPDModal";
 
 function App() {
 	const [cotaAtual, setCotaAtual] = useState(null);
 	const [ruas, setRuas] = useState([]);
 	const [isSimulando, setIsSimulando] = useState(false);
 	const [painelRotaAberto, setPainelRotaAberto] = useState(false);
+
+	// Autenticação Real com LGPD
+	const [usuario, setUsuario] = useState(() => {
+		try {
+			const salvo = localStorage.getItem("usuario_sentinela");
+			return salvo ? JSON.parse(salvo) : null;
+		} catch (e) {
+			return null;
+		}
+	});
+	const [modalAuthAberto, setModalAuthAberto] = useState(false);
 	const [modalPerfilAberto, setModalPerfilAberto] = useState(false);
+
 	// Estados de Simulação
 	const [cotaReal, setCotaReal] = useState(13.84);
 	const [cotaSimulada, setCotaSimulada] = useState(13.84);
@@ -29,6 +43,10 @@ function App() {
 			if (resp.ok) {
 				const data = await resp.json();
 				setCotaAtual(data);
+				if (data.nivel) {
+					setCotaReal(data.nivel);
+					setCotaSimulada(data.nivel);
+				}
 			}
 		} catch (e) {
 			console.error("Erro ao sincronizar cota:", e);
@@ -77,7 +95,23 @@ function App() {
 		carregarCota();
 		carregarRuas();
 
-		// Robô do Frontend: Sincroniza a cota automaticamente a cada 3 minutos!
+		// Sincroniza dados da conta se houver token ativo
+		const token = localStorage.getItem("sentinela_token");
+		if (token) {
+			fetch(`${API_BASE}/api/v1/auth/me/`, {
+				headers: { Authorization: `Token ${token}` },
+			})
+				.then((r) => (r.ok ? r.json() : null))
+				.then((d) => {
+					if (d && d.usuario) {
+						setUsuario(d.usuario);
+						localStorage.setItem("usuario_sentinela", JSON.stringify(d.usuario));
+					}
+				})
+				.catch(() => {});
+		}
+
+		// Robô do Frontend: Sincroniza a cota automaticamente a cada 3 minutos
 		const intervalo = setInterval(() => {
 			carregarCota();
 		}, 180000);
@@ -97,13 +131,33 @@ function App() {
 				setIsSimulando={setIsSimulando}
 				painelRotaAberto={painelRotaAberto}
 				setPainelRotaAberto={setPainelRotaAberto}
-				// Novas props de sincronização com a gaveta
 				pontoOrigem={pontoOrigem}
 				pontoDestino={pontoDestino}
 				dadosRota={dadosRota}
 				setDadosRota={setDadosRota}
 			/>
-			<TopSearchBar className="absolute top-4 left-0 right-0 z-10 px-4" />
+
+			{/* Barra de Pesquisa e Perfil Superior */}
+			<TopSearchBar
+				className="absolute top-4 left-0 right-0 z-10 px-4"
+				usuario={usuario}
+				onPerfilClick={() => {
+					if (usuario) {
+						setModalPerfilAberto(true);
+					} else {
+						setModalAuthAberto(true);
+					}
+				}}
+				onNotifClick={() => {
+					if (!usuario) {
+						setModalAuthAberto(true);
+					} else {
+						setModalPerfilAberto(true);
+					}
+				}}
+			/>
+
+			{/* Painel Inferior Deslizante */}
 			<MetricsBottomSheet
 				cotaReal={cotaAtual?.nivel || 13.84}
 				cotaSimulada={cotaSimulada}
@@ -127,6 +181,8 @@ function App() {
 				abaAtiva={isSimulando ? "simular" : painelRotaAberto ? "rotas" : "mapa"}
 				className="absolute bottom-0 left-0 right-0 z-20"
 			/>
+
+			{/* Barra de Navegação Inferior */}
 			<BottomNavigation
 				className="absolute bottom-0 left-0 right-0 z-30"
 				abaAtiva={isSimulando ? "simular" : painelRotaAberto ? "rotas" : "mapa"}
@@ -142,6 +198,23 @@ function App() {
 				onSimularClick={() => setIsSimulando(!isSimulando)}
 				isSimulando={isSimulando}
 				painelRotaAberto={painelRotaAberto}
+			/>
+
+			{/* Modais Globais de Autenticação e Perfil LGPD */}
+			<AuthLGPDModal
+				isOpen={modalAuthAberto}
+				onClose={() => setModalAuthAberto(false)}
+				onLoginSucesso={(novoUser) => {
+					setUsuario(novoUser);
+				}}
+			/>
+
+			<PerfilLGPDModal
+				isOpen={modalPerfilAberto}
+				onClose={() => setModalPerfilAberto(false)}
+				usuario={usuario}
+				onLogout={() => setUsuario(null)}
+				onUsuarioAtualizado={(atualizado) => setUsuario(atualizado)}
 			/>
 		</div>
 	);

@@ -13,6 +13,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import AuthLGPDModal from "./mobile/AuthLGPDModal";
 
 // Ícones Customizados
 const iconeBloqueio = new L.DivIcon({
@@ -1261,169 +1262,15 @@ const MapaInterativo = ({
 				</div>
 			)}
 
-			{/* MODAL AUTH */}
-			{modalAuthAberto && (
-				<div
-					style={{ zIndex: 3000 }}
-					className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-					<div className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl transition-all">
-						<div className="flex justify-between items-center pb-3 border-b border-gray-100">
-							<div className="flex items-center gap-2">
-								<span className="text-2xl">🌊</span>
-								<div>
-									<h3 className="font-bold text-gray-900 text-base leading-tight">
-										Sentinela Lajeado
-									</h3>
-									<p className="text-[11px] text-gray-500">
-										Monitore sua casa e rotas de fuga
-									</p>
-								</div>
-							</div>
-							<button
-								onClick={() => setModalAuthAberto(false)}
-								className="text-gray-400 hover:text-gray-600 text-lg font-bold p-1">
-								✕
-							</button>
-						</div>
-
-						<p className="text-xs text-gray-600 mt-3 mb-4 leading-relaxed">
-							Acesse sua conta para salvar a localização exata da sua casa,
-							calcular rotas seguras e receber avisos de inundação em tempo
-							real.
-						</p>
-
-						<button
-							onClick={() => {
-								setModalAuthAberto(false);
-								setModalGoogleChooserAberto(true);
-							}}
-							className="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-bold py-3 px-4 rounded-2xl text-xs flex items-center justify-center gap-3 shadow-sm transition active:scale-95 mb-4">
-							<svg className="w-4 h-4" viewBox="0 0 24 24">
-								<path
-									fill="#4285F4"
-									d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.04h3.88c2.27-2.09 3.66-5.17 3.66-9.14z"
-								/>
-								<path
-									fill="#34A853"
-									d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.04c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.27 21.36 7.36 24 12 24z"
-								/>
-								<path
-									fill="#FBBC05"
-									d="M5.28 14.28c-.25-.72-.38-1.49-.38-2.28s.13-1.56.38-2.28V6.59H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.41l4.03-3.13z"
-								/>
-								<path
-									fill="#EA4335"
-									d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.36 0 3.27 2.64 1.25 6.59l4.03 3.13c.95-2.83 3.6-4.97 6.72-4.97z"
-								/>
-							</svg>
-							<span>Continuar com o Google (Escolher Conta)</span>
-						</button>
-
-						<div className="relative my-3 text-center">
-							<div className="absolute inset-0 flex items-center">
-								<div className="w-full border-t border-gray-200"></div>
-							</div>
-							<span className="relative bg-white px-3 text-[11px] text-gray-400 font-semibold uppercase">
-								ou acesse com seu e-mail
-							</span>
-						</div>
-
-						<div className="flex bg-gray-100 p-1 rounded-xl mb-3">
-							<button
-								onClick={() => setAbaAuth("entrar")}
-								className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${abaAuth === "entrar" ? "bg-white shadow-sm text-gray-900" : "text-gray-500"}`}>
-								Entrar
-							</button>
-							<button
-								onClick={() => setAbaAuth("cadastrar")}
-								className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${abaAuth === "cadastrar" ? "bg-white shadow-sm text-gray-900" : "text-gray-500"}`}>
-								Criar Conta
-							</button>
-						</div>
-
-						<form onSubmit={handleLoginEmail} className="space-y-2.5">
-							{abaAuth === "cadastrar" && (
-								<input
-									type="text"
-									placeholder="Seu Nome Completo"
-									value={nomeInput}
-									onChange={(e) => setNomeInput(e.target.value)}
-									className="w-full text-xs p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-									required
-								/>
-							)}
-							<input
-								type="email"
-								placeholder="seu.email@exemplo.com"
-								value={emailInput}
-								onChange={(e) => setEmailInput(e.target.value)}
-								className="w-full text-xs p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-								required
-							/>
-							<input
-								type="password"
-								placeholder="Sua senha secreta"
-								value={senhaInput}
-								onChange={(e) => setSenhaInput(e.target.value)}
-								className="w-full text-xs p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-								required
-							/>
-							<button
-								type="submit"
-								className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition active:scale-95">
-								{abaAuth === "entrar"
-									? "Acessar Conta"
-									: "Criar Conta Gratuita"}
-							</button>
-						</form>
-					</div>
-				</div>
-			)}
-
-			{/* MODAL GOOGLE CHOOSER */}
-			{modalGoogleChooserAberto && (
-				<div
-					style={{ zIndex: 4000 }}
-					className="fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-					<div className="bg-[#1f1f1f] text-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-gray-800">
-						<h2 className="text-2xl font-bold text-gray-100 mb-1">
-							Escolha uma conta
-						</h2>
-						<p className="text-xs text-gray-400 mb-6">
-							Prosseguir para{" "}
-							<strong className="text-blue-400">Sentinela Lajeado</strong>
-						</p>
-
-						<div className="divide-y divide-gray-800 border-t border-b border-gray-800">
-							{contasGoogleDisponiveis.map((c, idx) => (
-								<div
-									key={idx}
-									onClick={() => selecionarContaGoogle(c)}
-									className="flex items-center gap-3.5 py-3 px-2 hover:bg-gray-800/80 rounded-xl cursor-pointer transition">
-									<div
-										className={`w-10 h-10 rounded-full ${c.cor} text-white flex items-center justify-center font-bold text-base shadow-inner`}>
-										{c.iniciais}
-									</div>
-									<div className="flex-1 min-w-0">
-										<p className="text-sm font-semibold text-gray-100 truncate">
-											{c.nome}
-										</p>
-										<p className="text-xs text-gray-400 truncate">{c.email}</p>
-									</div>
-								</div>
-							))}
-						</div>
-
-						<div className="mt-6 text-right">
-							<button
-								onClick={() => setModalGoogleChooserAberto(false)}
-								className="text-xs text-gray-400 hover:text-white">
-								Cancelar
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
+			{/* MODAL AUTH REAL COM LGPD */}
+			<AuthLGPDModal
+				isOpen={modalAuthAberto}
+				onClose={() => setModalAuthAberto(false)}
+				onLoginSucesso={(user) => {
+					setUsuario(user);
+					if (!user.residencia) setModalCasaAberto(true);
+				}}
+			/>
 
 			{/* PASSO 2: CONFIGURAR CASA COM TESTE DE ALERTA PUSH */}
 			{modalCasaAberto && (
