@@ -137,6 +137,10 @@ const MapaInterativo = ({
 	setIsSimulando,
 	painelRotaAberto,
 	setPainelRotaAberto,
+	usuario: usuarioProp,
+	setUsuario: setUsuarioProp,
+	modalCasaAberto: modalCasaAbertoProp,
+	setModalCasaAberto: setModalCasaAbertoProp,
 }) => {
 	const config = {
 		centro: [-29.4669, -51.9611],
@@ -147,10 +151,15 @@ const MapaInterativo = ({
 		],
 	};
 
-	const [usuario, setUsuario] = useState(() => {
+	const [usuarioLocal, setUsuarioLocal] = useState(() => {
 		const salvo = localStorage.getItem("usuario_sentinela");
 		return salvo ? JSON.parse(salvo) : null;
 	});
+	const usuario = usuarioProp !== undefined ? usuarioProp : usuarioLocal;
+	const setUsuario = (u) => {
+		setUsuarioLocal(u);
+		if (setUsuarioProp) setUsuarioProp(u);
+	};
 
 	// Permissão de Notificação Web Push
 	const [permissaoPush, setPermissaoPush] = useState(() => {
