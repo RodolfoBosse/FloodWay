@@ -185,3 +185,4 @@ export default function PrevisaoClimaModal({ isOpen, onClose, dadosClima }) {
     </div>
   );
 }
+

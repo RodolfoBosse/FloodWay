@@ -41,6 +41,14 @@ function App() {
 	const [dadosRota, setDadosRota] = useState(null);
 	const [calculandoRota, setCalculandoRota] = useState(false);
 
+	const limparRota = () => {
+		setDadosRota(null);
+		setPontoOrigem(null);
+		setPontoDestino(null);
+		setTextoOrigem("");
+		setTextoDestino("");
+	};
+
 	const carregarClima = async () => {
 		try {
 			const resp = await fetch(
@@ -184,6 +192,8 @@ function App() {
 			{/* Barra de Pesquisa e Perfil Superior Fixa */}
 			<TopSearchBar
 				usuario={usuario}
+				temRotaAtiva={!!dadosRota || !!pontoOrigem || !!pontoDestino}
+				onLimparRota={limparRota}
 				onBuscarClick={() => {
 					setPainelRotaAberto(true);
 					setIsSimulando(false);
@@ -226,6 +236,7 @@ function App() {
 				setDadosRota={setDadosRota}
 				calculandoRota={calculandoRota}
 				setCalculandoRota={setCalculandoRota}
+				onLimparRota={limparRota}
 				// Controle de Vista
 				abaAtiva={isSimulando ? "simular" : painelRotaAberto ? "rotas" : "mapa"}
 				className="absolute bottom-0 left-0 right-0 z-20"

@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Bell, User } from "lucide-react";
+import { Search, Bell, User, X } from "lucide-react";
 
 const TopSearchBar = ({
   textoBusca = "",
@@ -7,6 +7,8 @@ const TopSearchBar = ({
   onNotifClick,
   onPerfilClick,
   usuario = null,
+  temRotaAtiva = false,
+  onLimparRota,
 }) => {
   return (
     <header
@@ -20,9 +22,24 @@ const TopSearchBar = ({
       >
         <Search size={15} className="text-gray-400 mr-2 shrink-0" />
         <span className="truncate text-gray-500 font-normal text-[11px] sm:text-xs">
-          {textoBusca || "Pesquisar rota, local, ponto..."}
+          {textoBusca || (temRotaAtiva ? "Rota Ativa no Mapa" : "Pesquisar rota, local, ponto...")}
         </span>
       </button>
+
+      {temRotaAtiva && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onLimparRota) onLimparRota();
+          }}
+          className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2.5 py-1 rounded-full text-[11px] font-bold active:scale-95 transition mr-1.5 shadow-sm"
+          title="Apagar e remover rota do mapa"
+        >
+          <X size={13} strokeWidth={2.5} />
+          <span>Limpar Rota</span>
+        </button>
+      )}
 
       <div className="flex items-center gap-2.5 ml-2 shrink-0 border-l border-gray-100 pl-2.5">
         <button

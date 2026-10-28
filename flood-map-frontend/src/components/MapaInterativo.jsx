@@ -293,8 +293,8 @@ const MapaInterativo = ({
 		setDadosRota(null);
 		setPontoOrigem(null);
 		setPontoDestino(null);
-		setNomeOrigem("");
-		setNomeDestino("");
+		setTextoOrigem("");
+		setTextoDestino("");
 	};
 	const [textoOrigem, setTextoOrigem] = useState("");
 	const [textoDestino, setTextoDestino] = useState("");
@@ -1629,6 +1629,11 @@ const MapaInterativo = ({
 									className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
 									⭐ Salvar Rota nos Meus Alertas
 								</button>
+								<button
+									onClick={limparRotaAtual}
+									className="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold py-1.5 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
+									🗑️ Apagar / Limpar Rota do Mapa
+								</button>
 
 								<div className="flex gap-2 pt-1">
 									<button
@@ -1681,8 +1686,8 @@ const MapaInterativo = ({
 						<button
 							onClick={limparRotaAtual}
 							title="Remover rota ativa do mapa"
-							className="bg-white/95 hover:bg-red-50 text-gray-700 hover:text-red-600 font-bold px-3 py-1.5 rounded-lg shadow-md border border-gray-300 text-xs flex items-center gap-1.5 transition">
-							? Desativar Rota
+							className="bg-white/95 hover:bg-red-50 text-red-600 hover:text-red-700 font-bold px-3 py-1.5 rounded-xl shadow-lg border border-red-200 text-xs flex items-center gap-1.5 transition active:scale-95">
+							<span>🗑️</span><span>Limpar Rota</span>
 						</button>
 					</div>
 				)}

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CloudRain, MoreHorizontal } from "lucide-react";
+import { CloudRain, MoreHorizontal, Trash2 } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
 import GoogleAdBlock from "./GoogleAdBlock";
 
@@ -29,6 +29,7 @@ const MetricsBottomSheet = ({
 	calculandoRota,
 	setCalculandoRota,
 	abaAtiva,
+	onLimparRota,
 }) => {
 	// Alturas em pixels: min = 60px, mid = 245px, max = 85vh (calculado dinamicamente)
 	const [currentHeight, setCurrentHeight] = useState(245);
@@ -351,13 +352,28 @@ const MetricsBottomSheet = ({
 								</div>
 
 								{dadosRota && (
-									<div className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-[11px]">
-										<p>
-											<strong>Distância:</strong> {dadosRota.distancia} km
-										</p>
-										<p>
-											<strong>Tempo:</strong> {dadosRota.tempo} min
-										</p>
+									<div className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-[11px] space-y-2">
+										<div className="flex justify-between items-start">
+											<div>
+												<p>
+													<strong>Distância:</strong> {dadosRota.distancia} km
+												</p>
+												<p>
+													<strong>Tempo:</strong> {dadosRota.tempo} min
+												</p>
+											</div>
+											<button
+												type="button"
+												onClick={() => {
+													if (onLimparRota) onLimparRota();
+												}}
+												className="flex items-center gap-1 text-[11px] text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2 py-1 rounded-lg font-bold transition active:scale-95 shadow-sm"
+												title="Apagar rota do mapa"
+											>
+												<Trash2 size={12} />
+												<span>Limpar Rota</span>
+											</button>
+										</div>
 										<p
 											className={`font-bold mt-1 ${dadosRota.segura ? "text-emerald-600" : "text-red-600"}`}>
 											{dadosRota.segura
