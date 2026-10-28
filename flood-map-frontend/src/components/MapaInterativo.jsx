@@ -15,6 +15,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import AuthLGPDModal from "./mobile/AuthLGPDModal";
 
+import { buscarDestinosCalibrados, LOCAIS_OFICIAIS_LAJEADO } from "../services/locaisLajeado";
 // Ícones Customizados
 const iconeBloqueio = new L.DivIcon({
 	html: '<div style="background-color: #dc2626; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.35);">⛔</div>',
@@ -45,74 +46,6 @@ const iconeDestino = new L.DivIcon({
 });
 
 // BASE OFICIAL VERIFICADA DE MARCOS E ESTABELECIMENTOS DE LAJEADO/RS
-const LOCAIS_OFICIAIS_LAJEADO = [
-	{
-		nome: "Colégio Madre Bárbara",
-		tipo: "escola",
-		detalhe: "Rua Júlio May, 340 - Centro",
-		coords: [-29.46725, -51.96443],
-	},
-	{
-		nome: "Hospital Bruno Born (HBB)",
-		tipo: "hospital",
-		detalhe: "Av. Benjamin Constant, 881 - Centro",
-		coords: [-29.46085, -51.96245],
-	},
-	{
-		nome: "Universidade Univates",
-		tipo: "faculdade",
-		detalhe: "Av. Avelino Talini, 100 - Universitário",
-		coords: [-29.4442, -51.9568],
-	},
-	{
-		nome: "Colégio Evangélico Alberto Torres (CEAT)",
-		tipo: "escola",
-		detalhe: "Rua Alberto Torres, 260 - Centro",
-		coords: [-29.4601, -51.9608],
-	},
-	{
-		nome: "Prefeitura Municipal de Lajeado",
-		tipo: "estabelecimento",
-		detalhe: "Rua Cel. Júlio May, 242 - Centro",
-		coords: [-29.4655, -51.961],
-	},
-	{
-		nome: "Delegacia de Polícia de Lajeado",
-		tipo: "estabelecimento",
-		detalhe: "Rua Cel. João Batista de Mello, 509 - Centro",
-		coords: [-29.465, -51.9665],
-	},
-	{
-		nome: "Parque Professor Theobaldo Dick (Parque do Dick)",
-		tipo: "estabelecimento",
-		detalhe: "Rua Santos Filho - Centro",
-		coords: [-29.4665, -51.968],
-	},
-	{
-		nome: "Shopping Lajeado",
-		tipo: "estabelecimento",
-		detalhe: "Rodovia BR-386, Km 346 - São Cristóvão",
-		coords: [-29.445, -51.975],
-	},
-	{
-		nome: "Supermercado Imec (Centro)",
-		tipo: "estabelecimento",
-		detalhe: "Rua Júlio de Castilhos, 1157 - Centro",
-		coords: [-29.462, -51.963],
-	},
-	{
-		nome: "Supermercado Imec (São Cristóvão)",
-		tipo: "estabelecimento",
-		detalhe: "Av. Senador Alberto Pasqualini, 1760",
-		coords: [-29.448, -51.952],
-	},
-	{
-		nome: "Colégio Gustavo Adolfo",
-		tipo: "escola",
-		detalhe: "Rua Doutor Albert Schweitzer, 270 - Florestal",
-		coords: [-29.456, -51.971],
-	},
-];
 
 const CapturadorDeCliques = ({ modoSelecao, onPontoSelecionado }) => {
 	const map = useMap();
@@ -331,107 +264,15 @@ const MapaInterativo = ({
 			setSugestoes([]);
 			return;
 		}
-
-		const tNorm = termo
-			.toLowerCase()
-			.normalize("NFD")
-			.replace(/[̀-ͯ]/g, "")
-			.trim();
-
-		const termoLimpo = tNorm
-			.replace(/[,\.\-\/#??]/g, " ")
-			.replace(/\s+/g, " ")
-			.trim();
-		const tokens = termoLimpo
-			.split(" ")
-			.filter((t) => t.length >= 2 && !/^\d+$/.test(t));
-
-		const resultados = [];
-
-		// 1. Busca nos Locais Oficiais de Lajeado (Madre B?rbara, Univates, etc.)
-		for (const loc of LOCAIS_OFICIAIS_LAJEADO) {
-			const nNorm = (loc.nome || "")
-				.toLowerCase()
-				.normalize("NFD")
-				.replace(/[̀-ͯ]/g, "");
-			const dNorm = (loc.detalhe || "")
-				.toLowerCase()
-				.normalize("NFD")
-				.replace(/[̀-ͯ]/g, "");
-
-			const matchDireto =
-				nNorm.includes(tNorm) ||
-				tNorm.includes(nNorm) ||
-				dNorm.includes(tNorm) ||
-				tNorm.includes(dNorm);
-			const matchTokens =
-				tokens.length > 0 &&
-				tokens.every((tok) => nNorm.includes(tok) || dNorm.includes(tok));
-
-			if (matchDireto || matchTokens) {
-				resultados.push({
-					nome: loc.nome,
-					tipo: loc.tipo || "local",
-					detalhe: loc.detalhe || "",
-					coords: loc.coords,
-					cota: loc.cota || null,
-				});
-			}
-		}
-
-		// 2. Busca na Lista de Ruas de Lajeado (com suporte a n?mero e pontua??o)
-		for (const rua of listaRuas) {
-			const rNorm = (rua.nome || "")
-				.toLowerCase()
-				.normalize("NFD")
-				.replace(/[̀-ͯ]/g, "");
-			const bNorm = (rua.bairro || "")
-				.toLowerCase()
-				.normalize("NFD")
-				.replace(/[̀-ͯ]/g, "");
-
-			const matchDireto = rNorm.includes(tNorm) || tNorm.includes(rNorm);
-			const matchTokens =
-				tokens.length > 0 &&
-				tokens.every((tok) => rNorm.includes(tok) || bNorm.includes(tok));
-
-			if (matchDireto || matchTokens) {
-				const coordsRua = rua.coords ||
-					(rua.pontos && rua.pontos[0]) || [-29.4668, -51.9614];
-				resultados.push({
-					nome: rua.nome,
-					tipo: "rua",
-					detalhe: rua.bairro ? `Bairro ${rua.bairro}` : "Lajeado",
-					coords: coordsRua,
-					cota: rua.cota || null,
-				});
-			}
-		}
-
-		setSugestoes(resultados.slice(0, 7));
-
-		// 3. Fallback online para qualquer endere?o ou n?mero de Lajeado
-		if (resultados.length < 3) {
-			try {
-				const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(termoLimpo + ", Lajeado, RS, Brasil")}&limit=3&viewbox=-52.05,-29.40,-51.90,-29.52`;
-				const resp = await fetch(url, {
-					headers: { "Accept-Language": "pt-BR" },
-				});
-				if (resp.ok) {
-					const dados = await resp.json();
-					const adicionais = dados.map((d) => ({
-						nome: d.display_name.split(",")[0],
-						tipo: "endereco",
-						detalhe: d.display_name,
-						coords: [parseFloat(d.lat), parseFloat(d.lon)],
-						cota: null,
-					}));
-					setSugestoes((prev) => [...prev, ...adicionais].slice(0, 7));
-				}
-			} catch (_) {}
+		try {
+			const listaRuas = Array.isArray(ruas) ? ruas : [];
+			const resultados = await buscarDestinosCalibrados(termo, listaRuas);
+			setSugestoes(resultados);
+		} catch (err) {
+			console.warn("Erro ao buscar destinos calibrados:", err);
+			setSugestoes([]);
 		}
 	};
-
 	const selecionarContaGoogle = (conta) => {
 		const user = {
 			nome: conta.nome,
