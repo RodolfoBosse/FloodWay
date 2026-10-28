@@ -1,6 +1,11 @@
 /**
- * BASE CALIBRADA DE MARCOS, ESCOLAS, UNIVERSIDADES, HOSPITAIS E PONTOS DE INTERESSE
- * DE LAJEADO / RS (COM COORDENADAS REAIS VERIFICADAS)
+ * MOTOR DE BUSCA GEOGRÁFICA INTELIGENTE DE LAJEADO E VALE DO TAQUARI
+ * Modelo híbrido estilo Google Maps:
+ * 1. Base Calibrada Local (Pontos e apelidos mais comuns como CEAT, Univates, HBB, Dick, etc.)
+ * 2. Base Oficial de Ruas de Lajeado (com cálculo e interpolação por número predial)
+ * 3. Photon Geocoding Engine (Busca fonética e livre em toda a base mundial do OpenStreetMap,
+ *    com viés restrito em Lajeado e região do Vale do Taquari)
+ * 4. Nominatim OpenStreetMap (Fallback complementar com bounding-box estrita)
  */
 
 export const LOCAIS_OFICIAIS_LAJEADO = [
@@ -277,8 +282,117 @@ export function normalizarTexto(txt = "") {
 }
 
 /**
+ * Extrai número predial (se houver) no termo digitado
+ */
+function extrairNumeroPredial(termo = "") {
+	const match = termo.match(/\b(\d{1,5})\b/);
+	return match ? parseInt(match[1], 10) : null;
+}
+
+/**
+ * Interpolação de coordenadas com base no número predial na extensão da rua
+ */
+function estimarCoordenadaPorNumero(rua, numero) {
+	let coordsArray = [];
+	try {
+		const j = JSON.parse(rua.coordenadas_json);
+		if (Array.isArray(j)) {
+			j.forEach((seg) => {
+				if (seg.coords) coordsArray.push(...seg.coords);
+			});
+		}
+	} catch (e) {}
+
+	if (coordsArray.length === 0) {
+		coordsArray = [
+			[rua.latitude_inicio, rua.longitude_inicio],
+			[rua.latitude_fim, rua.longitude_fim],
+		].filter((p) => p[0] && p[1]);
+	}
+
+	if (coordsArray.length <= 1) {
+		return coordsArray[0] || [rua.latitude_inicio, rua.longitude_inicio];
+	}
+
+	if (!numero) return coordsArray[0];
+
+	// Estima posição na extensão da via com base na numeração predial aproximada
+	const maxNum = 2000;
+	const fator = Math.min(Math.max(numero / maxNum, 0.05), 0.95);
+	const idx = Math.floor(fator * (coordsArray.length - 1));
+	return coordsArray[idx];
+}
+
+/**
+ * Busca online em tempo real no Photon Geocoder (Komoot / OpenStreetMap)
+ * com restrição geográfica no Vale do Taquari (Lajeado, Estrela, Arroio do Meio)
+ */
+async function buscarPhoton(termo) {
+	try {
+		const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(
+			termo
+		)}&lat=-29.4669&lon=-51.9611&limit=8`;
+		const resp = await fetch(url);
+		if (!resp.ok) return [];
+
+		const json = await resp.json();
+		const features = json.features || [];
+
+		return features
+			.filter((f) => {
+				const lat = f.geometry?.coordinates?.[1];
+				const lon = f.geometry?.coordinates?.[0];
+				if (!lat || !lon) return false;
+
+				// Limite espacial da região do Vale do Taquari (raio de 30km)
+				const isInRegion =
+					lat >= -29.65 && lat <= -29.35 && lon >= -52.20 && lon <= -51.80;
+				const c = (
+					f.properties?.city ||
+					f.properties?.county ||
+					f.properties?.state ||
+					""
+				).toLowerCase();
+				return (
+					isInRegion ||
+					c.includes("lajeado") ||
+					c.includes("estrela") ||
+					c.includes("arroio do meio")
+				);
+			})
+			.map((f) => {
+				const props = f.properties || {};
+				const nome = props.name || props.street || "Ponto de Interesse";
+				const detalhePartes = [
+					props.street ? `${props.street}${props.housenumber ? `, ${props.housenumber}` : ""}` : "",
+					props.district || props.city || "Lajeado",
+				].filter(Boolean);
+
+				return {
+					nome,
+					tipo: props.osm_value === "school" || props.osm_value === "university"
+						? "escola"
+						: props.osm_value === "hospital" || props.osm_value === "pharmacy"
+							? "hospital"
+							: "estabelecimento",
+					detalhe: detalhePartes.join(" - ") || props.city || "Lajeado - RS",
+					coords: [f.geometry.coordinates[1], f.geometry.coordinates[0]],
+					cota: null,
+					prioridade: 2,
+				};
+			});
+	} catch (e) {
+		console.warn("Photon search error:", e);
+		return [];
+	}
+}
+
+/**
  * Função de busca inteligente e calibrada de destinos em Lajeado
- * Prioriza POIs calibrados com aliases, depois ruas cadastradas e por fim OpenStreetMap
+ * 1. Base Calibrada Local (Univates, CEAT, HBB, etc.)
+ * 2. Photon Geocoder (Busca em tempo real de estabelecimentos, mercados, farmácias)
+ * 3. Ruas de Lajeado (com número predial interpolado)
+ * 4. Nominatim OpenStreetMap (Fallback)
  */
 export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 	if (!termo || termo.trim().length < 2) {
@@ -286,6 +400,7 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 	}
 
 	const tNorm = normalizarTexto(termo);
+	const numPredial = extrairNumeroPredial(termo);
 	const tokens = tNorm.split(" ").filter((t) => t.length >= 2 && !/^\d+$/.test(t));
 	const resultados = [];
 	const idsVistos = new Set();
@@ -296,7 +411,6 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 		const dNorm = normalizarTexto(loc.detalhe);
 		const aliasesNorm = (loc.aliases || []).map(normalizarTexto);
 
-		// Match exato no alias ou substring forte
 		const matchAlias = aliasesNorm.some(
 			(a) => a === tNorm || a.includes(tNorm) || tNorm.includes(a)
 		);
@@ -327,7 +441,7 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 		}
 	}
 
-	// 2. Busca na base de Ruas de Lajeado
+	// 2. Busca na base de Ruas de Lajeado (com suporte a número predial)
 	for (const rua of listaRuas) {
 		const rNorm = normalizarTexto(rua.nome || "");
 		const bNorm = normalizarTexto(rua.bairro || "");
@@ -338,29 +452,14 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 			tokens.every((tok) => rNorm.includes(tok) || bNorm.includes(tok));
 
 		if (matchDireto || matchTokens) {
-			// Extrai coordenadas reais da rua (suporta coords, pontos, latitude_inicio ou json)
-			let coordsRua = null;
-			if (rua.coords && Array.isArray(rua.coords) && rua.coords.length === 2) {
-				coordsRua = rua.coords;
-			} else if (rua.pontos && Array.isArray(rua.pontos) && rua.pontos[0]) {
-				coordsRua = rua.pontos[0];
-			} else if (rua.latitude_inicio && rua.longitude_inicio) {
-				coordsRua = [rua.latitude_inicio, rua.longitude_inicio];
-			} else if (rua.coordenadas_json) {
-				try {
-					const j = JSON.parse(rua.coordenadas_json);
-					if (Array.isArray(j) && j[0]?.coords?.[0]) {
-						coordsRua = j[0].coords[0];
-					}
-				} catch (e) {}
-			}
+			const coordsRua = estimarCoordenadaPorNumero(rua, numPredial);
 
 			if (coordsRua) {
 				const idKey = `${coordsRua[0].toFixed(4)},${coordsRua[1].toFixed(4)}`;
 				if (!idsVistos.has(idKey)) {
 					idsVistos.add(idKey);
 					resultados.push({
-						nome: rua.nome,
+						nome: numPredial ? `${rua.nome}, ${numPredial}` : rua.nome,
 						tipo: "rua",
 						detalhe: rua.bairro ? `Bairro ${rua.bairro}` : "Lajeado - RS",
 						coords: coordsRua,
@@ -372,20 +471,30 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 		}
 	}
 
-	// Ordena por prioridade (POIs calibrados primeiro)
+	// 3. Busca online em tempo real no Photon (estilo Google Maps sem custo de API)
+	const photonResultados = await buscarPhoton(termo);
+	for (const p of photonResultados) {
+		const idKey = `${p.coords[0].toFixed(4)},${p.coords[1].toFixed(4)}`;
+		if (!idsVistos.has(idKey)) {
+			idsVistos.add(idKey);
+			resultados.push(p);
+		}
+	}
+
+	// Ordena por prioridade
 	resultados.sort((a, b) => (a.prioridade || 99) - (b.prioridade || 99));
 
-	if (resultados.length >= 4) {
+	if (resultados.length >= 5) {
 		return resultados.slice(0, 8);
 	}
 
-	// 3. Fallback online (OpenStreetMap Nominatim limitado estritamente à área de Lajeado)
+	// 4. Fallback Nominatim OpenStreetMap (se faltarem resultados)
 	try {
 		const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-			tNorm + ", Lajeado, RS, Brasil"
-		)}&limit=4&viewbox=-52.05,-29.40,-51.90,-29.52&bounded=1`;
+			tNorm + " Lajeado RS"
+		)}&limit=4&viewbox=-52.05,-29.40,-51.90,-29.52&bounded=0`;
 		const resp = await fetch(url, {
-			headers: { "Accept-Language": "pt-BR" },
+			headers: { "Accept-Language": "pt-BR", "User-Agent": "FloodWay/1.0" },
 		});
 		if (resp.ok) {
 			const dados = await resp.json();
