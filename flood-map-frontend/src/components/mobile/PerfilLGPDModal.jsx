@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { User, Home, Shield, LogOut, Trash2, X, MapPin, Bell } from 'lucide-react';
 import { API_BASE } from '../../services/config';
 
-export default function PerfilLGPDModal({ isOpen, onClose, usuario, onLogout, onUsuarioAtualizado }) {
+export default function PerfilLGPDModal({ isOpen, onClose, usuario, onLogout, onUsuarioAtualizado, onAbrirConfigCasa }) {
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
   const [erro, setErro] = useState('');
@@ -62,9 +62,23 @@ export default function PerfilLGPDModal({ isOpen, onClose, usuario, onLogout, on
         {/* Informações da Casa Monitorada */}
         <div className="mt-4 space-y-3">
           <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl">
-            <div className="flex items-center gap-2 text-gray-700 font-semibold text-xs mb-1">
-              <Home className="w-4 h-4 text-amber-600" />
-              <span>Residência Monitorada</span>
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2 text-gray-700 font-semibold text-xs">
+                <Home className="w-4 h-4 text-amber-600" />
+                <span>Residência Monitorada</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (onAbrirConfigCasa) {
+                    onAbrirConfigCasa();
+                    onClose();
+                  }
+                }}
+                className="text-[11px] font-bold text-amber-700 hover:text-amber-800 bg-amber-100/70 hover:bg-amber-100 px-2 py-0.5 rounded-lg transition"
+              >
+                {usuario.residencia || usuario.endereco ? "Alterar" : "+ Cadastrar"}
+              </button>
             </div>
             {usuario.residencia || usuario.endereco ? (
               <div className="text-[11px] text-gray-600 space-y-0.5">
@@ -77,7 +91,7 @@ export default function PerfilLGPDModal({ isOpen, onClose, usuario, onLogout, on
               </div>
             ) : (
               <p className="text-[11px] text-gray-500 italic">
-                Nenhum endereço salvo. Salve sua casa no mapa para alertas precisos.
+                Nenhum endereço salvo. Clique em <strong>+ Cadastrar</strong> para marcar sua casa no mapa e receber alertas precisos de alagamento.
               </p>
             )}
           </div>

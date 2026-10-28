@@ -24,6 +24,7 @@ function App() {
 	});
 	const [modalAuthAberto, setModalAuthAberto] = useState(false);
 	const [modalPerfilAberto, setModalPerfilAberto] = useState(false);
+	const [modalCasaAberto, setModalCasaAberto] = useState(false);
 
 	// Estados de Simulação
 	const [cotaReal, setCotaReal] = useState(13.84);
@@ -135,6 +136,10 @@ function App() {
 				pontoDestino={pontoDestino}
 				dadosRota={dadosRota}
 				setDadosRota={setDadosRota}
+				usuario={usuario}
+				setUsuario={setUsuario}
+				modalCasaAberto={modalCasaAberto}
+				setModalCasaAberto={setModalCasaAberto}
 			/>
 
 			{/* Barra de Pesquisa e Perfil Superior Fixa */}
@@ -209,6 +214,9 @@ function App() {
 				onClose={() => setModalAuthAberto(false)}
 				onLoginSucesso={(novoUser) => {
 					setUsuario(novoUser);
+					if (!novoUser?.residencia) {
+						setModalCasaAberto(true);
+					}
 				}}
 			/>
 
@@ -218,6 +226,7 @@ function App() {
 				usuario={usuario}
 				onLogout={() => setUsuario(null)}
 				onUsuarioAtualizado={(atualizado) => setUsuario(atualizado)}
+				onAbrirConfigCasa={() => setModalCasaAberto(true)}
 			/>
 		</div>
 	);

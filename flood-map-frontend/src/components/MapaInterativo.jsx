@@ -163,7 +163,12 @@ const MapaInterativo = ({
 	const [sheetMobileAberto, setSheetMobileAberto] = useState(true);
 	const [modalGoogleChooserAberto, setModalGoogleChooserAberto] =
 		useState(false);
-	const [modalCasaAberto, setModalCasaAberto] = useState(false);
+	const [modalCasaAbertoLocal, setModalCasaAbertoLocal] = useState(false);
+	const modalCasaAberto = modalCasaAbertoProp !== undefined ? modalCasaAbertoProp : modalCasaAbertoLocal;
+	const setModalCasaAberto = (v) => {
+		setModalCasaAbertoLocal(v);
+		if (setModalCasaAbertoProp) setModalCasaAbertoProp(v);
+	};
 	const [modalPerfilAberto, setModalPerfilAberto] = useState(false);
 	const [modalRotasSalvasAberto, setModalRotasSalvasAberto] = useState(false);
 	const [abaAuth, setAbaAuth] = useState("entrar");
