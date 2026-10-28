@@ -131,7 +131,6 @@ const CapturadorDeCliques = ({ modoSelecao, onPontoSelecionado }) => {
 const MapaInterativo = ({
 	cotaAtual,
 	cotaSimulada,
-	cotaReal,
 	ruas,
 	isSimulando,
 	setIsSimulando,

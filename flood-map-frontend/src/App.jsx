@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import MapaInterativo from "./components/MapaInterativo";
 import { API_BASE } from "./services/config";
 import TopSearchBar from "./components/mobile/TopSearchBar";
@@ -89,6 +89,8 @@ function App() {
 		<div className="relative w-full h-screen overflow-hidden bg-gray-900 select-none">
 			<MapaInterativo
 				cotaAtual={cotaAtual}
+				cotaSimulada={cotaSimulada}
+				setCotaSimulada={setCotaSimulada}
 				ruas={ruas}
 				className="absolute inset-0 z-0"
 				isSimulando={isSimulando}
