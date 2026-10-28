@@ -1856,86 +1856,89 @@ const MapaInterativo = ({
 					</LayersControl>
 
 					{/* Ruas */}
-					{trechosPistas.map((p) => {
-						let cor = "#16a34a";
-						let peso = 3.5;
-						let opacidade = 0.8;
-						let tracejado = undefined;
+					{/* Força a repintura das ruas sempre que o nível da água mudar */}
+					<React.Fragment key={`ruas-${nivelAtivo}`}>
+						{trechosPistas.map((p) => {
+							let cor = "#16a34a";
+							let peso = 3.5;
+							let opacidade = 0.8;
+							let tracejado = undefined;
 
-						if (p.isBloqueado) {
-							cor = "#dc2626";
-							peso = 5.5;
-							opacidade = 1.0;
-							tracejado = "8,4";
-						} else if (p.isRiscoIminente) {
-							cor = "#ea580c";
-							peso = 5.0;
-							opacidade = 0.95;
-						}
+							if (p.isBloqueado) {
+								cor = "#dc2626";
+								peso = 5.5;
+								opacidade = 1.0;
+								tracejado = "8,4";
+							} else if (p.isRiscoIminente) {
+								cor = "#ea580c";
+								peso = 5.0;
+								opacidade = 0.95;
+							}
 
-						return (
-							<Polyline
-								key={`${p.id}-${p.isBloqueado ? "alagada" : p.isRiscoIminente ? "risco" : p.isCalibrado ? "calibrada" : "livre"}`}
-								positions={p.coords}
-								color={cor}
-								weight={peso}
-								opacity={opacidade}
-								dashArray={tracejado}>
-								<Popup>
-									<div className="text-xs p-1 font-sans min-w-[210px]">
-										<div className="flex items-center justify-between gap-1 mb-1">
-											<h4 className="font-bold text-gray-900 text-sm truncate">
-												{p.nome}
-											</h4>
-											{p.isCalibrado && (
-												<span className="bg-sky-100 text-sky-800 text-[9px] px-1.5 py-0.5 rounded font-black tracking-tight whitespace-nowrap">
-													🎯 ASFALTO REAL
-												</span>
-											)}
-										</div>
+							return (
+								<Polyline
+									key={`${p.id}-${p.isBloqueado ? "alagada" : p.isRiscoIminente ? "risco" : p.isCalibrado ? "calibrada" : "livre"}`}
+									positions={p.coords}
+									color={cor}
+									weight={peso}
+									opacity={opacidade}
+									dashArray={tracejado}>
+									<Popup>
+										<div className="text-xs p-1 font-sans min-w-[210px]">
+											<div className="flex items-center justify-between gap-1 mb-1">
+												<h4 className="font-bold text-gray-900 text-sm truncate">
+													{p.nome}
+												</h4>
+												{p.isCalibrado && (
+													<span className="bg-sky-100 text-sky-800 text-[9px] px-1.5 py-0.5 rounded font-black tracking-tight whitespace-nowrap">
+														🎯 ASFALTO REAL
+													</span>
+												)}
+											</div>
 
-										<p className="text-gray-600">
-											Altitude Asfalto:{" "}
-											<strong className="text-blue-700">
-												{p.cota.toFixed(1)}m
-											</strong>
-										</p>
-										<p className="text-gray-600">
-											Nível do Rio:{" "}
-											<strong>{Number(nivelAtivo).toFixed(1)}m</strong>
-										</p>
-										<p className="text-gray-600">
-											{p.isBloqueado
-												? "Lâmina de Água:"
-												: "Margem de Segurança:"}{" "}
-											<strong>
-												{p.isBloqueado ? `+${p.lamina}m` : `+${p.margem}m`}
-											</strong>
-										</p>
+											<p className="text-gray-600">
+												Altitude Asfalto:{" "}
+												<strong className="text-blue-700">
+													{p.cota.toFixed(1)}m
+												</strong>
+											</p>
+											<p className="text-gray-600">
+												Nível do Rio:{" "}
+												<strong>{Number(nivelAtivo).toFixed(1)}m</strong>
+											</p>
+											<p className="text-gray-600">
+												{p.isBloqueado
+													? "Lâmina de Água:"
+													: "Margem de Segurança:"}{" "}
+												<strong>
+													{p.isBloqueado ? `+${p.lamina}m` : `+${p.margem}m`}
+												</strong>
+											</p>
 
-										<div
-											className={`mt-2 p-1 rounded font-bold text-center ${
-												p.isBloqueado
-													? "bg-red-100 text-red-800"
+											<div
+												className={`mt-2 p-1 rounded font-bold text-center ${
+													p.isBloqueado
+														? "bg-red-100 text-red-800"
+														: p.isRiscoIminente
+															? "bg-orange-100 text-orange-900 border border-orange-300"
+															: p.isCalibrado
+																? "bg-sky-100 text-sky-900 border border-sky-300"
+																: "bg-green-100 text-green-800"
+												}`}>
+												{p.isBloqueado
+													? `🌊 SUBMERSA (+${p.lamina}m)`
 													: p.isRiscoIminente
-														? "bg-orange-100 text-orange-900 border border-orange-300"
+														? `⚠️ RISCO IMINENTE (Folga de ${p.margem}m)`
 														: p.isCalibrado
-															? "bg-sky-100 text-sky-900 border border-sky-300"
-															: "bg-green-100 text-green-800"
-											}`}>
-											{p.isBloqueado
-												? `🌊 SUBMERSA (+${p.lamina}m)`
-												: p.isRiscoIminente
-													? `⚠️ RISCO IMINENTE (Folga de ${p.margem}m)`
-													: p.isCalibrado
-														? "🎯 ASFALTO LIVRE (CALIBRADO)"
-														: "✅ TRÂNSITO LIVRE"}
+															? "🎯 ASFALTO LIVRE (CALIBRADO)"
+															: "✅ TRÂNSITO LIVRE"}
+											</div>
 										</div>
-									</div>
-								</Popup>
-							</Polyline>
-						);
-					})}
+									</Popup>
+								</Polyline>
+							);
+						})}
+					</React.Fragment>
 
 					{/* ROTA NAVEGÁVEL DE CARRO (ROXO VIBRANTE DE ALTO CONTRASTE) */}
 					{dadosRota &&
