@@ -6,6 +6,7 @@ import MetricsBottomSheet from "./components/mobile/MetricsBottomSheet";
 import BottomNavigation from "./components/mobile/BottomNavigation";
 import AuthLGPDModal from "./components/mobile/AuthLGPDModal";
 import PerfilLGPDModal from "./components/mobile/PerfilLGPDModal";
+import PrevisaoClimaModal from "./components/mobile/PrevisaoClimaModal";
 
 function App() {
 	const [cotaAtual, setCotaAtual] = useState(null);
@@ -25,6 +26,8 @@ function App() {
 	const [modalAuthAberto, setModalAuthAberto] = useState(false);
 	const [modalPerfilAberto, setModalPerfilAberto] = useState(false);
 	const [modalCasaAberto, setModalCasaAberto] = useState(false);
+	const [modalClimaAberto, setModalClimaAberto] = useState(false);
+	const [dadosClima, setDadosClima] = useState(null);
 
 	// Estados de Simulação
 	const [cotaReal, setCotaReal] = useState(12.86);
@@ -37,6 +40,20 @@ function App() {
 	const [pontoDestino, setPontoDestino] = useState(null);
 	const [dadosRota, setDadosRota] = useState(null);
 	const [calculandoRota, setCalculandoRota] = useState(false);
+
+	const carregarClima = async () => {
+		try {
+			const resp = await fetch(
+				"https://api.open-meteo.com/v1/forecast?latitude=-29.4669&longitude=-51.9611&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=America%2FSao_Paulo"
+			);
+			if (resp.ok) {
+				const json = await resp.json();
+				setDadosClima(json);
+			}
+		} catch (e) {
+			console.warn("Erro ao buscar dados de previsão meteorológica:", e);
+		}
+	};
 
 	const carregarCota = async () => {
 		try {
@@ -115,6 +132,7 @@ function App() {
 		// Carga inicial
 		carregarCota();
 		carregarRuas();
+		carregarClima();
 
 		// Sincroniza dados da conta se houver token ativo
 		const token = localStorage.getItem("sentinela_token");
@@ -135,6 +153,7 @@ function App() {
 		// Robô do Frontend: Sincroniza a cota automaticamente a cada 3 minutos
 		const intervalo = setInterval(() => {
 			carregarCota();
+			carregarClima();
 		}, 180000);
 
 		return () => clearInterval(intervalo);
@@ -187,11 +206,13 @@ function App() {
 
 			{/* Painel Inferior Deslizante */}
 			<MetricsBottomSheet
-				cotaReal={cotaAtual?.nivel || 13.84}
+				cotaReal={cotaAtual?.nivel || 12.86}
 				cotaSimulada={cotaSimulada}
 				setCotaSimulada={setCotaSimulada}
 				isSimulando={isSimulando}
 				setIsSimulando={setIsSimulando}
+				temperatura={dadosClima?.current?.temperature_2m !== undefined ? `${Math.round(dadosClima.current.temperature_2m)}°` : "20°"}
+				onAbrirClima={() => setModalClimaAberto(true)}
 				// Props de Rotas
 				textoOrigem={textoOrigem}
 				setTextoOrigem={setTextoOrigem}
@@ -247,6 +268,13 @@ function App() {
 				onLogout={() => setUsuario(null)}
 				onUsuarioAtualizado={(atualizado) => setUsuario(atualizado)}
 				onAbrirConfigCasa={() => setModalCasaAberto(true)}
+			/>
+
+			{/* Modal de Previsão do Tempo e Chuvas */}
+			<PrevisaoClimaModal
+				isOpen={modalClimaAberto}
+				onClose={() => setModalClimaAberto(false)}
+				dadosClima={dadosClima}
 			/>
 		</div>
 	);

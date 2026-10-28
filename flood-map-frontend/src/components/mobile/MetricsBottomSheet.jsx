@@ -11,6 +11,7 @@ const MetricsBottomSheet = ({
 	dadosRota = null,
 	temperatura = "13°",
 	onAbrirRotas,
+	onAbrirClima,
 	// Novas Props do App.jsx
 	cotaSimulada,
 	setCotaSimulada,
@@ -164,10 +165,18 @@ const MetricsBottomSheet = ({
 						</h2>
 					</div>
 					<div className="flex items-center gap-3">
-						<div className="flex items-center gap-1.5 text-xs text-gray-700 font-medium bg-white/50 backdrop-blur-sm border border-gray-100 px-3 py-1.5 rounded-full shadow-sm">
-							<CloudRain size={16} className="text-blue-500" />
-							<span className="text-sm font-bold">{temperatura}</span>
-						</div>
+						<button
+							type="button"
+							onClick={(e) => {
+								e.stopPropagation();
+								if (onAbrirClima) onAbrirClima();
+							}}
+							className="flex items-center gap-1.5 text-xs text-gray-700 font-medium bg-blue-50/80 hover:bg-blue-100/90 active:scale-95 border border-blue-200/80 px-3 py-1.5 rounded-full shadow-sm transition-all"
+							title="Ver Previsão do Tempo Completa"
+						>
+							<CloudRain size={16} className="text-blue-600 animate-pulse" />
+							<span className="text-sm font-bold text-blue-900">{temperatura}</span>
+						</button>
 						<button
 							className="text-gray-400 hover:text-gray-600 p-1 bg-gray-100/50 rounded-full transition-colors"
 							onClick={(e) => {
