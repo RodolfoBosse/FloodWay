@@ -137,10 +137,13 @@ function App() {
 				setDadosRota={setDadosRota}
 			/>
 
-			{/* Barra de Pesquisa e Perfil Superior */}
+			{/* Barra de Pesquisa e Perfil Superior Fixa */}
 			<TopSearchBar
-				className="absolute top-4 left-0 right-0 z-10 px-4"
 				usuario={usuario}
+				onBuscarClick={() => {
+					setPainelRotaAberto(true);
+					setIsSimulando(false);
+				}}
 				onPerfilClick={() => {
 					if (usuario) {
 						setModalPerfilAberto(true);
