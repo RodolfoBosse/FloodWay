@@ -100,6 +100,21 @@ function App() {
 	};
 
 	const carregarRuas = async () => {
+		// 1. Carrega imediatamente o JSON local estático (/ruas_calibradas.json) que é servido pela CDN da Vercel em milissegundos
+		try {
+			const localResp = await fetch("/ruas_calibradas.json");
+			if (localResp.ok) {
+				const localData = await localResp.json();
+				if (Array.isArray(localData) && localData.length > 0) {
+					setRuas(localData);
+					return;
+				}
+			}
+		} catch (err) {
+			console.warn("Base local /ruas_calibradas.json falhou, tentando API:", err);
+		}
+
+		// 2. Fallback caso a CDN local não responda
 		try {
 			const resp = await fetch(`${API_BASE}/api/v1/ruas/`);
 			if (resp.ok) {
@@ -112,27 +127,10 @@ function App() {
 							: [];
 				if (lista.length > 0) {
 					setRuas(lista);
-					return;
 				}
 			}
 		} catch (e) {
-			console.warn(
-				"API de ruas indisponível ou vazia, usando base calibrada local:",
-				e,
-			);
-		}
-
-		// Fallback: carrega base de ruas calibradas embutida
-		try {
-			const localResp = await fetch("/ruas_calibradas.json");
-			if (localResp.ok) {
-				const localData = await localResp.json();
-				if (Array.isArray(localData) && localData.length > 0) {
-					setRuas(localData);
-				}
-			}
-		} catch (err) {
-			console.error("Erro ao carregar base calibrada local:", err);
+			console.error("Falha ao obter ruas da API remota:", e);
 		}
 	};
 

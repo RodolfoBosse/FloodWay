@@ -58,14 +58,22 @@ const MetricsBottomSheet = ({
 	const qtdBloqueios =
 		dadosRota?.pontosBloqueio?.length || (isInundacao ? 22 : 0);
 
-	const getMaxHeight = () => Math.round(window.innerHeight * 0.84);
-	const getMidHeight = () => (abaAtiva === "rotas" ? 390 : 295);
+	const getMaxHeight = () => Math.round(window.innerHeight * 0.88);
+	const getMidHeight = () => {
+		if (abaAtiva === "rotas") return 450;
+		if (abaAtiva === "simular") return 310;
+		return 295;
+	};
 	const getMinHeight = () => 60;
 
-	// Ajusta a altura da barra quando troca para rotas se estiver no tamanho padrão
+	// Ajusta a altura da barra suavemente ao trocar entre as abas (Mapa, Rotas, Simulação)
 	useEffect(() => {
 		if (abaAtiva === "rotas") {
-			setCurrentHeight((prev) => (prev < 360 ? 390 : prev));
+			setCurrentHeight(450);
+		} else if (abaAtiva === "simular") {
+			setCurrentHeight(310);
+		} else {
+			setCurrentHeight(295);
 		}
 	}, [abaAtiva]);
 
