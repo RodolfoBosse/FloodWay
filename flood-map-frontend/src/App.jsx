@@ -226,6 +226,7 @@ function App() {
 				setIsSimulando={setIsSimulando}
 				temperatura={dadosClima?.current?.temperature_2m !== undefined ? `${Math.round(dadosClima.current.temperature_2m)}°` : "20°"}
 				onAbrirClima={() => setModalClimaAberto(true)}
+				usuario={usuario}
 				// Props de Rotas
 				textoOrigem={textoOrigem}
 				setTextoOrigem={setTextoOrigem}

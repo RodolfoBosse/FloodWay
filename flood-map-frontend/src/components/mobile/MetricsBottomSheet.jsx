@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { CloudRain, MoreHorizontal, Trash2 } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
 import GoogleAdBlock from "./GoogleAdBlock";
+import { buscarDestinosCalibrados } from "../../services/locaisLajeado";
 
 const MetricsBottomSheet = ({
 	cotaReal = 13.84,
@@ -33,12 +34,24 @@ const MetricsBottomSheet = ({
 	setCalculandoRota,
 	abaAtiva,
 	onLimparRota,
+	usuario = null,
 }) => {
 	// Alturas em pixels: min = 60px, mid = 295px (exibe cota, barra e tendência com folga), max = 85vh (calculado dinamicamente)
 	const [currentHeight, setCurrentHeight] = useState(295);
 	const [isDragging, setIsDragging] = useState(false);
+	const [sugestoesOrigem, setSugestoesOrigem] = useState([]);
+	const [sugestoesDestino, setSugestoesDestino] = useState([]);
 	const startYRef = useRef(0);
 	const startHeightRef = useRef(295);
+
+	const handleBuscar = async (termo, setter) => {
+		if (!termo || termo.trim().length < 2) {
+			setter([]);
+			return;
+		}
+		const res = await buscarDestinosCalibrados(termo);
+		setter(res || []);
+	};
 
 	const isInundacao = cotaReal >= cotaInundacao;
 	const temBloqueios = dadosRota?.bloqueada || isInundacao;
@@ -330,51 +343,174 @@ const MetricsBottomSheet = ({
 
 						{/* VISTA 3: ROTAS (Aba Rotas) */}
 						{abaAtiva === "rotas" && (
-							<div className="flex flex-col gap-y-4 animate-in fade-in duration-300">
-								<h3 className="font-bold text-gray-900 flex items-center gap-2">
-									<span className="text-xl">🚗</span> Planejar Rota Segura
+							<div className="flex flex-col gap-y-3 animate-in fade-in duration-300 pb-16">
+								<h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm">
+									<span className="text-xl">🚗</span> Planejar Rota Segura (Anti-Enchente)
 								</h3>
 
+								{/* ATALHOS RÁPIDOS: MINHA CASA */}
+								{usuario?.residencia && (
+									<div className="flex gap-2">
+										<button
+											type="button"
+											onClick={() => {
+												setPontoOrigem(usuario.residencia.coords);
+												setTextoOrigem(`Minha Casa (${usuario.residencia.endereco})`);
+												setSugestoesOrigem([]);
+											}}
+											className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition active:scale-95">
+											🏠 Partir de Casa
+										</button>
+										<button
+											type="button"
+											onClick={() => {
+												setPontoDestino(usuario.residencia.coords);
+												setTextoDestino(`Minha Casa (${usuario.residencia.endereco})`);
+												setSugestoesDestino([]);
+											}}
+											className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition active:scale-95">
+											🏁 Ir para Casa
+										</button>
+									</div>
+								)}
+
+								{/* ATALHOS DE PONTOS DE INTERESSE SALVOS */}
+								{usuario?.pontosInteresse?.length > 0 && (
+									<div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+										<span className="text-[10px] text-gray-400 font-bold whitespace-nowrap">Meus Pontos:</span>
+										{usuario.pontosInteresse.map((pt) => (
+											<button
+												key={pt.id}
+												type="button"
+												onClick={() => {
+													if (!pontoOrigem) {
+														setTextoOrigem(pt.nome);
+														if (pt.coords) setPontoOrigem(pt.coords);
+														setSugestoesOrigem([]);
+													} else {
+														setTextoDestino(pt.nome);
+														if (pt.coords) setPontoDestino(pt.coords);
+														setSugestoesDestino([]);
+													}
+												}}
+												className="bg-blue-50 border border-blue-200 text-blue-900 text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap hover:bg-blue-100 transition active:scale-95">
+												📍 {pt.nome}
+											</button>
+										))}
+									</div>
+								)}
+
 								<div className="space-y-3">
+									{/* PARTIDA (A) */}
 									<div className="relative">
-										<label className="text-[10px] font-bold text-gray-500 uppercase">
-											Partida (A)
-										</label>
+										<div className="flex items-center justify-between mb-1">
+											<label className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">
+												<span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Partida (A)
+											</label>
+											{pontoOrigem && (
+												<span className="text-[10px] text-emerald-600 font-bold">✓ Definido</span>
+											)}
+										</div>
 										<input
 											type="text"
 											value={textoOrigem}
-											onChange={(e) => setTextoOrigem(e.target.value)}
-											placeholder="Ex: Centro, Univates..."
-											className="w-full text-xs p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+											onChange={(e) => {
+												setTextoOrigem(e.target.value);
+												handleBuscar(e.target.value, setSugestoesOrigem);
+											}}
+											placeholder="Ex: Centro, Univates, CEAT, HBB, Rua..."
+											className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
 										/>
+
+										{/* AUTOCOMPLETE PARTIDA */}
+										{sugestoesOrigem.length > 0 && (
+											<div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 divide-y divide-gray-100 max-h-52 overflow-y-auto">
+												{sugestoesOrigem.map((s, idx) => (
+													<div
+														key={idx}
+														onClick={() => {
+															setPontoOrigem(s.coords);
+															setTextoOrigem(s.nome);
+															setSugestoesOrigem([]);
+														}}
+														className="text-xs p-2.5 hover:bg-emerald-50 cursor-pointer flex items-center gap-2">
+														<span>
+															{s.tipo === "hospital" ? "🏥" : s.tipo === "faculdade" || s.tipo === "escola" ? "🎓" : s.tipo === "rua" ? "📍" : "🏢"}
+														</span>
+														<div className="min-w-0 flex-1">
+															<p className="font-bold text-gray-900 truncate">{s.nome}</p>
+															<p className="text-[10px] text-gray-500 truncate">{s.detalhe}</p>
+														</div>
+													</div>
+												))}
+											</div>
+										)}
 									</div>
+
+									{/* DESTINO (B) */}
 									<div className="relative">
-										<label className="text-[10px] font-bold text-gray-500 uppercase">
-											Destino (B)
-										</label>
+										<div className="flex items-center justify-between mb-1">
+											<label className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">
+												<span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Destino (B)
+											</label>
+											{pontoDestino && (
+												<span className="text-[10px] text-emerald-600 font-bold">✓ Definido</span>
+											)}
+										</div>
 										<input
 											type="text"
 											value={textoDestino}
-											onChange={(e) => setTextoDestino(e.target.value)}
-											placeholder="Ex: Hospital Bruno Born..."
-											className="w-full text-xs p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+											onChange={(e) => {
+												setTextoDestino(e.target.value);
+												handleBuscar(e.target.value, setSugestoesDestino);
+											}}
+											placeholder="Ex: Univates, Castelinho, Hospital Bruno Born..."
+											className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
 										/>
+
+										{/* AUTOCOMPLETE DESTINO */}
+										{sugestoesDestino.length > 0 && (
+											<div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 divide-y divide-gray-100 max-h-52 overflow-y-auto">
+												{sugestoesDestino.map((s, idx) => (
+													<div
+														key={idx}
+														onClick={() => {
+															setPontoDestino(s.coords);
+															setTextoDestino(s.nome);
+															setSugestoesDestino([]);
+														}}
+														className="text-xs p-2.5 hover:bg-red-50 cursor-pointer flex items-center gap-2">
+														<span>
+															{s.tipo === "hospital" ? "🏥" : s.tipo === "faculdade" || s.tipo === "escola" ? "🎓" : s.tipo === "rua" ? "📍" : "🏢"}
+														</span>
+														<div className="min-w-0 flex-1">
+															<p className="font-bold text-gray-900 truncate">{s.nome}</p>
+															<p className="text-[10px] text-gray-500 truncate">{s.detalhe}</p>
+														</div>
+													</div>
+												))}
+											</div>
+										)}
 									</div>
+
 									<button
-										disabled={calculandoRota}
-										className="w-full py-2 bg-blue-600 text-white rounded-xl text-xs font-bold shadow-md active:scale-95 transition"
+										disabled={calculandoRota || !pontoOrigem || !pontoDestino}
+										className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md transition ${
+											calculandoRota || !pontoOrigem || !pontoDestino
+												? "bg-gray-300 text-gray-500 cursor-not-allowed"
+												: "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white active:scale-95"
+										}`}
 										onClick={() => {
-											// Aqui chamaremos a função de gerar rota que moveremos do Mapa depois
 											window.dispatchEvent(new CustomEvent("trigger-gerar-rota"));
 										}}>
 										{calculandoRota
-											? "⏳ Calculando..."
+											? "⏳ Calculando Desvio Seguro..."
 											: "🚀 Gerar Rota Anti-Enchente"}
 									</button>
 								</div>
 
 								{dadosRota && (
-									<div className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-[11px] space-y-2">
+									<div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-[11px] space-y-2 mt-2">
 										<div className="flex justify-between items-start">
 											<div>
 												<p>
@@ -389,19 +525,21 @@ const MetricsBottomSheet = ({
 												onClick={() => {
 													if (onLimparRota) onLimparRota();
 												}}
-												className="flex items-center gap-1 text-[11px] text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2 py-1 rounded-lg font-bold transition active:scale-95 shadow-sm"
+												className="flex items-center gap-1 text-[11px] text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-1 rounded-lg font-bold transition active:scale-95 shadow-sm"
 												title="Apagar rota do mapa"
 											>
 												<Trash2 size={12} />
 												<span>Limpar Rota</span>
 											</button>
 										</div>
-										<p
-											className={`font-bold mt-1 ${dadosRota.segura ? "text-emerald-600" : "text-red-600"}`}>
+										<div
+											className={`p-1.5 rounded-lg font-bold text-center text-[11px] ${
+												dadosRota.segura ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+											}`}>
 											{dadosRota.segura
-												? "🛡️ Rota 100% Segura"
-												: "⛔ Rota com Bloqueios"}
-										</p>
+												? "🛡️ ROTA 100% SEGURA (Desvio pelas Colinas)"
+												: "⛔ ATENÇÃO: CIDADE ILHADA NO NÍVEL ATIVO"}
+										</div>
 									</div>
 								)}
 							</div>

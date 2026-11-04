@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Home, Shield, LogOut, Trash2, X, MapPin, Bell, Plus, Check } from 'lucide-react';
 import { API_BASE } from '../../services/config';
+import { buscarDestinosCalibrados } from '../../services/locaisLajeado';
 
 export default function PerfilLGPDModal({
   isOpen,
@@ -20,6 +21,34 @@ export default function PerfilLGPDModal({
   const [novoNome, setNovoNome] = useState('');
   const [novoEndereco, setNovoEndereco] = useState('');
   const [novaCota, setNovaCota] = useState('24.0');
+  const [novasCoords, setNovasCoords] = useState(null);
+  const [sugestoesPonto, setSugestoesPonto] = useState([]);
+
+  const handleBuscarSugestoesPonto = async (termo) => {
+    setNovoEndereco(termo);
+    if (!termo || termo.trim().length < 2) {
+      setSugestoesPonto([]);
+      return;
+    }
+    const res = await buscarDestinosCalibrados(termo);
+    setSugestoesPonto(res || []);
+  };
+
+  const handleSelecionarSugestaoPonto = (s) => {
+    setNovoEndereco(`${s.nome} (${s.detalhe})`);
+    if (!novoNome) {
+      setNovoNome(s.nome.split('-')[0].trim());
+    }
+    if (s.cota) {
+      setNovaCota(s.cota.toFixed(1));
+    } else {
+      setNovaCota('24.0');
+    }
+    if (s.coords) {
+      setNovasCoords(s.coords);
+    }
+    setSugestoesPonto([]);
+  };
 
   if (!isOpen || !usuario) return null;
 
@@ -32,6 +61,7 @@ export default function PerfilLGPDModal({
       nome: novoNome.trim(),
       endereco: novoEndereco.trim() || 'Lajeado, RS',
       cota: parseFloat(novaCota) || 24.0,
+      coords: novasCoords || null,
     };
     const novosPontos = [...pontos, pontoObj];
     const usuarioAtualizado = {
@@ -48,6 +78,8 @@ export default function PerfilLGPDModal({
     setNovoNome('');
     setNovoEndereco('');
     setNovaCota('24.0');
+    setNovasCoords(null);
+    setSugestoesPonto([]);
     setAdicionandoPonto(false);
   };
 
@@ -182,46 +214,85 @@ export default function PerfilLGPDModal({
 
             {adicionandoPonto && (
               <div className="p-2.5 bg-white border border-blue-200 rounded-lg space-y-2 text-xs">
-                <div>
-                  <label className="text-[10px] font-bold text-gray-500 block mb-0.5">Identificador do Local</label>
+                <div className="relative">
+                  <label className="text-[10px] font-bold text-gray-500 block mb-0.5">Buscar Local / Rua / Ponto de Referência</label>
                   <input
                     type="text"
-                    placeholder="Ex: Trabalho, Escola, Empresa..."
+                    placeholder="Digite ex: Univates, Bento Gonçalves, CEAT, HBB..."
+                    value={novoEndereco}
+                    onChange={(e) => handleBuscarSugestoesPonto(e.target.value)}
+                    className="w-full border border-blue-300 rounded-lg px-2.5 py-1.5 text-xs outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+
+                  {/* Sugestões Automáticas em Tempo Real */}
+                  {sugestoesPonto.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 divide-y divide-gray-100 max-h-48 overflow-y-auto">
+                      {sugestoesPonto.map((s, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => handleSelecionarSugestaoPonto(s)}
+                          className="text-xs p-2 hover:bg-blue-50 cursor-pointer flex items-center gap-2"
+                        >
+                          <span className="text-sm">
+                            {s.tipo === "hospital" ? "🏥" : s.tipo === "faculdade" || s.tipo === "escola" ? "🎓" : s.tipo === "rua" ? "📍" : "🏢"}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-gray-900 truncate">{s.nome}</p>
+                            <p className="text-[10px] text-gray-500 truncate">{s.detalhe}</p>
+                          </div>
+                          {s.cota && (
+                            <span className="text-[10px] bg-blue-100 text-blue-800 font-black px-1.5 py-0.5 rounded">
+                              {s.cota.toFixed(1)}m
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold text-gray-500 block mb-0.5">Nome / Identificador</label>
+                  <input
+                    type="text"
+                    placeholder="Ex: Trabalho, Escola, Escritório..."
                     value={novoNome}
                     onChange={(e) => setNovoNome(e.target.value)}
-                    className="w-full border border-gray-300 rounded px-2 py-1 text-xs outline-none focus:border-blue-500"
+                    className="w-full border border-gray-300 rounded px-2 py-1 text-xs outline-none focus:border-blue-500 font-semibold"
                   />
                 </div>
-                <div>
-                  <label className="text-[10px] font-bold text-gray-500 block mb-0.5">Endereço / Bairro</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Av. Alberto Pasqualini, Americano"
-                    value={novoEndereco}
-                    onChange={(e) => setNovoEndereco(e.target.value)}
-                    className="w-full border border-gray-300 rounded px-2 py-1 text-xs outline-none focus:border-blue-500"
-                  />
+
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <label className="text-[10px] font-bold text-gray-500 block mb-0.5">Cota do Terreno (metros)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={novaCota}
+                      onChange={(e) => setNovaCota(e.target.value)}
+                      className="w-full border border-gray-300 rounded px-2 py-1 text-xs outline-none focus:border-blue-500 font-bold text-blue-700"
+                    />
+                  </div>
+                  {novasCoords && (
+                    <div className="flex items-end pb-1 text-[10px] text-emerald-600 font-bold">
+                      ✓ Coordenadas GPS
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label className="text-[10px] font-bold text-gray-500 block mb-0.5">Cota do Terreno (metros)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={novaCota}
-                    onChange={(e) => setNovaCota(e.target.value)}
-                    className="w-full border border-gray-300 rounded px-2 py-1 text-xs outline-none focus:border-blue-500 font-bold text-blue-700"
-                  />
-                </div>
+
                 <div className="flex gap-2 pt-1">
                   <button
-                    onClick={() => setAdicionandoPonto(false)}
-                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-1 rounded text-xs"
+                    onClick={() => {
+                      setAdicionandoPonto(false);
+                      setSugestoesPonto([]);
+                    }}
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-1.5 rounded text-xs"
                   >
                     Cancelar
                   </button>
                   <button
                     onClick={handleSalvarPonto}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 rounded text-xs"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 rounded text-xs active:scale-95 transition"
                   >
                     Salvar Ponto
                   </button>
