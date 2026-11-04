@@ -10,6 +10,9 @@ const MetricsBottomSheet = ({
 	suaCota = 26.0,
 	dadosRota = null,
 	temperatura = "13°",
+	cotaAtual = null,
+	velocidade_cm_h = null,
+	velocidade_formatada = null,
 	onAbrirRotas,
 	onAbrirClima,
 	// Novas Props do App.jsx
@@ -229,28 +232,47 @@ const MetricsBottomSheet = ({
 									/>
 								</div>
 
-								<div className="grid grid-cols-2 gap-4 items-center">
-									<div className="flex items-center gap-2">
-										<span className="text-sm text-gray-500 font-medium">
-											Última hora
-										</span>
-										<span className="text-lg font-bold text-gray-900">
-											+0,35m
-										</span>
-										<span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full">
-											Rio estável
-										</span>
-									</div>
-									<div className="flex items-center justify-end gap-2">
-										<span className="text-sm text-gray-500 font-medium">
-											Ruas bloqueadas
-										</span>
-										<span
-											className={`text-lg font-bold ${dadosRota?.bloqueada ? "text-red-600" : "text-gray-900"}`}>
-											{dadosRota?.pontosBloqueio?.length || 0}
-										</span>
-									</div>
-								</div>
+								{(() => {
+									const velNum = velocidade_cm_h !== null && velocidade_cm_h !== undefined
+										? Number(velocidade_cm_h)
+										: (cotaAtual?.velocidade_cm_h !== undefined ? Number(cotaAtual.velocidade_cm_h) : 0);
+									const velTxt = velocidade_formatada || cotaAtual?.velocidade_formatada || (
+										velNum > 0
+											? `▲ Subindo a ${velNum.toFixed(1).replace('.', ',')} cm/h`
+											: velNum < 0
+												? `▼ Descendo a ${Math.abs(velNum).toFixed(1).replace('.', ',')} cm/h`
+												: "⏸ Estável"
+									);
+									const isSubindo = velNum > 0;
+									const isDescendo = velNum < 0;
+									const badgeColor = isSubindo
+										? "bg-amber-100 text-amber-800 border border-amber-200"
+										: isDescendo
+											? "bg-blue-100 text-blue-800 border border-blue-200"
+											: "bg-emerald-100 text-emerald-700 border border-emerald-200";
+
+									return (
+										<div className="grid grid-cols-2 gap-4 items-center">
+											<div className="flex items-center gap-1.5 flex-wrap">
+												<span className="text-xs text-gray-500 font-medium">
+													Tendência:
+												</span>
+												<span className={`px-2.5 py-1 text-[11px] font-bold rounded-full shadow-sm ${badgeColor}`}>
+													{velTxt}
+												</span>
+											</div>
+											<div className="flex items-center justify-end gap-2">
+												<span className="text-sm text-gray-500 font-medium">
+													Ruas bloqueadas
+												</span>
+												<span
+													className={`text-lg font-bold ${dadosRota?.bloqueada ? "text-red-600" : "text-gray-900"}`}>
+													{dadosRota?.pontosBloqueio?.length || 0}
+												</span>
+											</div>
+										</div>
+									);
+								})()}
 							</div>
 						)}
 

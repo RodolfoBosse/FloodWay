@@ -65,10 +65,10 @@ function App() {
 
 	const carregarCota = async () => {
 		try {
-			// Tenta buscar endpoint padrão
-			let resp = await fetch(`${API_BASE}/api/v1/cota/atual-sync/`);
+			// Prioriza /api/cota (serverless com scraping em tempo real de nivelguaiba.com.br/lajeado)
+			let resp = await fetch('/api/cota');
 			if (!resp.ok) {
-				resp = await fetch('/api/cota');
+				resp = await fetch(`${API_BASE}/api/v1/cota/atual-sync/`);
 			}
 			if (resp.ok) {
 				const data = await resp.json();
@@ -80,14 +80,14 @@ function App() {
 				}
 			}
 		} catch (e) {
-			console.warn("Erro ao sincronizar cota via API principal, tentando fallback:", e);
+			console.warn("Erro ao sincronizar cota via /api/cota, tentando backend Django:", e);
 		}
 
-		// Fallback direto caso o backend esteja indisponível
+		// Fallback secundário
 		try {
-			const fallbackResp = await fetch('/api/cota');
-			if (fallbackResp.ok) {
-				const fbData = await fallbackResp.json();
+			const fbResp = await fetch(`${API_BASE}/api/v1/cota/atual-sync/`);
+			if (fbResp.ok) {
+				const fbData = await fbResp.json();
 				setCotaAtual(fbData);
 				if (fbData.nivel) {
 					setCotaReal(fbData.nivel);
@@ -95,7 +95,7 @@ function App() {
 				}
 			}
 		} catch (err) {
-			console.error("Falha ao obter cota:", err);
+			console.error("Falha ao obter cota de todas as fontes:", err);
 		}
 	};
 
@@ -216,7 +216,10 @@ function App() {
 
 			{/* Painel Inferior Deslizante */}
 			<MetricsBottomSheet
-				cotaReal={cotaAtual?.nivel || 12.86}
+				cotaReal={cotaAtual?.nivel || 13.24}
+				cotaAtual={cotaAtual}
+				velocidade_cm_h={cotaAtual?.velocidade_cm_h}
+				velocidade_formatada={cotaAtual?.velocidade_formatada}
 				cotaSimulada={cotaSimulada}
 				setCotaSimulada={setCotaSimulada}
 				isSimulando={isSimulando}
