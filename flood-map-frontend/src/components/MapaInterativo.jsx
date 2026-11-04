@@ -1296,8 +1296,8 @@ const MapaInterativo = ({
 				</div>
 			)}
 
-			{/* PAINEL DE ROTA MOBILE / DESKTOP */}
-			{painelRotaAberto && (
+			{/* PAINEL DE ROTA MOBILE / DESKTOP (SUBSTITUÍDO PELA BOTTOM SHEET) */}
+			{false && painelRotaAberto && (
 				<div
 					style={{ zIndex: 2000 }}
 					className="fixed inset-x-0 bottom-0 sm:bottom-auto sm:right-auto sm:top-20 sm:left-4 sm:w-96 bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl border border-gray-200 p-5 max-h-[85vh] overflow-y-auto transition-all">
