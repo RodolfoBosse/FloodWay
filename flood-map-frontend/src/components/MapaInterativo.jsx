@@ -1557,7 +1557,7 @@ const MapaInterativo = ({
 					</div>
 				)}
 
-				<MapContainer
+				<MapContainer zoomControl={false}
 					center={config.centro}
 					zoom={config.zoom}
 					style={{ width: "100%", height: "100%" }}
