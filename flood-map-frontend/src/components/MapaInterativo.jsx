@@ -74,6 +74,12 @@ const MapaInterativo = ({
 	setUsuario: setUsuarioProp,
 	modalCasaAberto: modalCasaAbertoProp,
 	setModalCasaAberto: setModalCasaAbertoProp,
+	pontoOrigem: pontoOrigemProp,
+	setPontoOrigem: setPontoOrigemProp,
+	pontoDestino: pontoDestinoProp,
+	setPontoDestino: setPontoDestinoProp,
+	dadosRota: dadosRotaProp,
+	setDadosRota: setDadosRotaProp,
 }) => {
 	const config = {
 		centro: [-29.4669, -51.9611],
@@ -246,14 +252,26 @@ const MapaInterativo = ({
 	};
 	const [textoOrigem, setTextoOrigem] = useState("");
 	const [textoDestino, setTextoDestino] = useState("");
-	const [pontoOrigem, setPontoOrigem] = useState(null);
-	const [pontoDestino, setPontoDestino] = useState(null);
-	const [modoSelecao, setModoSelecao] = useState(null);
-	const [sugestoesOrigem, setSugestoesOrigem] = useState([]);
-	const [sugestoesDestino, setSugestoesDestino] = useState([]);
-	const [sugestoesCasa, setSugestoesCasa] = useState([]);
-	const [calculandoRota, setCalculandoRota] = useState(false);
-	const [dadosRota, setDadosRota] = useState(null);
+	const [pontoOrigemLocal, setPontoOrigemLocal] = useState(null);
+	const pontoOrigem = pontoOrigemProp !== undefined ? pontoOrigemProp : pontoOrigemLocal;
+	const setPontoOrigem = (p) => {
+		setPontoOrigemLocal(p);
+		if (setPontoOrigemProp) setPontoOrigemProp(p);
+	};
+
+	const [pontoDestinoLocal, setPontoDestinoLocal] = useState(null);
+	const pontoDestino = pontoDestinoProp !== undefined ? pontoDestinoProp : pontoDestinoLocal;
+	const setPontoDestino = (p) => {
+		setPontoDestinoLocal(p);
+		if (setPontoDestinoProp) setPontoDestinoProp(p);
+	};
+
+	const [dadosRotaLocal, setDadosRotaLocal] = useState(null);
+	const dadosRota = dadosRotaProp !== undefined ? dadosRotaProp : dadosRotaLocal;
+	const setDadosRota = (d) => {
+		setDadosRotaLocal(d);
+		if (setDadosRotaProp) setDadosRotaProp(d);
+	};
 
 	const carregarRotasSalvas = async (email) => {
 		if (!email) return;
