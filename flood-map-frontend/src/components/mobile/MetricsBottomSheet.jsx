@@ -34,11 +34,11 @@ const MetricsBottomSheet = ({
 	abaAtiva,
 	onLimparRota,
 }) => {
-	// Alturas em pixels: min = 60px, mid = 245px, max = 85vh (calculado dinamicamente)
-	const [currentHeight, setCurrentHeight] = useState(245);
+	// Alturas em pixels: min = 60px, mid = 295px (exibe cota, barra e tendência com folga), max = 85vh (calculado dinamicamente)
+	const [currentHeight, setCurrentHeight] = useState(295);
 	const [isDragging, setIsDragging] = useState(false);
 	const startYRef = useRef(0);
-	const startHeightRef = useRef(245);
+	const startHeightRef = useRef(295);
 
 	const isInundacao = cotaReal >= cotaInundacao;
 	const temBloqueios = dadosRota?.bloqueada || isInundacao;
@@ -46,7 +46,7 @@ const MetricsBottomSheet = ({
 		dadosRota?.pontosBloqueio?.length || (isInundacao ? 22 : 0);
 
 	const getMaxHeight = () => Math.round(window.innerHeight * 0.84);
-	const getMidHeight = () => 245;
+	const getMidHeight = () => 295;
 	const getMinHeight = () => 60;
 
 	// Início do arrasto com o dedo ou mouse
@@ -409,10 +409,10 @@ const MetricsBottomSheet = ({
 					</div>
 				)}
 
-				{/* ESPAÇOS DE MONETIZAÇÃO QUANDO A GAVETA FOR EXPANDIDA */}
+				{/* ESPAÇOS DE MONETIZAÇÃO QUANDO A GAVETA FOR EXPANDIDA (DESATIVADO TEMPORARIAMENTE) */}
+				{/*
 				{isExpanded && (
 					<div className="mt-4 pt-3 border-t border-gray-100 overflow-y-auto space-y-3 pb-6">
-						{/* 1. Anúncio Patrocinado Oficial (Empresas Locais / Parceiros) */}
 						<BannerPatrocinador
 							titulo="Apoiador Oficial da Prevenção"
 							nome="Sicredi Integração RS/MG"
@@ -422,7 +422,6 @@ const MetricsBottomSheet = ({
 							corLogo="bg-emerald-600"
 						/>
 
-						{/* 2. Bloco Google AdSense (Monetização Automática) */}
 						<GoogleAdBlock
 							client="ca-pub-XXXXXXXXXXXXXXXX"
 							slot="1234567890"
@@ -430,6 +429,7 @@ const MetricsBottomSheet = ({
 						/>
 					</div>
 				)}
+				*/}
 			</div>
 		</div>
 	);
