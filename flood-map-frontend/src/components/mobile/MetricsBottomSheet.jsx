@@ -59,8 +59,15 @@ const MetricsBottomSheet = ({
 		dadosRota?.pontosBloqueio?.length || (isInundacao ? 22 : 0);
 
 	const getMaxHeight = () => Math.round(window.innerHeight * 0.84);
-	const getMidHeight = () => 295;
+	const getMidHeight = () => (abaAtiva === "rotas" ? 390 : 295);
 	const getMinHeight = () => 60;
+
+	// Ajusta a altura da barra quando troca para rotas se estiver no tamanho padrão
+	useEffect(() => {
+		if (abaAtiva === "rotas") {
+			setCurrentHeight((prev) => (prev < 360 ? 390 : prev));
+		}
+	}, [abaAtiva]);
 
 	// Início do arrasto com o dedo ou mouse
 	const handleTouchStart = (e) => {
@@ -354,8 +361,9 @@ const MetricsBottomSheet = ({
 										<button
 											type="button"
 											onClick={() => {
-												setPontoOrigem(usuario.residencia.coords);
-												setTextoOrigem(`Minha Casa (${usuario.residencia.endereco})`);
+												const c = usuario.residencia.coords || (usuario.residencia.lat && usuario.residencia.lon ? [usuario.residencia.lat, usuario.residencia.lon] : null);
+												if (c) setPontoOrigem(c);
+												setTextoOrigem(`Minha Casa (${usuario.residencia.endereco || ''})`);
 												setSugestoesOrigem([]);
 											}}
 											className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition active:scale-95">
@@ -364,8 +372,9 @@ const MetricsBottomSheet = ({
 										<button
 											type="button"
 											onClick={() => {
-												setPontoDestino(usuario.residencia.coords);
-												setTextoDestino(`Minha Casa (${usuario.residencia.endereco})`);
+												const c = usuario.residencia.coords || (usuario.residencia.lat && usuario.residencia.lon ? [usuario.residencia.lat, usuario.residencia.lon] : null);
+												if (c) setPontoDestino(c);
+												setTextoDestino(`Minha Casa (${usuario.residencia.endereco || ''})`);
 												setSugestoesDestino([]);
 											}}
 											className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition active:scale-95">

@@ -471,53 +471,27 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 		}
 	}
 
-	// 3. Busca online em tempo real no Photon (estilo Google Maps sem custo de API)
-	const photonResultados = await buscarPhoton(termo);
-	for (const p of photonResultados) {
-		const idKey = `${p.coords[0].toFixed(4)},${p.coords[1].toFixed(4)}`;
-		if (!idsVistos.has(idKey)) {
-			idsVistos.add(idKey);
-			resultados.push(p);
-		}
-	}
-
-	// Ordena por prioridade
-	resultados.sort((a, b) => (a.prioridade || 99) - (b.prioridade || 99));
-
-	if (resultados.length >= 5) {
+	// Se já encontrou resultados locais calibrados (Univates, CEAT, Ruas, etc.), retorna imediatamente sem esperar APIs lentas
+	if (resultados.length >= 3) {
 		return resultados.slice(0, 8);
 	}
 
-	// 4. Fallback Nominatim OpenStreetMap (se faltarem resultados)
+	// 3. Busca online em tempo real no Photon (apenas se poucos resultados locais)
 	try {
-		const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-			tNorm + " Lajeado RS"
-		)}&limit=4&viewbox=-52.05,-29.40,-51.90,-29.52&bounded=0`;
-		const resp = await fetch(url, {
-			headers: { "Accept-Language": "pt-BR", "User-Agent": "FloodWay/1.0" },
-		});
-		if (resp.ok) {
-			const dados = await resp.json();
-			for (const d of dados) {
-				const lat = parseFloat(d.lat);
-				const lon = parseFloat(d.lon);
-				const idKey = `${lat.toFixed(4)},${lon.toFixed(4)}`;
-				if (!idsVistos.has(idKey)) {
-					idsVistos.add(idKey);
-					resultados.push({
-						nome: d.display_name.split(",")[0],
-						tipo: "endereco",
-						detalhe: d.display_name,
-						coords: [lat, lon],
-						cota: null,
-						prioridade: 4,
-					});
-				}
+		const photonPromise = buscarPhoton(termo);
+		const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve([]), 1200));
+		const photonResultados = await Promise.race([photonPromise, timeoutPromise]);
+		for (const p of photonResultados) {
+			const idKey = `${p.coords[0].toFixed(4)},${p.coords[1].toFixed(4)}`;
+			if (!idsVistos.has(idKey)) {
+				idsVistos.add(idKey);
+				resultados.push(p);
 			}
 		}
-	} catch (err) {
-		console.warn("Erro ao buscar no Nominatim:", err);
-	}
+	} catch (_) {}
+
+	// Ordena por prioridade
+	resultados.sort((a, b) => (a.prioridade || 99) - (b.prioridade || 99));
 
 	return resultados.slice(0, 8);
 }
