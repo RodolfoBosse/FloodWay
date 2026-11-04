@@ -60,22 +60,67 @@ const MetricsBottomSheet = ({
 
 	const getMaxHeight = () => Math.round(window.innerHeight * 0.88);
 	const getMidHeight = () => {
-		if (abaAtiva === "rotas") return 450;
+		if (abaAtiva === "rotas") return dadosRota ? 520 : 450;
 		if (abaAtiva === "simular") return 310;
 		return 295;
 	};
 	const getMinHeight = () => 60;
 
-	// Ajusta a altura da barra suavemente ao trocar entre as abas (Mapa, Rotas, Simulação)
+	// Ajusta a altura da barra suavemente ao trocar entre as abas ou gerar rota
 	useEffect(() => {
 		if (abaAtiva === "rotas") {
-			setCurrentHeight(450);
+			setCurrentHeight(dadosRota ? 520 : 450);
 		} else if (abaAtiva === "simular") {
 			setCurrentHeight(310);
 		} else {
 			setCurrentHeight(295);
 		}
-	}, [abaAtiva]);
+	}, [abaAtiva, !!dadosRota]);
+
+	const abrirGoogleMaps = () => {
+		if (!pontoOrigem || !pontoDestino) return;
+		const oLat = pontoOrigem[0].toFixed(5);
+		const oLon = pontoOrigem[1].toFixed(5);
+		const dLat = pontoDestino[0].toFixed(5);
+		const dLon = pontoDestino[1].toFixed(5);
+
+		let paradas = [];
+		if (dadosRota?.coords?.length >= 6) {
+			const total = dadosRota.coords.length;
+			const p1 = dadosRota.coords[Math.floor(total * 0.35)];
+			const p2 = dadosRota.coords[Math.floor(total * 0.70)];
+			paradas = [
+				`${p1[0].toFixed(5)},${p1[1].toFixed(5)}`,
+				`${p2[0].toFixed(5)},${p2[1].toFixed(5)}`,
+			];
+		}
+
+		let pathGoogle = `${oLat},${oLon}/`;
+		for (const p of paradas) {
+			pathGoogle += `${p}/`;
+		}
+		pathGoogle += `${dLat},${dLon}`;
+
+		const url = `https://www.google.com/maps/dir/${pathGoogle}/@${oLat},${oLon},14z/data=!4m2!4m1!3e0`;
+		window.open(url, "_blank");
+	};
+
+	const abrirWaze = () => {
+		if (!pontoDestino) return;
+		// Se houver parada intermediária no desvio seguro anti-enchente, orienta para o ponto chave do desvio antes do destino
+		let alvoLat = pontoDestino[0];
+		let alvoLon = pontoDestino[1];
+
+		if (dadosRota?.coords?.length >= 6) {
+			const total = dadosRota.coords.length;
+			const pDesvio = dadosRota.coords[Math.floor(total * 0.5)];
+			alvoLat = pDesvio[0];
+			alvoLon = pDesvio[1];
+		}
+
+		const url = `https://waze.com/ul?ll=${alvoLat},${alvoLon}&navigate=yes`;
+		window.open(url, "_blank");
+	};
 
 	// Início do arrasto com o dedo ou mouse
 	const handleTouchStart = (e) => {
@@ -527,7 +572,7 @@ const MetricsBottomSheet = ({
 								</div>
 
 								{dadosRota && (
-									<div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-[11px] space-y-2 mt-2">
+									<div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-[11px] space-y-2.5 mt-2">
 										<div className="flex justify-between items-start">
 											<div>
 												<p>
@@ -556,6 +601,24 @@ const MetricsBottomSheet = ({
 											{dadosRota.segura
 												? "🛡️ ROTA 100% SEGURA (Desvio pelas Colinas)"
 												: "⛔ ATENÇÃO: CIDADE ILHADA NO NÍVEL ATIVO"}
+										</div>
+
+										{/* BOTÕES NAVEGAÇÃO EXTERNA (GOOGLE MAPS & WAZE) */}
+										<div className="flex gap-2 pt-1">
+											<button
+												type="button"
+												onClick={abrirGoogleMaps}
+												className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
+												<span>🗺️</span>
+												<span>Google Maps</span>
+											</button>
+											<button
+												type="button"
+												onClick={abrirWaze}
+												className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
+												<span>🚗</span>
+												<span>Waze</span>
+											</button>
 										</div>
 									</div>
 								)}
