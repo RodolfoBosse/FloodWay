@@ -80,8 +80,23 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
         localStorage.setItem('sentinela_token', data.token);
       }
       if (data.usuario) {
-        localStorage.setItem('usuario_sentinela', JSON.stringify(data.usuario));
-        if (onLoginSucesso) onLoginSucesso(data.usuario);
+        // Recupera dados salvos localmente do usuário (casa, pontos de interesse, rotas) para nunca perder ao relogar
+        let dadosCompletos = { ...data.usuario };
+        try {
+          const dadosSalvos = localStorage.getItem(`dados_perfil_${data.usuario.email}`);
+          if (dadosSalvos) {
+            const parsed = JSON.parse(dadosSalvos);
+            dadosCompletos = {
+              ...dadosCompletos,
+              ...parsed,
+              residencia: parsed.residencia || dadosCompletos.residencia,
+              pontosInteresse: parsed.pontosInteresse || dadosCompletos.pontosInteresse || [],
+            };
+          }
+        } catch (_) {}
+
+        localStorage.setItem('usuario_sentinela', JSON.stringify(dadosCompletos));
+        if (onLoginSucesso) onLoginSucesso(dadosCompletos);
       }
 
       setSucesso(`Bem-vindo, ${data.usuario.nome}!`);

@@ -365,7 +365,7 @@ const MetricsBottomSheet = ({
 										className="w-full py-2 bg-blue-600 text-white rounded-xl text-xs font-bold shadow-md active:scale-95 transition"
 										onClick={() => {
 											// Aqui chamaremos a função de gerar rota que moveremos do Mapa depois
-											alert("Clique no mapa para marcar os pontos A e B!");
+											window.dispatchEvent(new CustomEvent("trigger-gerar-rota"));
 										}}>
 										{calculandoRota
 											? "⏳ Calculando..."

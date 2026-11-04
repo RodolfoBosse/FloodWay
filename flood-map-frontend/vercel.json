@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/v1/auth/google/",
+      "destination": "/api/auth?action=google"
+    },
+    {
+      "source": "/api/v1/auth/excluir-conta/",
+      "destination": "/api/auth?action=excluir-conta"
+    },
+    {
       "source": "/api/v1/cota/(.*)",
       "destination": "/api/cota"
     },

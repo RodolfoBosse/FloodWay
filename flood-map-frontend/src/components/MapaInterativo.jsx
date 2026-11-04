@@ -177,20 +177,35 @@ const MapaInterativo = ({
 	};
 
 	const dispararNotificacaoLocal = (titulo, mensagem) => {
-		if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-			navigator.serviceWorker.ready.then((reg) => {
-				reg.showNotification(titulo, {
-					body: mensagem,
-					icon: "/favicon.ico",
-					vibrate: [300, 100, 300, 100, 300],
-					tag: "alerta-floodway",
-				});
-			});
-		} else if (
-			"Notification" in window &&
-			Notification.permission === "granted"
-		) {
-			new Notification(titulo, { body: mensagem, icon: "/favicon.ico" });
+		try {
+			if (typeof window !== "undefined" && "Notification" in window) {
+				if (Notification.permission === "granted") {
+					if ("serviceWorker" in navigator) {
+						navigator.serviceWorker.ready.then((reg) => {
+							reg.showNotification(titulo, {
+								body: mensagem,
+								icon: "/icon-192.png",
+								badge: "/icon-192.png",
+								vibrate: [300, 100, 300, 100, 300],
+								tag: "alerta-floodway",
+							});
+						}).catch(() => {
+							new Notification(titulo, { body: mensagem, icon: "/icon-192.png" });
+						});
+					} else {
+						new Notification(titulo, { body: mensagem, icon: "/icon-192.png" });
+					}
+				} else if (Notification.permission !== "denied") {
+					Notification.requestPermission().then((perm) => {
+						setPermissaoPush(perm);
+						if (perm === "granted") {
+							new Notification(titulo, { body: mensagem, icon: "/icon-192.png" });
+						}
+					});
+				}
+			}
+		} catch (e) {
+			console.warn("Falha ao disparar notificacao local:", e);
 		}
 	};
 
@@ -404,10 +419,10 @@ const MapaInterativo = ({
 			};
 
 			setUsuario(usuarioAtualizado);
-			localStorage.setItem(
-				"usuario_sentinela",
-				JSON.stringify(usuarioAtualizado),
-			);
+			localStorage.setItem("usuario_sentinela", JSON.stringify(usuarioAtualizado));
+			if (usuario?.email) {
+				localStorage.setItem("dados_perfil_" + usuario.email, JSON.stringify(usuarioAtualizado));
+			}
 			setModalCasaAberto(false);
 		} catch (err) {
 			const usuarioAtualizado = {
@@ -421,10 +436,10 @@ const MapaInterativo = ({
 				},
 			};
 			setUsuario(usuarioAtualizado);
-			localStorage.setItem(
-				"usuario_sentinela",
-				JSON.stringify(usuarioAtualizado),
-			);
+			localStorage.setItem("usuario_sentinela", JSON.stringify(usuarioAtualizado));
+			if (usuario?.email) {
+				localStorage.setItem("dados_perfil_" + usuario.email, JSON.stringify(usuarioAtualizado));
+			}
 			setModalCasaAberto(false);
 		} finally {
 			setSalvandoCasa(false);
@@ -465,10 +480,10 @@ const MapaInterativo = ({
 			};
 
 			setUsuario(usuarioAtualizado);
-			localStorage.setItem(
-				"usuario_sentinela",
-				JSON.stringify(usuarioAtualizado),
-			);
+			localStorage.setItem("usuario_sentinela", JSON.stringify(usuarioAtualizado));
+			if (usuario?.email) {
+				localStorage.setItem("dados_perfil_" + usuario.email, JSON.stringify(usuarioAtualizado));
+			}
 		} catch (err) {}
 	};
 
@@ -675,6 +690,15 @@ const MapaInterativo = ({
 		}
 		setModoSelecao(null);
 	};
+
+	
+	useEffect(() => {
+		const handlerTrigger = () => {
+			gerarRotaAntiEnchente();
+		};
+		window.addEventListener('trigger-gerar-rota', handlerTrigger);
+		return () => window.removeEventListener('trigger-gerar-rota', handlerTrigger);
+	}, [pontoOrigem, pontoDestino, nivelAtivo, pontosBloqueadosGeo]);
 
 	const gerarRotaAntiEnchente = async () => {
 		if (!pontoOrigem || !pontoDestino) {

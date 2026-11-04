@@ -282,6 +282,7 @@ function App() {
 				onLogout={() => setUsuario(null)}
 				onUsuarioAtualizado={(atualizado) => setUsuario(atualizado)}
 				onAbrirConfigCasa={() => setModalCasaAberto(true)}
+				cotaAtual={cotaAtual?.nivel || cotaReal || 13.24}
 			/>
 
 			{/* Modal de Previsão do Tempo e Chuvas */}
