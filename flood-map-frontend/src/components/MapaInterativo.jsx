@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { API_BASE } from "../services/config";
 import {
 	MapContainer,
@@ -272,6 +272,12 @@ const MapaInterativo = ({
 		setDadosRotaLocal(d);
 		if (setDadosRotaProp) setDadosRotaProp(d);
 	};
+
+	const [modoSelecao, setModoSelecao] = useState(null);
+	const [sugestoesOrigem, setSugestoesOrigem] = useState([]);
+	const [sugestoesDestino, setSugestoesDestino] = useState([]);
+	const [sugestoesCasa, setSugestoesCasa] = useState([]);
+	const [calculandoRota, setCalculandoRota] = useState(false);
 
 	const carregarRotasSalvas = async (email) => {
 		if (!email) return;
