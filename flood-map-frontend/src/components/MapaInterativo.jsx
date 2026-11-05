@@ -155,8 +155,8 @@ const MapaInterativo = ({
 
 		if (perm === "granted") {
 			dispararNotificacaoLocal(
-				"🔔 SENTINELA ATIVADO COM SUCESSO!",
-				"Você receberá alertas automáticos na tela do seu celular se o Rio Taquari subir em direção à sua casa.",
+				"🔔 Alertas Ativados com Sucesso!",
+				"Você receberá avisos automáticos na tela do seu celular se o Rio Taquari subir em direção à sua casa ou locais salvos.",
 			);
 		} else {
 			alert("Permissão de notificações não autorizada no navegador.");
@@ -545,7 +545,7 @@ const MapaInterativo = ({
 			});
 
 			if (resp.ok) {
-				alert("✅ Rota salva com sucesso no seu Sentinela!");
+				alert("✅ Rota salva com sucesso nos seus favoritos!");
 				carregarRotasSalvas(usuario.email);
 			}
 		} catch (e) {
@@ -1323,8 +1323,8 @@ const MapaInterativo = ({
 								disabled={salvandoCasa}
 								className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-3 rounded-xl text-xs shadow-md transition">
 								{salvandoCasa
-									? "⏳ Salvando cota real..."
-									: "🛡️ Salvar Localização Exata"}
+									? "⏳ Calculando altitude segura..."
+									: "Salvar Minha Residência"}
 							</button>
 						</form>
 					</div>
@@ -1635,7 +1635,7 @@ const MapaInterativo = ({
 								opacidade = 1.0;
 								tracejado = "8,4";
 							} else if (p.isRiscoIminente) {
-								cor = "#ea580c";
+								cor = "#eab308"; // Amarelo vivo (alto contraste, sem confundir com vermelho)
 								peso = 5.0;
 								opacidade = 0.95;
 							}
@@ -1685,7 +1685,7 @@ const MapaInterativo = ({
 													p.isBloqueado
 														? "bg-red-100 text-red-800"
 														: p.isRiscoIminente
-															? "bg-orange-100 text-orange-900 border border-orange-300"
+															? "bg-yellow-100 text-yellow-900 border border-yellow-300"
 															: p.isCalibrado
 																? "bg-sky-100 text-sky-900 border border-sky-300"
 																: "bg-green-100 text-green-800"
@@ -1693,7 +1693,7 @@ const MapaInterativo = ({
 												{p.isBloqueado
 													? `🌊 SUBMERSA (+${p.lamina}m)`
 													: p.isRiscoIminente
-														? `⚠️ RISCO IMINENTE (Folga de ${p.margem}m)`
+														? `⚠️ ATENÇÃO / ALERTA (Folga de ${p.margem}m)`
 														: p.isCalibrado
 															? "🎯 ASFALTO LIVRE (CALIBRADO)"
 															: "✅ TRÂNSITO LIVRE"}

@@ -193,10 +193,10 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
             <span className="text-2xl">🌊</span>
             <div>
               <h3 className="font-bold text-gray-900 text-base leading-tight">
-                Sentinela Lajeado
+                FloodWay Lajeado
               </h3>
               <p className="text-[11px] text-gray-500">
-                Segurança hidrológica e rotas de fuga
+                Monitor de alagamentos e rotas seguras
               </p>
             </div>
           </div>
@@ -217,7 +217,7 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
             </div>
             <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-200 max-h-60 overflow-y-auto space-y-2.5 text-[11px] leading-relaxed">
               <p>
-                <strong>1. Compromisso com sua Privacidade:</strong> Em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 - LGPD), o Sentinela Lajeado coleta exclusivamente as informações estritamente necessárias para a prestação de serviços de alerta preventivo contra enchentes e cálculo de rotas seguras de fuga.
+                <strong>1. Compromisso com sua Privacidade:</strong> Em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 - LGPD), o FloodWay coleta exclusivamente as informações estritamente necessárias para a prestação de serviços de alerta preventivo contra enchentes e cálculo de rotas seguras.
               </p>
               <p>
                 <strong>2. Dados Coletados:</strong> Nome, e-mail para autenticação, número de WhatsApp (opcional, para avisos de emergência quando o rio atinge a cota de atenção) e localização da residência/empresa para comparação com a altimetria do terreno.

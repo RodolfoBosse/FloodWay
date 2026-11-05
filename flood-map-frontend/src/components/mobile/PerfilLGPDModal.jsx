@@ -173,24 +173,30 @@ export default function PerfilLGPDModal({
               </button>
             </div>
             {usuario.residencia || usuario.endereco ? (
-              <div className="text-[11px] text-gray-600 space-y-0.5">
-                <p className="font-medium text-gray-800">
+              <div className="text-[11px] text-gray-600 space-y-1">
+                <p className="font-semibold text-gray-800">
                   {usuario.residencia?.endereco || usuario.endereco}
                 </p>
-                <p className="text-gray-500">
-                  Cota do Solo: <strong className="text-blue-600">{usuario.residencia?.cota || usuario.cota_terreno || 20.0}m</strong>
-                  {' • '}
-                  Margem Atual:{' '}
-                  <strong className={((usuario.residencia?.cota || 20.0) - cotaAtual) > 0 ? 'text-emerald-600' : 'text-red-600'}>
+                <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                  <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-medium border border-blue-100">
+                    Altitude: <strong>{(usuario.residencia?.cota || usuario.cota_terreno || 20.0).toFixed(1)}m</strong>
+                  </span>
+                  <span className={`px-2 py-0.5 rounded-md font-semibold ${
+                    ((usuario.residencia?.cota || 20.0) - cotaAtual) > 2.0
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : ((usuario.residencia?.cota || 20.0) - cotaAtual) > 0
+                        ? 'bg-yellow-50 text-yellow-800 border border-yellow-200'
+                        : 'bg-red-50 text-red-700 border border-red-200'
+                  }`}>
                     {((usuario.residencia?.cota || 20.0) - cotaAtual) > 0
-                      ? `+${((usuario.residencia?.cota || 20.0) - cotaAtual).toFixed(1)}m livres`
-                      : `${Math.abs((usuario.residencia?.cota || 20.0) - cotaAtual).toFixed(1)}m submerso`}
-                  </strong>
-                </p>
+                      ? `🟢 Seguro (+${((usuario.residencia?.cota || 20.0) - cotaAtual).toFixed(1)}m de margem)`
+                      : `🔴 Risco de Alagamento (${Math.abs((usuario.residencia?.cota || 20.0) - cotaAtual).toFixed(1)}m submerso)`}
+                  </span>
+                </div>
               </div>
             ) : (
               <p className="text-[11px] text-gray-500 italic">
-                Nenhum endereço salvo. Clique em <strong>+ Cadastrar</strong> para marcar sua casa no mapa e receber alertas precisos de alagamento.
+                Nenhum endereço salvo. Clique em <strong>+ Cadastrar</strong> para marcar sua casa no mapa e receber avisos no celular.
               </p>
             )}
           </div>

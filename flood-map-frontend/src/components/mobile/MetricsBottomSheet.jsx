@@ -407,13 +407,13 @@ const MetricsBottomSheet = ({
 							!usuario ? (
 								<div className="flex flex-col items-center justify-center py-8 px-4 text-center animate-in fade-in duration-300">
 									<div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-inner">
-										🔒
+										🗺️
 									</div>
 									<h3 className="font-bold text-gray-900 text-base mb-1">
-										Recurso Exclusivo para Usuários
+										Faça login para traçar Rotas Seguras
 									</h3>
 									<p className="text-xs text-gray-500 max-w-xs mb-5">
-										O cálculo de <strong>Rotas Seguras Anti-Enchente</strong> com desvio em tempo real de ruas alagadas é exclusivo para usuários cadastrados.
+										Acesse o traçado inteligente de rotas com <strong>desvio automático de ruas alagadas</strong> em tempo real.
 									</p>
 									<button
 										onClick={onAbrirAuth}
@@ -425,7 +425,7 @@ const MetricsBottomSheet = ({
 							) : (
 							<div className="flex flex-col gap-y-3 animate-in fade-in duration-300 pb-16">
 								<h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm">
-									<span className="text-xl">🚗</span> Planejar Rota Segura (Anti-Enchente)
+									<span className="text-xl">🚗</span> Traçar Rota Segura
 								</h3>
 
 								{/* ATALHOS RÁPIDOS: MINHA CASA */}
