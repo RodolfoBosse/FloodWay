@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CloudRain, MoreHorizontal, Trash2 } from "lucide-react";
+import { CloudRain, MoreHorizontal, Trash2, Bookmark, Star, Check } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
 import GoogleAdBlock from "./GoogleAdBlock";
 import { buscarDestinosCalibrados } from "../../services/locaisLajeado";
+import { API_BASE } from "../../services/config";
 
 const MetricsBottomSheet = ({
 	cotaReal = 13.84,
@@ -42,8 +43,105 @@ const MetricsBottomSheet = ({
 	const [isDragging, setIsDragging] = useState(false);
 	const [sugestoesOrigem, setSugestoesOrigem] = useState([]);
 	const [sugestoesDestino, setSugestoesDestino] = useState([]);
+	const [rotasSalvas, setRotasSalvas] = useState([]);
+	const [salvandoRotaAtual, setSalvandoRotaAtual] = useState(false);
+	const [rotaJaSalva, setRotaJaSalva] = useState(false);
 	const startYRef = useRef(0);
 	const startHeightRef = useRef(295);
+
+	// Carrega rotas salvas do LocalStorage e Backend
+	useEffect(() => {
+		if (usuario?.email) {
+			try {
+				const salvasLocal = localStorage.getItem(`rotas_${usuario.email}`);
+				if (salvasLocal) setRotasSalvas(JSON.parse(salvasLocal));
+			} catch (_) {}
+
+			fetch(`${API_BASE}/api/v1/rotas/listar/?email=${encodeURIComponent(usuario.email)}`)
+				.then((r) => (r.ok ? r.json() : null))
+				.then((d) => {
+					if (d?.rotas && Array.isArray(d.rotas)) {
+						setRotasSalvas(d.rotas);
+						localStorage.setItem(`rotas_${usuario.email}`, JSON.stringify(d.rotas));
+					}
+				})
+				.catch(() => {});
+		}
+	}, [usuario]);
+
+	// Verifica se a rota atual em exibição já está nos favoritos
+	useEffect(() => {
+		if (!dadosRota || !textoOrigem || !textoDestino) {
+			setRotaJaSalva(false);
+			return;
+		}
+		const existe = rotasSalvas.some(
+			(r) =>
+				(r.origem_nome === textoOrigem && r.destino_nome === textoDestino) ||
+				(r.origem_nome === textoDestino && r.destino_nome === textoOrigem)
+		);
+		setRotaJaSalva(existe);
+	}, [dadosRota, textoOrigem, textoDestino, rotasSalvas]);
+
+	const handleSalvarRotaFavorita = async () => {
+		if (!usuario || !pontoOrigem || !pontoDestino || !dadosRota) return;
+		const nomeSugerido = `${textoOrigem.split(',')[0]} ➔ ${textoDestino.split(',')[0]}`;
+		const apelido = window.prompt("Nome para esta rota frequente:", nomeSugerido);
+		if (!apelido) return;
+
+		setSalvandoRotaAtual(true);
+		const novaRotaObj = {
+			id: Date.now(),
+			email: usuario.email,
+			nome: apelido,
+			origem_nome: textoOrigem,
+			origem_coords: pontoOrigem,
+			destino_nome: textoDestino,
+			destino_coords: pontoDestino,
+			distancia: dadosRota.distancia || "0",
+			tempo: dadosRota.tempo || 5,
+		};
+
+		const atualizadas = [novaRotaObj, ...rotasSalvas.filter((r) => r.id !== novaRotaObj.id)];
+		setRotasSalvas(atualizadas);
+		localStorage.setItem(`rotas_${usuario.email}`, JSON.stringify(atualizadas));
+		setRotaJaSalva(true);
+
+		try {
+			await fetch(`${API_BASE}/api/v1/rotas/salvar/`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(novaRotaObj),
+			});
+		} catch (_) {}
+		setSalvandoRotaAtual(false);
+	};
+
+	const handleCarregarRotaSalva = (r) => {
+		setTextoOrigem(r.origem_nome);
+		setPontoOrigem(r.origem_coords);
+		setTextoDestino(r.destino_nome);
+		setPontoDestino(r.destino_coords);
+		setSugestoesOrigem([]);
+		setSugestoesDestino([]);
+		// Dispara o cálculo automático da rota
+		setTimeout(() => {
+			window.dispatchEvent(new CustomEvent("trigger-gerar-rota"));
+		}, 100);
+	};
+
+	const handleExcluirRotaSalva = async (id, e) => {
+		e.stopPropagation();
+		if (!window.confirm("Remover esta rota dos seus favoritos?")) return;
+		const filtradas = rotasSalvas.filter((r) => r.id !== id);
+		setRotasSalvas(filtradas);
+		if (usuario?.email) {
+			localStorage.setItem(`rotas_${usuario.email}`, JSON.stringify(filtradas));
+		}
+		try {
+			await fetch(`${API_BASE}/api/v1/rotas/${id}/excluir/`, { method: "POST" });
+		} catch (_) {}
+	};
 
 	const handleBuscar = async (termo, setter) => {
 		if (!termo || termo.trim().length < 2) {
@@ -456,6 +554,44 @@ const MetricsBottomSheet = ({
 									</div>
 								)}
 
+								{/* ROTAS FREQUENTES SALVAS */}
+								{rotasSalvas?.length > 0 && (
+									<div className="space-y-1">
+										<div className="flex items-center justify-between">
+											<span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider flex items-center gap-1">
+												<Star size={11} className="text-amber-500 fill-amber-500" />
+												Rotas Frequentes
+											</span>
+										</div>
+										<div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+											{rotasSalvas.map((r) => (
+												<div
+													key={r.id}
+													className="flex items-center bg-amber-50/80 border border-amber-200/80 text-amber-950 rounded-lg px-2 py-1 text-[11px] whitespace-nowrap shadow-sm hover:bg-amber-100 transition shrink-0 gap-1.5"
+												>
+													<button
+														type="button"
+														onClick={() => handleCarregarRotaSalva(r)}
+														className="flex items-center gap-1 font-semibold text-left"
+														title={`${r.origem_nome} ➔ ${r.destino_nome}`}
+													>
+														<span>🚗</span>
+														<span>{r.nome}</span>
+													</button>
+													<button
+														type="button"
+														onClick={(e) => handleExcluirRotaSalva(r.id, e)}
+														className="text-amber-700/60 hover:text-red-600 p-0.5 rounded transition"
+														title="Remover dos favoritos"
+													>
+														<Trash2 size={11} />
+													</button>
+												</div>
+											))}
+										</div>
+									</div>
+								)}
+
 								{/* ATALHOS DE PONTOS DE INTERESSE SALVOS */}
 								{usuario?.pontosInteresse?.length > 0 && (
 									<div className="flex items-center gap-1.5 overflow-x-auto pb-1">
@@ -623,7 +759,7 @@ const MetricsBottomSheet = ({
 												: "⛔ ATENÇÃO: CIDADE ILHADA NO NÍVEL ATIVO"}
 										</div>
 
-										{/* BOTÕES NAVEGAÇÃO EXTERNA (GOOGLE MAPS & WAZE) */}
+										{/* BOTÕES NAVEGAÇÃO EXTERNA (GOOGLE MAPS & WAZE) & SALVAR FAVORITA */}
 										<div className="flex gap-2 pt-1">
 											<button
 												type="button"
@@ -640,6 +776,30 @@ const MetricsBottomSheet = ({
 												<span>Waze</span>
 											</button>
 										</div>
+
+										{/* BOTÃO SALVAR ROTA FREQUENTE */}
+										<button
+											type="button"
+											onClick={handleSalvarRotaFavorita}
+											disabled={salvandoRotaAtual || rotaJaSalva}
+											className={`w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-95 border ${
+												rotaJaSalva
+													? "bg-amber-50 text-amber-800 border-amber-300"
+													: "bg-white hover:bg-amber-50 text-gray-800 border-gray-300 shadow-sm"
+											}`}
+										>
+											{rotaJaSalva ? (
+												<>
+													<Check size={14} className="text-emerald-600 stroke-[3]" />
+													<span className="text-amber-900">Salva nas Rotas Frequentes</span>
+												</>
+											) : (
+												<>
+													<Star size={14} className="text-amber-500 fill-amber-500" />
+													<span>Salvar como Rota Frequente</span>
+												</>
+											)}
+										</button>
 									</div>
 								)}
 							</div>

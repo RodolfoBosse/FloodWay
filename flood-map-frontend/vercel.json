@@ -1,6 +1,18 @@
 {
   "rewrites": [
     {
+      "source": "/api/v1/rotas/listar/(.*)",
+      "destination": "/api/rotas?action=listar"
+    },
+    {
+      "source": "/api/v1/rotas/salvar/(.*)",
+      "destination": "/api/rotas?action=salvar"
+    },
+    {
+      "source": "/api/v1/rotas/(.*)/excluir/(.*)",
+      "destination": "/api/rotas?action=excluir&id=$1"
+    },
+    {
       "source": "/api/v1/auth/google/",
       "destination": "/api/auth?action=google"
     },
