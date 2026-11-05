@@ -8,6 +8,7 @@ import AuthLGPDModal from "./components/mobile/AuthLGPDModal";
 import PerfilLGPDModal from "./components/mobile/PerfilLGPDModal";
 import PrevisaoClimaModal from "./components/mobile/PrevisaoClimaModal";
 import InstallPWABanner from "./components/mobile/InstallPWABanner";
+import GoogleAdBanner from "./components/mobile/GoogleAdBanner";
 import { estimarCotaTerreno } from "./services/locaisLajeado";
 
 function App() {
@@ -292,6 +293,9 @@ function App() {
 				isSimulando={isSimulando}
 				painelRotaAberto={painelRotaAberto}
 			/>
+
+			{/* Anúncio Google AdSense (Minimizável, fixado sobre a barra) */}
+			<GoogleAdBanner />
 
 			{/* Modais Globais de Autenticação e Perfil LGPD */}
 			<AuthLGPDModal
