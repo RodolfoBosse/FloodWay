@@ -387,12 +387,38 @@ async function buscarPhoton(termo) {
 	}
 }
 
+let _cacheEstabelecimentos = null;
+let _carregandoEstabelecimentos = null;
+
+async function carregarEstabelecimentosLajeado() {
+	if (_cacheEstabelecimentos) return _cacheEstabelecimentos;
+	if (_carregandoEstabelecimentos) return _carregandoEstabelecimentos;
+
+	_carregandoEstabelecimentos = (async () => {
+		try {
+			const res = await fetch("/estabelecimentos_lajeado.json");
+			if (!res.ok) throw new Error("Falha ao buscar estabelecimentos");
+			const dados = await res.json();
+			_cacheEstabelecimentos = Array.isArray(dados) ? dados : [];
+			return _cacheEstabelecimentos;
+		} catch (e) {
+			console.warn("Não foi possível carregar estabelecimentos_lajeado.json:", e);
+			_cacheEstabelecimentos = [];
+			return [];
+		} finally {
+			_carregandoEstabelecimentos = null;
+		}
+	})();
+
+	return _carregandoEstabelecimentos;
+}
+
 /**
  * Função de busca inteligente e calibrada de destinos em Lajeado
  * 1. Base Calibrada Local (Univates, CEAT, HBB, etc.)
- * 2. Photon Geocoder (Busca em tempo real de estabelecimentos, mercados, farmácias)
+ * 2. Base Completa de Estabelecimentos Comerciais e de Serviços de Lajeado (OSM)
  * 3. Ruas de Lajeado (com número predial interpolado)
- * 4. Nominatim OpenStreetMap (Fallback)
+ * 4. Photon Geocoder (Busca em tempo real)
  */
 export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 	if (!termo || termo.trim().length < 2) {
@@ -404,6 +430,9 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 	const tokens = tNorm.split(" ").filter((t) => t.length >= 2 && !/^\d+$/.test(t));
 	const resultados = [];
 	const idsVistos = new Set();
+
+	// Inicia carregamento dos estabelecimentos se ainda não feito
+	const promessaEstabelecimentos = carregarEstabelecimentosLajeado();
 
 	// 1. Busca prioritária nos Marcos e Locais Oficiais de Lajeado (Univates, CEAT, HBB, etc.)
 	for (const loc of LOCAIS_OFICIAIS_LAJEADO) {
@@ -441,7 +470,42 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 		}
 	}
 
-	// 2. Busca na base de Ruas de Lajeado (com suporte a número predial)
+	// 2. Busca na base de todos os Estabelecimentos de Lajeado (Mercados, Farmácias, Lojas, Clínicas, etc.)
+	try {
+		const listaEstab = await promessaEstabelecimentos;
+		for (const est of listaEstab) {
+			const eNomeNorm = normalizarTexto(est.nome || "");
+			const eDetNorm = normalizarTexto(est.detalhe || "");
+			const eCatNorm = normalizarTexto(est.categoria || "");
+
+			const matchDireto = eNomeNorm.includes(tNorm) || tNorm.includes(eNomeNorm);
+			const matchTokens =
+				tokens.length > 0 &&
+				tokens.every(
+					(tok) => eNomeNorm.includes(tok) || eDetNorm.includes(tok) || eCatNorm.includes(tok)
+				);
+
+			if (matchDireto || matchTokens) {
+				const idKey = `${est.coords[0].toFixed(4)},${est.coords[1].toFixed(4)}`;
+				if (!idsVistos.has(idKey)) {
+					idsVistos.add(idKey);
+					resultados.push({
+						nome: est.nome,
+						tipo: est.tipo || "comercio",
+						detalhe: `${est.detalhe} • ${est.categoria || "Lajeado"}`,
+						coords: est.coords,
+						cota: est.cota || null,
+						prioridade: eNomeNorm.startsWith(tNorm) ? 2 : 3,
+					});
+				}
+			}
+			if (resultados.length >= 10) break;
+		}
+	} catch (e) {
+		console.warn("Erro ao filtrar estabelecimentos:", e);
+	}
+
+	// 3. Busca na base de Ruas de Lajeado (com suporte a número predial)
 	for (const rua of listaRuas) {
 		const rNorm = normalizarTexto(rua.nome || "");
 		const bNorm = normalizarTexto(rua.bairro || "");
@@ -464,19 +528,20 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 						detalhe: rua.bairro ? `Bairro ${rua.bairro}` : "Lajeado - RS",
 						coords: coordsRua,
 						cota: rua.cota_bloqueio || rua.altitude_min || rua.cota || null,
-						prioridade: 3,
+						prioridade: 4,
 					});
 				}
 			}
 		}
 	}
 
-	// Se já encontrou resultados locais calibrados (Univates, CEAT, Ruas, etc.), retorna imediatamente sem esperar APIs lentas
+	// Se já encontrou resultados locais calibrados (Univates, CEAT, Estabelecimentos, Ruas), retorna imediatamente
 	if (resultados.length >= 3) {
+		resultados.sort((a, b) => (a.prioridade || 99) - (b.prioridade || 99));
 		return resultados.slice(0, 8);
 	}
 
-	// 3. Busca online em tempo real no Photon (apenas se poucos resultados locais)
+	// 4. Busca online em tempo real no Photon (apenas se poucos resultados locais)
 	try {
 		const photonPromise = buscarPhoton(termo);
 		const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve([]), 1200));

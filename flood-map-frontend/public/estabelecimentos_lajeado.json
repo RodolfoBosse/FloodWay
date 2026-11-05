@@ -1,0 +1,4932 @@
+[
+  {
+    "nome": "UNIVATES",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.44399,
+      -51.95545
+    ]
+  },
+  {
+    "nome": "Tombado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Borges de Medeiros, 225",
+    "coords": [
+      -29.46686,
+      -51.96251
+    ]
+  },
+  {
+    "nome": "Farmácia Panvel",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.46428,
+      -51.96449
+    ]
+  },
+  {
+    "nome": "Carmelito e Beto",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Borges de Medeiros, 251",
+    "coords": [
+      -29.46693,
+      -51.96274
+    ]
+  },
+  {
+    "nome": "Garagem da Julyo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46606,
+      -51.96297
+    ]
+  },
+  {
+    "nome": "Polly Dog",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Júlio de Castilhos, 312",
+    "coords": [
+      -29.46786,
+      -51.96309
+    ]
+  },
+  {
+    "nome": "Bombeiros",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44826,
+      -51.98151
+    ]
+  },
+  {
+    "nome": "Weiand Turis Hotel",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45941,
+      -51.97712
+    ]
+  },
+  {
+    "nome": "Pimentas Bar",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45628,
+      -51.96647
+    ]
+  },
+  {
+    "nome": "Farol Lanches",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.45645,
+      -51.96703
+    ]
+  },
+  {
+    "nome": "Posto Pflug",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.49051,
+      -51.91438
+    ]
+  },
+  {
+    "nome": "ES015 Igreja Católica Linha Novo Paraíso",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49634,
+      -51.91846
+    ]
+  },
+  {
+    "nome": "Zallon Hotel Executivo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Jacob Alois Altmayer, 36",
+    "coords": [
+      -29.45357,
+      -51.96598
+    ]
+  },
+  {
+    "nome": "Posto Tradição",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.4917,
+      -51.96012
+    ]
+  },
+  {
+    "nome": "Igreja Adventista",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48938,
+      -51.96085
+    ]
+  },
+  {
+    "nome": "Polícia Civil",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49625,
+      -51.96534
+    ]
+  },
+  {
+    "nome": "Colégio Martin Luther",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Nilo Pecanha, 104 - Oriental",
+    "coords": [
+      -29.49319,
+      -51.96388
+    ]
+  },
+  {
+    "nome": "Posto Charrua",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.48864,
+      -51.95923
+    ]
+  },
+  {
+    "nome": "Ponto de táxi",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46734,
+      -51.96303
+    ]
+  },
+  {
+    "nome": "Oi",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.47043,
+      -51.96155
+    ]
+  },
+  {
+    "nome": "Paróquia São Cristóvão",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48636,
+      -51.95326
+    ]
+  },
+  {
+    "nome": "Caixa Econômica Federal",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Avenida Benjamin Constant, 1764 - Florestal",
+    "coords": [
+      -29.45767,
+      -51.97276
+    ]
+  },
+  {
+    "nome": "Farmácia Mais Econômica",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.46435,
+      -51.96467
+    ]
+  },
+  {
+    "nome": "Estação do Carro",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Rio Branco, 874 - Oriental",
+    "coords": [
+      -29.49102,
+      -51.96033
+    ]
+  },
+  {
+    "nome": "Ponto Econômico",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49992,
+      -51.96534
+    ]
+  },
+  {
+    "nome": "Hermes e Leonardo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49856,
+      -51.96381
+    ]
+  },
+  {
+    "nome": "Banrisul",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.40027,
+      -51.94562
+    ]
+  },
+  {
+    "nome": "Correios",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40248,
+      -51.94404
+    ]
+  },
+  {
+    "nome": "Sicredi",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.4018,
+      -51.94392
+    ]
+  },
+  {
+    "nome": "Banco do Brasil",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.40341,
+      -51.94402
+    ]
+  },
+  {
+    "nome": "Escola Estadual Guararapes",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.40007,
+      -51.947
+    ]
+  },
+  {
+    "nome": "Prefeitura Municipal de Arroio do Meio",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40137,
+      -51.94483
+    ]
+  },
+  {
+    "nome": "Hotel Moinho da Luz",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40337,
+      -51.94244
+    ]
+  },
+  {
+    "nome": "Mercado Arroiomeense",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.40207,
+      -51.94201
+    ]
+  },
+  {
+    "nome": "Pipa Jhow",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.44364,
+      -51.95717
+    ]
+  },
+  {
+    "nome": "Comida caseira",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.48137,
+      -51.96216
+    ]
+  },
+  {
+    "nome": "Bar do Zé",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4813,
+      -51.96308
+    ]
+  },
+  {
+    "nome": "Barden Eletromóveis",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Doutor João Carlos Machado, 681",
+    "coords": [
+      -29.40122,
+      -51.94456
+    ]
+  },
+  {
+    "nome": "Loja Barden",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Doutor João Carlos Machado, 647",
+    "coords": [
+      -29.40146,
+      -51.94432
+    ]
+  },
+  {
+    "nome": "Magia Íntima",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Onze de Junho, 119",
+    "coords": [
+      -29.44964,
+      -51.96598
+    ]
+  },
+  {
+    "nome": "Itaú",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.46585,
+      -51.96376
+    ]
+  },
+  {
+    "nome": "Mercado Bom Gosto",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "ERS-130",
+    "coords": [
+      -29.41126,
+      -51.96132
+    ]
+  },
+  {
+    "nome": "SLG KAR",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua São Cristóvão",
+    "coords": [
+      -29.41129,
+      -51.96171
+    ]
+  },
+  {
+    "nome": "Agência de Correios Florestal",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida dos Quinze, 1016",
+    "coords": [
+      -29.45027,
+      -51.97552
+    ]
+  },
+  {
+    "nome": "Agência de Correios Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 670",
+    "coords": [
+      -29.46515,
+      -51.96603
+    ]
+  },
+  {
+    "nome": "Lajeado Rent a Car",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45246,
+      -51.96344
+    ]
+  },
+  {
+    "nome": "Posto do Arco",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "ERS-130, km 72.8 - Santo André",
+    "coords": [
+      -29.44202,
+      -51.97137
+    ]
+  },
+  {
+    "nome": "Ultra",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua João Pinto da Silva, 65 - Moinhos",
+    "coords": [
+      -29.46409,
+      -51.98844
+    ]
+  },
+  {
+    "nome": "Oficina do Gerson",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40406,
+      -51.94274
+    ]
+  },
+  {
+    "nome": "Off Lounge",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44741,
+      -51.9429
+    ]
+  },
+  {
+    "nome": "Balneário da Cascalheira",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.41357,
+      -51.91863
+    ]
+  },
+  {
+    "nome": "Rodoviária de Arroio do Meio",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua João Carlos Machado, 489 - Centro",
+    "coords": [
+      -29.40243,
+      -51.9432
+    ]
+  },
+  {
+    "nome": "Itaú",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.46407,
+      -51.96481
+    ]
+  },
+  {
+    "nome": "Sicredi",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.44681,
+      -51.96336
+    ]
+  },
+  {
+    "nome": "Tombado",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Borges de Medeiros, 225",
+    "coords": [
+      -29.46673,
+      -51.96246
+    ]
+  },
+  {
+    "nome": "Polícia Rodoviária Federal",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.43299,
+      -52.00866
+    ]
+  },
+  {
+    "nome": "Lotário Thomas",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.41436,
+      -51.96211
+    ]
+  },
+  {
+    "nome": "Sorvecrem",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "ERS-130, 978",
+    "coords": [
+      -29.41317,
+      -51.96307
+    ]
+  },
+  {
+    "nome": "LT Imóveis",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Olavo Billac, 319 - Florestal",
+    "coords": [
+      -29.45617,
+      -51.97035
+    ]
+  },
+  {
+    "nome": "Dom Lion Chocolates Finos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 3362 - Montanha",
+    "coords": [
+      -29.45112,
+      -51.98296
+    ]
+  },
+  {
+    "nome": "Arcoplex Cinemas",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44941,
+      -51.96895
+    ]
+  },
+  {
+    "nome": "Bradesco",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.40065,
+      -51.94701
+    ]
+  },
+  {
+    "nome": "Cabeleireiro Henn",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4022,
+      -51.9435
+    ]
+  },
+  {
+    "nome": "Farmácia Carisfarma",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.40194,
+      -51.94187
+    ]
+  },
+  {
+    "nome": "Farmácia Drogativa",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.40461,
+      -51.94372
+    ]
+  },
+  {
+    "nome": "Farmácia Agafarma",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Rua Júlio de Castilhos",
+    "coords": [
+      -29.40222,
+      -51.94643
+    ]
+  },
+  {
+    "nome": "Farmácia Noite e Dia",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.40051,
+      -51.94535
+    ]
+  },
+  {
+    "nome": "Hotel Central",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40198,
+      -51.94345
+    ]
+  },
+  {
+    "nome": "Mercado Airton",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.40015,
+      -51.94759
+    ]
+  },
+  {
+    "nome": "Kadernus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40212,
+      -51.94359
+    ]
+  },
+  {
+    "nome": "Agrícola Maná",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.41013,
+      -51.96039
+    ]
+  },
+  {
+    "nome": "Polícia Civil",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40033,
+      -51.94754
+    ]
+  },
+  {
+    "nome": "Posto Codorna",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.4333,
+      -52.01008
+    ]
+  },
+  {
+    "nome": "Padaria Suiça",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 1419 - Centro",
+    "coords": [
+      -29.45869,
+      -51.96971
+    ]
+  },
+  {
+    "nome": "Lojas Bade",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4003,
+      -51.94597
+    ]
+  },
+  {
+    "nome": "Loja Kist",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40196,
+      -51.94375
+    ]
+  },
+  {
+    "nome": "Loja do Alemão",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40171,
+      -51.94351
+    ]
+  },
+  {
+    "nome": "Lojas Lebes",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4029,
+      -51.94248
+    ]
+  },
+  {
+    "nome": "Imobiliária Joner",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40031,
+      -51.94741
+    ]
+  },
+  {
+    "nome": "Imobiliária Porte",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4004,
+      -51.9473
+    ]
+  },
+  {
+    "nome": "Tabelionato",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40047,
+      -51.94723
+    ]
+  },
+  {
+    "nome": "Registro de Imóveis Thomas",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40109,
+      -51.94617
+    ]
+  },
+  {
+    "nome": "CRVA",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40101,
+      -51.94628
+    ]
+  },
+  {
+    "nome": "Centro Clínico São José",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Rua Júlio de Castilhos, 388 - Centro",
+    "coords": [
+      -29.40201,
+      -51.9471
+    ]
+  },
+  {
+    "nome": "Girazzi Peças",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola, 4787 - Olarias",
+    "coords": [
+      -29.44035,
+      -51.98931
+    ]
+  },
+  {
+    "nome": "Pedrotti Padaria E Confeitaria",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Visconde do Rio Branco, 636",
+    "coords": [
+      -29.4021,
+      -51.94541
+    ]
+  },
+  {
+    "nome": "Museu Público Municipal de Arroio do Meio",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40225,
+      -51.94523
+    ]
+  },
+  {
+    "nome": "Comercial Elétrica Scheibler",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Nicolau Kaffer, 354 - Barra do Forqueta",
+    "coords": [
+      -29.41572,
+      -51.95872
+    ]
+  },
+  {
+    "nome": "Aspen Executive Hotel",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 1175",
+    "coords": [
+      -29.45109,
+      -51.96486
+    ]
+  },
+  {
+    "nome": "Dillon Bohrer",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Rua Sidonia Prediger, 93",
+    "coords": [
+      -29.44916,
+      -51.9635
+    ]
+  },
+  {
+    "nome": "Flores & Flores - Floricultura",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida ACVAT, 217",
+    "coords": [
+      -29.45595,
+      -51.96491
+    ]
+  },
+  {
+    "nome": "J.A. Spohr Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola",
+    "coords": [
+      -29.45398,
+      -51.95963
+    ]
+  },
+  {
+    "nome": "Toyota Motolândia",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "ERS-130, 2388",
+    "coords": [
+      -29.44264,
+      -51.97016
+    ]
+  },
+  {
+    "nome": "Motomecânica",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Marcilio Dias, 103",
+    "coords": [
+      -29.45256,
+      -51.96693
+    ]
+  },
+  {
+    "nome": "O Pastelão",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Avenida Benjamin Constant, 1047",
+    "coords": [
+      -29.46203,
+      -51.96722
+    ]
+  },
+  {
+    "nome": "Pramius",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua João Batista de Melo, 314",
+    "coords": [
+      -29.46541,
+      -51.96473
+    ]
+  },
+  {
+    "nome": "Restaurante e Pizzaria Moenda",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua João Batista de Melo, 251",
+    "coords": [
+      -29.4648,
+      -51.96378
+    ]
+  },
+  {
+    "nome": "Sicredi Vale do Taquari RS",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44706,
+      -51.96451
+    ]
+  },
+  {
+    "nome": "Unimed Vales do Taquari e Rio Pardo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Piraí, 155",
+    "coords": [
+      -29.44677,
+      -51.96522
+    ]
+  },
+  {
+    "nome": "Valecross - Honda Dream",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 874",
+    "coords": [
+      -29.45301,
+      -51.96673
+    ]
+  },
+  {
+    "nome": "Valecross",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 700",
+    "coords": [
+      -29.45458,
+      -51.9673
+    ]
+  },
+  {
+    "nome": "Academia Musical Êxitus",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.45452,
+      -51.96431
+    ]
+  },
+  {
+    "nome": "Motel Cascata da Pedra",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Liberato Salzano Vieira da Cunha, 496",
+    "coords": [
+      -29.45538,
+      -51.96059
+    ]
+  },
+  {
+    "nome": "DEX Motos e Veículos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Expedicionários do Brasil, 479",
+    "coords": [
+      -29.45443,
+      -51.9644
+    ]
+  },
+  {
+    "nome": "Lar Santa Rita de Cássia",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Parque do Imigrante, 87",
+    "coords": [
+      -29.45612,
+      -51.95571
+    ]
+  },
+  {
+    "nome": "Minato Mirai",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Dezessete de Dezembro, 438",
+    "coords": [
+      -29.46218,
+      -51.95859
+    ]
+  },
+  {
+    "nome": "Motel Monn Cherry",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.42618,
+      -51.96774
+    ]
+  },
+  {
+    "nome": "Sorvetes Kelly",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Antônio Solleti, 243",
+    "coords": [
+      -29.43792,
+      -51.97286
+    ]
+  },
+  {
+    "nome": "Criah - Coletivo de Arte, Ecologia e Espiritualidade",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Julio May, 339 - Centro",
+    "coords": [
+      -29.46655,
+      -51.96424
+    ]
+  },
+  {
+    "nome": "Agripeças",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "ERS-130, 783",
+    "coords": [
+      -29.41382,
+      -51.96213
+    ]
+  },
+  {
+    "nome": "Restaurante Luigi",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Donga Menezes, 102",
+    "coords": [
+      -29.44486,
+      -51.98082
+    ]
+  },
+  {
+    "nome": "Matriz Lojas Benoit",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Barão do Triunfo, 157",
+    "coords": [
+      -29.45431,
+      -51.96782
+    ]
+  },
+  {
+    "nome": "Casa das Fechaduras",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Bento Rosa",
+    "coords": [
+      -29.46609,
+      -51.959
+    ]
+  },
+  {
+    "nome": "Pastelaria do Rei",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua 25 de Julho",
+    "coords": [
+      -29.45565,
+      -51.96776
+    ]
+  },
+  {
+    "nome": "Lajevet",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Beira Rio, 4575",
+    "coords": [
+      -29.49533,
+      -51.97381
+    ]
+  },
+  {
+    "nome": "Posto de Lavagem Classe A",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Senador Alberto Pasqualini",
+    "coords": [
+      -29.44596,
+      -51.96309
+    ]
+  },
+  {
+    "nome": "Restaurante do Baldo",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.40078,
+      -51.94687
+    ]
+  },
+  {
+    "nome": "Clínica Kerbes",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.40276,
+      -51.94474
+    ]
+  },
+  {
+    "nome": "EMEF Campestre",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Paul Harris, 488 - Campestre",
+    "coords": [
+      -29.43836,
+      -51.97512
+    ]
+  },
+  {
+    "nome": "Ki-Ponto Lanches",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Visconde do Rio Branco",
+    "coords": [
+      -29.40315,
+      -51.94428
+    ]
+  },
+  {
+    "nome": "Monumento ao Imigrante",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45298,
+      -51.96636
+    ]
+  },
+  {
+    "nome": "Floricultura SM",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40328,
+      -51.94413
+    ]
+  },
+  {
+    "nome": "Restaurante e Lancheria do Vale",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua José Wunibaldo Thomas",
+    "coords": [
+      -29.40431,
+      -51.95876
+    ]
+  },
+  {
+    "nome": "LS Artesanatos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40977,
+      -51.96406
+    ]
+  },
+  {
+    "nome": "Iveco",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Paulo Emílio Thiesen, 3240",
+    "coords": [
+      -29.43381,
+      -52.00375
+    ]
+  },
+  {
+    "nome": "Restaurante 22",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.44904,
+      -51.94684
+    ]
+  },
+  {
+    "nome": "Fruteira",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.41468,
+      -51.96335
+    ]
+  },
+  {
+    "nome": "Ellus Motel",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.47528,
+      -51.88528
+    ]
+  },
+  {
+    "nome": "Boate Flerte",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.47683,
+      -51.88494
+    ]
+  },
+  {
+    "nome": "Motel Fantasy",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48884,
+      -51.91014
+    ]
+  },
+  {
+    "nome": "Salão do Reino das Testemunhas de Jeová",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Maurício Cardoso, 860",
+    "coords": [
+      -29.44553,
+      -51.97354
+    ]
+  },
+  {
+    "nome": "Buddha Sushi Lounge",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.44556,
+      -51.94997
+    ]
+  },
+  {
+    "nome": "Igreja Nossa Senhora do Rosário",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48587,
+      -51.8943
+    ]
+  },
+  {
+    "nome": "Interact Bridges",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44905,
+      -51.94414
+    ]
+  },
+  {
+    "nome": "Retta Tecnologia",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44913,
+      -51.94423
+    ]
+  },
+  {
+    "nome": "Teatro Univates",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44551,
+      -51.95355
+    ]
+  },
+  {
+    "nome": "Biblioteca Univates",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44573,
+      -51.95315
+    ]
+  },
+  {
+    "nome": "GZT",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Mussnich, 10 - Centro",
+    "coords": [
+      -29.49724,
+      -51.96331
+    ]
+  },
+  {
+    "nome": "Lojas Lebes",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Mussnich, 18 - Centro",
+    "coords": [
+      -29.49741,
+      -51.96332
+    ]
+  },
+  {
+    "nome": "Lojas Becker",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49752,
+      -51.96333
+    ]
+  },
+  {
+    "nome": "Filtrobom Comércio Autopeças",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49641,
+      -51.95027
+    ]
+  },
+  {
+    "nome": "L’amour Motel",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4654,
+      -51.95167
+    ]
+  },
+  {
+    "nome": "Lojas Benoit",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Mussnich, 68 - Centro",
+    "coords": [
+      -29.49808,
+      -51.96345
+    ]
+  },
+  {
+    "nome": "A Mobília",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Mussnich, 68 - Centro",
+    "coords": [
+      -29.49823,
+      -51.96347
+    ]
+  },
+  {
+    "nome": "Salão Do Reino Das Testemunhas De Jeová",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Britto, 496 - Centro",
+    "coords": [
+      -29.49971,
+      -51.95879
+    ]
+  },
+  {
+    "nome": "Cachorrão Carmelito e Beto",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Avenida Rio Branco, 863 - Estados",
+    "coords": [
+      -29.49136,
+      -51.95993
+    ]
+  },
+  {
+    "nome": "Bauru Lanches",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Arnaldo Balve",
+    "coords": [
+      -29.49289,
+      -51.96126
+    ]
+  },
+  {
+    "nome": "Farmácias São João",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Avenida Rio Branco",
+    "coords": [
+      -29.49327,
+      -51.96136
+    ]
+  },
+  {
+    "nome": "Atacadão do Sorvete Eskimó",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Rio Branco, 662 - Oriental",
+    "coords": [
+      -29.49295,
+      -51.96125
+    ]
+  },
+  {
+    "nome": "Di Nápoli",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Avenida Rio Branco, 728 - Estados",
+    "coords": [
+      -29.49277,
+      -51.96074
+    ]
+  },
+  {
+    "nome": "Restaurante Terraço",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Avenida Rio Branco, 461 - Estados",
+    "coords": [
+      -29.49268,
+      -51.96069
+    ]
+  },
+  {
+    "nome": "Vilanova Auto Elétrica",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Rio Branco - Estados",
+    "coords": [
+      -29.49233,
+      -51.96046
+    ]
+  },
+  {
+    "nome": "Mega Lancheria Pizzaria",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Avenida Rio Branco, 765 - Estados",
+    "coords": [
+      -29.49238,
+      -51.96047
+    ]
+  },
+  {
+    "nome": "Restaurante Bocatto",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.44503,
+      -51.95674
+    ]
+  },
+  {
+    "nome": "Box Locadora Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 641 - Americano",
+    "coords": [
+      -29.45523,
+      -51.96681
+    ]
+  },
+  {
+    "nome": "Bendito Pub",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Alberto Müller, 1511 - Alto do Parque",
+    "coords": [
+      -29.44531,
+      -51.94982
+    ]
+  },
+  {
+    "nome": "Bierdron",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Germano Berner, 450 - Centro",
+    "coords": [
+      -29.45844,
+      -51.97001
+    ]
+  },
+  {
+    "nome": "Croasonho",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Bento Gonçalves, 1144 - Centro",
+    "coords": [
+      -29.46061,
+      -51.96566
+    ]
+  },
+  {
+    "nome": "Padaria, Confeitaria e Café Pão Quente",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Bento Gonçalves, 1083 - Centro",
+    "coords": [
+      -29.46118,
+      -51.96506
+    ]
+  },
+  {
+    "nome": "Restaurante Barranco",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Osvaldo Aranha, 255 - Centro",
+    "coords": [
+      -29.47037,
+      -51.96152
+    ]
+  },
+  {
+    "nome": "Amor Animal Pet Shop",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua João Goulart, 165 - Campestre",
+    "coords": [
+      -29.43732,
+      -51.97159
+    ]
+  },
+  {
+    "nome": "X Delivery Lajeado",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 691",
+    "coords": [
+      -29.45456,
+      -51.96644
+    ]
+  },
+  {
+    "nome": "Mercado e Açougue JL",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Rua Afonso Schneider, 842 - Barra do Forqueta",
+    "coords": [
+      -29.40769,
+      -51.9663
+    ]
+  },
+  {
+    "nome": "Charrua",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44127,
+      -51.97285
+    ]
+  },
+  {
+    "nome": "Pousada Vó Odete",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Santos Dumont, 156",
+    "coords": [
+      -29.46178,
+      -51.97295
+    ]
+  },
+  {
+    "nome": "Renova Bombas Injetoras LTDA",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Roberto Fridolino Kolling, 380 - Florestal",
+    "coords": [
+      -29.45035,
+      -51.97601
+    ]
+  },
+  {
+    "nome": "Wallerius Seguros",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4552,
+      -51.96417
+    ]
+  },
+  {
+    "nome": "EMEF Pinheiros",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.49592,
+      -51.94711
+    ]
+  },
+  {
+    "nome": "EMEI Espaço de Sonhos",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.4956,
+      -51.94488
+    ]
+  },
+  {
+    "nome": "Escola Estadual de Ensino Médio Santo Antônio",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.48478,
+      -51.98787
+    ]
+  },
+  {
+    "nome": "Márcia Souza Espaço da Beleza",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua São Cristóvão, 686",
+    "coords": [
+      -29.40802,
+      -51.9672
+    ]
+  },
+  {
+    "nome": "Mimado da Montanha Pet Shop",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Paulo J. Schlabitz, 249 - Montanha",
+    "coords": [
+      -29.44788,
+      -51.98305
+    ]
+  },
+  {
+    "nome": "Comercial Gaúcha (FECHADO)",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49051,
+      -51.95961
+    ]
+  },
+  {
+    "nome": "CenterCar",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Visconde do Rio Branco, 120",
+    "coords": [
+      -29.40568,
+      -51.94151
+    ]
+  },
+  {
+    "nome": "Achei Fácil - Rede de Negócios",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 323 - 303",
+    "coords": [
+      -29.46809,
+      -51.96429
+    ]
+  },
+  {
+    "nome": "Lojas Certel",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Doutor João Carlos Machado, 1114 - Centro",
+    "coords": [
+      -29.40448,
+      -51.94117
+    ]
+  },
+  {
+    "nome": "Super Lojão - Ponto do Real",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Júlio de Castilhos, 566 - Centro",
+    "coords": [
+      -29.46606,
+      -51.96556
+    ]
+  },
+  {
+    "nome": "Consisa",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Coronel Britto, 1005 - Imigrantes",
+    "coords": [
+      -29.49667,
+      -51.95635
+    ]
+  },
+  {
+    "nome": "Bufalera",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua 17 de Dezembro, 438 LJ07 - Hidráulica",
+    "coords": [
+      -29.46195,
+      -51.95858
+    ]
+  },
+  {
+    "nome": "ES196",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44605,
+      -51.88289
+    ]
+  },
+  {
+    "nome": "ES242",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48878,
+      -51.91016
+    ]
+  },
+  {
+    "nome": "ES241",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.47522,
+      -51.88528
+    ]
+  },
+  {
+    "nome": "ES222",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.47672,
+      -51.88512
+    ]
+  },
+  {
+    "nome": "ES221",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48825,
+      -51.90447
+    ]
+  },
+  {
+    "nome": "Himmel Bier",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Estrada Novo Paraíso, 533 - Novo Paraíso",
+    "coords": [
+      -29.49501,
+      -51.92392
+    ]
+  },
+  {
+    "nome": "ES362",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49366,
+      -51.92711
+    ]
+  },
+  {
+    "nome": "ES382",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49414,
+      -51.9249
+    ]
+  },
+  {
+    "nome": "ES377",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4988,
+      -51.9103
+    ]
+  },
+  {
+    "nome": "ES017",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49906,
+      -51.90892
+    ]
+  },
+  {
+    "nome": "ES013",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44848,
+      -51.88388
+    ]
+  },
+  {
+    "nome": "ES011",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49409,
+      -51.92591
+    ]
+  },
+  {
+    "nome": "ES003",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4961,
+      -51.91765
+    ]
+  },
+  {
+    "nome": "Mimar Agropet",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44927,
+      -52.00204
+    ]
+  },
+  {
+    "nome": "Ekipcar Rodas e Pneus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45189,
+      -51.97828
+    ]
+  },
+  {
+    "nome": "Barra Um",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44284,
+      -51.95722
+    ]
+  },
+  {
+    "nome": "Diretoria",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44297,
+      -51.95691
+    ]
+  },
+  {
+    "nome": "Pit Stop",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44293,
+      -51.95704
+    ]
+  },
+  {
+    "nome": "Lojas Benoit",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46085,
+      -51.96684
+    ]
+  },
+  {
+    "nome": "Uniasselvi Lajeado",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Avenida 7 de Setembro, 184 , Sala 301 - Florestal",
+    "coords": [
+      -29.45458,
+      -51.97564
+    ]
+  },
+  {
+    "nome": "Outlet das Tintas",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 3300, Sala 101 - Montanha",
+    "coords": [
+      -29.45121,
+      -51.98239
+    ]
+  },
+  {
+    "nome": "Agropecuária Portaluppi",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45121,
+      -51.98247
+    ]
+  },
+  {
+    "nome": "Auto-Elétrica Muskopf",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.43364,
+      -52.00916
+    ]
+  },
+  {
+    "nome": "Velho Bento St. Barbershop",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46516,
+      -51.96316
+    ]
+  },
+  {
+    "nome": "Lendário Pub & Café",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Bento Gonçalves, 1008 - Centro",
+    "coords": [
+      -29.46191,
+      -51.96497
+    ]
+  },
+  {
+    "nome": "Linda Import",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Carlos Spohr Filho, 3046 - Moinhos d'Água",
+    "coords": [
+      -29.46155,
+      -51.99327
+    ]
+  },
+  {
+    "nome": "Casa Nostra Lajeado",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 678",
+    "coords": [
+      -29.45484,
+      -51.96729
+    ]
+  },
+  {
+    "nome": "Supermercado Passarela",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.44899,
+      -51.9687
+    ]
+  },
+  {
+    "nome": "Praça de Alimentação",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4492,
+      -51.96879
+    ]
+  },
+  {
+    "nome": "Farmácia São João",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.4492,
+      -51.9685
+    ]
+  },
+  {
+    "nome": "Subway",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.44909,
+      -51.969
+    ]
+  },
+  {
+    "nome": "Burger King",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.44917,
+      -51.96937
+    ]
+  },
+  {
+    "nome": "Renner",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44901,
+      -51.96948
+    ]
+  },
+  {
+    "nome": "Lojas Americanas",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44937,
+      -51.96851
+    ]
+  },
+  {
+    "nome": "ESF Montanha",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Rua João Sebastiany, 1312 - Montanha",
+    "coords": [
+      -29.45619,
+      -51.98695
+    ]
+  },
+  {
+    "nome": "Certel Energia",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 3533 - Montanha",
+    "coords": [
+      -29.45054,
+      -51.9847
+    ]
+  },
+  {
+    "nome": "Cometa Livraria e Papelaria",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Júlio de Castilhos, 280 - Centro",
+    "coords": [
+      -29.46804,
+      -51.96303
+    ]
+  },
+  {
+    "nome": "Rufúgio Strong",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Júlio de Castilhos, 350",
+    "coords": [
+      -29.46756,
+      -51.96321
+    ]
+  },
+  {
+    "nome": "Busto de Orlando Fett",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46757,
+      -51.96288
+    ]
+  },
+  {
+    "nome": "Bar do Lula",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46836,
+      -51.96332
+    ]
+  },
+  {
+    "nome": "Livraria Planetária",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Marechal Deodoro, 192 - Centro",
+    "coords": [
+      -29.46789,
+      -51.96196
+    ]
+  },
+  {
+    "nome": "Tafarel Lanches",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.46793,
+      -51.96206
+    ]
+  },
+  {
+    "nome": "PC Carnes",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Carlos Sphor Filho, 951",
+    "coords": [
+      -29.46802,
+      -51.97519
+    ]
+  },
+  {
+    "nome": "Merlin Gastropub",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Osvaldo Aranha, 205",
+    "coords": [
+      -29.47023,
+      -51.96087
+    ]
+  },
+  {
+    "nome": "Gruta Nossa Senhora de Lourdes",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45846,
+      -51.96255
+    ]
+  },
+  {
+    "nome": "Santander",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44501,
+      -51.95635
+    ]
+  },
+  {
+    "nome": "Padaria e Cafeteria Moinhos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46208,
+      -51.99065
+    ]
+  },
+  {
+    "nome": "Lucasa Construtora",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44553,
+      -51.96193
+    ]
+  },
+  {
+    "nome": "ES580",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.43415,
+      -51.91182
+    ]
+  },
+  {
+    "nome": "Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.42206,
+      -51.9669
+    ]
+  },
+  {
+    "nome": "Posto Flex Lajeado",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.43577,
+      -51.9971
+    ]
+  },
+  {
+    "nome": "Posto Sim",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.45455,
+      -51.97404
+    ]
+  },
+  {
+    "nome": "Posto Fórmula",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 619",
+    "coords": [
+      -29.45553,
+      -51.96683
+    ]
+  },
+  {
+    "nome": "Feira do Produtor Rural",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46508,
+      -51.96693
+    ]
+  },
+  {
+    "nome": "Posto Charrua",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.4667,
+      -51.96221
+    ]
+  },
+  {
+    "nome": "Posto Spohr Filho",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Rua Carlos Spohr Filho, 2015 - Moinhos",
+    "coords": [
+      -29.46409,
+      -51.98383
+    ]
+  },
+  {
+    "nome": "Posto Fórmula",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.45016,
+      -51.96517
+    ]
+  },
+  {
+    "nome": "Estacionamento de Motos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44416,
+      -51.95731
+    ]
+  },
+  {
+    "nome": "Posto Via Quality",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.44928,
+      -52.00222
+    ]
+  },
+  {
+    "nome": "Inspesul",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 3023",
+    "coords": [
+      -29.45085,
+      -51.981
+    ]
+  },
+  {
+    "nome": "Car Sul Veículos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45085,
+      -51.98076
+    ]
+  },
+  {
+    "nome": "Peixe Gás",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45082,
+      -51.9812
+    ]
+  },
+  {
+    "nome": "Injeto Power",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45088,
+      -51.98089
+    ]
+  },
+  {
+    "nome": "Casa do Açougueiro",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45274,
+      -51.97915
+    ]
+  },
+  {
+    "nome": "Auto Som Kaupfmann",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45254,
+      -51.97912
+    ]
+  },
+  {
+    "nome": "Misto Quente",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.45248,
+      -51.97911
+    ]
+  },
+  {
+    "nome": "BR",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.46564,
+      -51.95655
+    ]
+  },
+  {
+    "nome": "Casa do Peixe",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.40621,
+      -51.94042
+    ]
+  },
+  {
+    "nome": "Clínica Tostes",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Rua Germano Berner, 360 - Centro",
+    "coords": [
+      -29.45894,
+      -51.97032
+    ]
+  },
+  {
+    "nome": "Congregação Cristã no Brasil",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49899,
+      -51.9528
+    ]
+  },
+  {
+    "nome": "AMBI",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Henrique Uebel, 1045 - Moinhos",
+    "coords": [
+      -29.48205,
+      -51.96676
+    ]
+  },
+  {
+    "nome": "Posto Médico-Legal de Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel João Batista de Mello, 509",
+    "coords": [
+      -29.46566,
+      -51.96654
+    ]
+  },
+  {
+    "nome": "Posto do Arco Caminhões",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.44136,
+      -51.97127
+    ]
+  },
+  {
+    "nome": "Csn Suplementos",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Rua Olavo Billac, 520 - Florestal",
+    "coords": [
+      -29.45693,
+      -51.97222
+    ]
+  },
+  {
+    "nome": "Igreja Evangélica Assembleia de Deus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48489,
+      -51.95679
+    ]
+  },
+  {
+    "nome": "Igreja Batista",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48448,
+      -51.95954
+    ]
+  },
+  {
+    "nome": "Conceito Materiais de Construção",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48599,
+      -51.95715
+    ]
+  },
+  {
+    "nome": "A Igreja de Jesus Cristo dos Santos dos Últimos Dias",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48803,
+      -51.95877
+    ]
+  },
+  {
+    "nome": "D'Pedó Móveis",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48779,
+      -51.95901
+    ]
+  },
+  {
+    "nome": "Canto do Churrasco",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.48622,
+      -51.95782
+    ]
+  },
+  {
+    "nome": "Super Esquinão",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Rua João Lino Braun",
+    "coords": [
+      -29.48263,
+      -51.95154
+    ]
+  },
+  {
+    "nome": "Samaq Massey Ferguson",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.488,
+      -51.95434
+    ]
+  },
+  {
+    "nome": "EEEB Nicolau Müssnich",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Professora Nelly Müller",
+    "coords": [
+      -29.48801,
+      -51.95197
+    ]
+  },
+  {
+    "nome": "Univale Distribuidora de Bebidas",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48898,
+      -51.95621
+    ]
+  },
+  {
+    "nome": "JL Moto Peças",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4892,
+      -51.95993
+    ]
+  },
+  {
+    "nome": "Floricultura Rio Branco",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48977,
+      -51.95957
+    ]
+  },
+  {
+    "nome": "Stop Car Multimarcas",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48964,
+      -51.95949
+    ]
+  },
+  {
+    "nome": "EEEF Moinhos (FECHADA)",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua dos Marinheiros",
+    "coords": [
+      -29.48449,
+      -51.97506
+    ]
+  },
+  {
+    "nome": "Colégio Martin Luther Júnior",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.49417,
+      -51.9631
+    ]
+  },
+  {
+    "nome": "Mercado Preço Baixo",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.4988,
+      -51.96529
+    ]
+  },
+  {
+    "nome": "Creche Colméia",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Doutor Lauro Reinaldo Müller",
+    "coords": [
+      -29.4875,
+      -51.9528
+    ]
+  },
+  {
+    "nome": "Farmácia Bom Retiro",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.48649,
+      -51.95089
+    ]
+  },
+  {
+    "nome": "Maxxi Econômica",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.48645,
+      -51.95132
+    ]
+  },
+  {
+    "nome": "Da Boa União Fruteira",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48636,
+      -51.95085
+    ]
+  },
+  {
+    "nome": "Mercado Zart",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Rua São Jorge",
+    "coords": [
+      -29.49925,
+      -51.95209
+    ]
+  },
+  {
+    "nome": "Panela de Ferro",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48838,
+      -51.9584
+    ]
+  },
+  {
+    "nome": "Bombeiros Estrela",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.48973,
+      -51.95612
+    ]
+  },
+  {
+    "nome": "Salão do Reino Testemunhas de Jeová",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49024,
+      -51.95618
+    ]
+  },
+  {
+    "nome": "Elyza Zart Terapia Ocupacional",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Rua Piauí, 1405",
+    "coords": [
+      -29.45203,
+      -51.94998
+    ]
+  },
+  {
+    "nome": "Presídio estadual de Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45192,
+      -51.97761
+    ]
+  },
+  {
+    "nome": "Selaria Lajeadense - Artigos Gauchescos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Paulo José Schlabitz, 246",
+    "coords": [
+      -29.44779,
+      -51.98276
+    ]
+  },
+  {
+    "nome": "Igreja Evangélica Novo Paraíso",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49918,
+      -51.90897
+    ]
+  },
+  {
+    "nome": "Anfiteatro Univates",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44485,
+      -51.95595
+    ]
+  },
+  {
+    "nome": "Parque do Imigrante",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.455,
+      -51.9544
+    ]
+  },
+  {
+    "nome": "Atacadão",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 1476 - São Cristovão",
+    "coords": [
+      -29.44803,
+      -51.96519
+    ]
+  },
+  {
+    "nome": "São Cristóvão",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44967,
+      -51.96523
+    ]
+  },
+  {
+    "nome": "Posto Fascina",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.44938,
+      -51.96436
+    ]
+  },
+  {
+    "nome": "JamRock Skate Lounge",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45686,
+      -51.98062
+    ]
+  },
+  {
+    "nome": "Grupo Independente",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Alberto Müller, 242",
+    "coords": [
+      -29.45479,
+      -51.95641
+    ]
+  },
+  {
+    "nome": "Desco",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.45491,
+      -51.96597
+    ]
+  },
+  {
+    "nome": "Colégio Evangélico Alberto Torres",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.46217,
+      -51.96269
+    ]
+  },
+  {
+    "nome": "Centro Comunitário Evangélico",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46153,
+      -51.96241
+    ]
+  },
+  {
+    "nome": "Igreja Matriz Santo Inácio de Loyola",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46718,
+      -51.96171
+    ]
+  },
+  {
+    "nome": "Castelinho",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Bento Gonçalves, 291",
+    "coords": [
+      -29.46768,
+      -51.9614
+    ]
+  },
+  {
+    "nome": "Hospital Bruno Born",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Avenida Benjamin Constant, 881 - Centro",
+    "coords": [
+      -29.46289,
+      -51.96625
+    ]
+  },
+  {
+    "nome": "Prioridade 10",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49118,
+      -51.96042
+    ]
+  },
+  {
+    "nome": "Panvel Farmácias",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.49969,
+      -51.96565
+    ]
+  },
+  {
+    "nome": "Floricultura D'Maio",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Mussnich, 90 - Centro",
+    "coords": [
+      -29.49845,
+      -51.96343
+    ]
+  },
+  {
+    "nome": "Auto peças Apollo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49083,
+      -51.96028
+    ]
+  },
+  {
+    "nome": "Banrisul",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.49975,
+      -51.96526
+    ]
+  },
+  {
+    "nome": "Igreja Universal",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49432,
+      -51.96199
+    ]
+  },
+  {
+    "nome": "Farmácia Mais Econômica",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.5001,
+      -51.96605
+    ]
+  },
+  {
+    "nome": "STR Lajeado",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Rua Bento Gonçalves, 639",
+    "coords": [
+      -29.46471,
+      -51.96265
+    ]
+  },
+  {
+    "nome": "Associação Rural de Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Bento Gonçalves, 665",
+    "coords": [
+      -29.46438,
+      -51.96279
+    ]
+  },
+  {
+    "nome": "Colégio Gustavo Adolfo",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.44981,
+      -51.9602
+    ]
+  },
+  {
+    "nome": "Colégio João Batista de Mello",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.45988,
+      -51.97125
+    ]
+  },
+  {
+    "nome": "Faleiro Shell Select",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Rua Júlio de Castilhos, 1348",
+    "coords": [
+      -29.46005,
+      -51.9681
+    ]
+  },
+  {
+    "nome": "Imec",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.46052,
+      -51.96638
+    ]
+  },
+  {
+    "nome": "ABC Atacado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46135,
+      -51.95513
+    ]
+  },
+  {
+    "nome": "Posto Fórmula",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola",
+    "coords": [
+      -29.45948,
+      -51.95549
+    ]
+  },
+  {
+    "nome": "Churrascaria Boi e Brasa",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola",
+    "coords": [
+      -29.45852,
+      -51.95596
+    ]
+  },
+  {
+    "nome": "Casa Santo Nono",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.49885,
+      -51.96389
+    ]
+  },
+  {
+    "nome": "BR Mania",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.45016,
+      -51.96531
+    ]
+  },
+  {
+    "nome": "Imec",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.44558,
+      -51.96309
+    ]
+  },
+  {
+    "nome": "Apomedil Veículos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola, 625",
+    "coords": [
+      -29.46429,
+      -51.95465
+    ]
+  },
+  {
+    "nome": "Weicolo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola, 732",
+    "coords": [
+      -29.46237,
+      -51.9551
+    ]
+  },
+  {
+    "nome": "Panorâmico",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.45552,
+      -51.95524
+    ]
+  },
+  {
+    "nome": "Moises Cândido Veloso",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.46263,
+      -51.95747
+    ]
+  },
+  {
+    "nome": "Lojas Becker",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Julio de Castilhos, 1145",
+    "coords": [
+      -29.46086,
+      -51.96631
+    ]
+  },
+  {
+    "nome": "Garden Festas e Eventos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Silvestre Jacob Ely, 7",
+    "coords": [
+      -29.45744,
+      -51.9564
+    ]
+  },
+  {
+    "nome": "Estação Rodoviária de Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Presidente Castelo Branco, 42 - Moinhos",
+    "coords": [
+      -29.45276,
+      -51.97853
+    ]
+  },
+  {
+    "nome": "Banco do Brasil",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Rua Júlio de Castilhos, 810",
+    "coords": [
+      -29.46366,
+      -51.96512
+    ]
+  },
+  {
+    "nome": "Casas Bahia",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Julio de Castilhos, 1132",
+    "coords": [
+      -29.46112,
+      -51.96669
+    ]
+  },
+  {
+    "nome": "Bradesco",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Rua Julio de Castilhos, 1114",
+    "coords": [
+      -29.46132,
+      -51.96653
+    ]
+  },
+  {
+    "nome": "Droga Raia",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Rua Julio de Castilhos, 1200",
+    "coords": [
+      -29.46064,
+      -51.967
+    ]
+  },
+  {
+    "nome": "Banrisul",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Rua Julio de Castilhos, 569",
+    "coords": [
+      -29.4656,
+      -51.96377
+    ]
+  },
+  {
+    "nome": "Prefeitura Municipal de Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Júlio May, 242",
+    "coords": [
+      -29.46658,
+      -51.96324
+    ]
+  },
+  {
+    "nome": "Sicredi",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Rua Santos Filho, 240",
+    "coords": [
+      -29.46439,
+      -51.96397
+    ]
+  },
+  {
+    "nome": "Caixa Econômica Federal",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Rua Julio de Castilhos, 1029",
+    "coords": [
+      -29.46183,
+      -51.96568
+    ]
+  },
+  {
+    "nome": "Kikão Lanches",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 527",
+    "coords": [
+      -29.45615,
+      -51.9669
+    ]
+  },
+  {
+    "nome": "Posto Giovanella",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 586",
+    "coords": [
+      -29.45558,
+      -51.96743
+    ]
+  },
+  {
+    "nome": "Lojas Colombo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Mussnich, 36",
+    "coords": [
+      -29.49774,
+      -51.96328
+    ]
+  },
+  {
+    "nome": "EMEF São João",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Carlos Spohr Filho, 3320 - Moinhos",
+    "coords": [
+      -29.46095,
+      -51.99518
+    ]
+  },
+  {
+    "nome": "CFC Delazeri",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46279,
+      -51.9685
+    ]
+  },
+  {
+    "nome": "Mercado e açougue ARZ",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.46148,
+      -51.99185
+    ]
+  },
+  {
+    "nome": "Bar do Martins",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Arcelo Jose Diehl, 160 - Oriental",
+    "coords": [
+      -29.48996,
+      -51.96379
+    ]
+  },
+  {
+    "nome": "Rede Polo",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Rua Osvaldo Aranha, 847 - Centro",
+    "coords": [
+      -29.47173,
+      -51.96765
+    ]
+  },
+  {
+    "nome": "Supermercado Dom Aldino",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Rua Nilo Pecanha - Oriental",
+    "coords": [
+      -29.49471,
+      -51.9632
+    ]
+  },
+  {
+    "nome": "Colégio Vinte de Maio",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Balduino Pedro Vier - Oriental",
+    "coords": [
+      -29.49073,
+      -51.96258
+    ]
+  },
+  {
+    "nome": "Univates - Centro Cultural",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44565,
+      -51.95341
+    ]
+  },
+  {
+    "nome": "Mecânica Gregory",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4919,
+      -51.93576
+    ]
+  },
+  {
+    "nome": "Supermercado Noeli Caio",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.48125,
+      -51.95998
+    ]
+  },
+  {
+    "nome": "Top Records",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Mossoró, 936 - Universitário",
+    "coords": [
+      -29.43673,
+      -51.95033
+    ]
+  },
+  {
+    "nome": "Moraes E Maia Coleta de Eletrônicos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola - Florestal",
+    "coords": [
+      -29.44166,
+      -51.9894
+    ]
+  },
+  {
+    "nome": "Posto Montanha",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Avenida Benjamin Constant, 3378 - Montanha",
+    "coords": [
+      -29.45108,
+      -51.98319
+    ]
+  },
+  {
+    "nome": "Instituto Federal de Educação, Ciência e Tecnologia Sul-rio-grandense",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua João Goulart, 2150 - Olarias",
+    "coords": [
+      -29.43696,
+      -51.98692
+    ]
+  },
+  {
+    "nome": "Savana Motel",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "RS-130",
+    "coords": [
+      -29.48821,
+      -51.99849
+    ]
+  },
+  {
+    "nome": "Posto Moinhos",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.46599,
+      -51.98068
+    ]
+  },
+  {
+    "nome": "CC - Country Club",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44116,
+      -51.9874
+    ]
+  },
+  {
+    "nome": "Posto Nevoeiro",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.45221,
+      -51.97872
+    ]
+  },
+  {
+    "nome": "Fórmula",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Lajeado/RS (Posto de Combustível)",
+    "coords": [
+      -29.45732,
+      -51.97253
+    ]
+  },
+  {
+    "nome": "IMEC Florestal",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.45825,
+      -51.97263
+    ]
+  },
+  {
+    "nome": "Boate Champagne",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44233,
+      -51.98541
+    ]
+  },
+  {
+    "nome": "Scooby Doo Lanches",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.43479,
+      -51.99078
+    ]
+  },
+  {
+    "nome": "Fabi Compensados",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.47827,
+      -52.01463
+    ]
+  },
+  {
+    "nome": "Sushi Bar",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.46062,
+      -51.95737
+    ]
+  },
+  {
+    "nome": "Centro Clínico Univates - Prédio 22",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.44893,
+      -51.94699
+    ]
+  },
+  {
+    "nome": "Univates",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.44905,
+      -51.94656
+    ]
+  },
+  {
+    "nome": "Escola de Música Josélia Jantsch Ferla",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Dezessete de Dezembro, 235",
+    "coords": [
+      -29.46397,
+      -51.95851
+    ]
+  },
+  {
+    "nome": "Posto de Saúde Municipal",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.48018,
+      -51.98079
+    ]
+  },
+  {
+    "nome": "Sicredi",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.44697,
+      -51.96453
+    ]
+  },
+  {
+    "nome": "São João",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 1550 - São Cristovão",
+    "coords": [
+      -29.44733,
+      -51.96422
+    ]
+  },
+  {
+    "nome": "Biblioteca Pública Municipal João Frederico Schaan",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Júlio de Castilhos, 411",
+    "coords": [
+      -29.46693,
+      -51.96319
+    ]
+  },
+  {
+    "nome": "Genes Work & Shop",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46517,
+      -51.96623
+    ]
+  },
+  {
+    "nome": "Quiosque dos Dick",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46639,
+      -51.97022
+    ]
+  },
+  {
+    "nome": "Aquarela das Flores",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Dezessete de Dezembro, 720",
+    "coords": [
+      -29.45964,
+      -51.95736
+    ]
+  },
+  {
+    "nome": "Champs-Élysées",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola, 580 - Hidráulica",
+    "coords": [
+      -29.4647,
+      -51.95612
+    ]
+  },
+  {
+    "nome": "Lancheira da Cascata",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Carlos Spohr Filho, 3420",
+    "coords": [
+      -29.4608,
+      -51.99659
+    ]
+  },
+  {
+    "nome": "Suivale",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "ERS-130, 988",
+    "coords": [
+      -29.41309,
+      -51.96289
+    ]
+  },
+  {
+    "nome": "Saborear Restaurante",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Omar Moreira Libio, 274",
+    "coords": [
+      -29.44913,
+      -51.96378
+    ]
+  },
+  {
+    "nome": "Costaneira",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44745,
+      -51.96703
+    ]
+  },
+  {
+    "nome": "Comunidade Nossa Senhora de Lurdes",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44043,
+      -51.95321
+    ]
+  },
+  {
+    "nome": "Igreja pentecostal Novo caminho",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.43894,
+      -51.96013
+    ]
+  },
+  {
+    "nome": "Atacadão",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.47927,
+      -51.95512
+    ]
+  },
+  {
+    "nome": "CTG Raça Gaudéria",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Andreas Goellner, 378 - Boa União",
+    "coords": [
+      -29.48481,
+      -51.94167
+    ]
+  },
+  {
+    "nome": "EMEF Professora Ruth Markus Huber",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Adão Henrique Fett, 596 - Boa União",
+    "coords": [
+      -29.48361,
+      -51.94301
+    ]
+  },
+  {
+    "nome": "Lojas Quero-Quero",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Mussnich, 25 - Centro",
+    "coords": [
+      -29.49753,
+      -51.96384
+    ]
+  },
+  {
+    "nome": "Posto Buffon",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola",
+    "coords": [
+      -29.49674,
+      -51.95028
+    ]
+  },
+  {
+    "nome": "Auto Elétrica e Baterias Petry",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola, 2828 - Imigrantes",
+    "coords": [
+      -29.49651,
+      -51.9503
+    ]
+  },
+  {
+    "nome": "Restaurante JF",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola",
+    "coords": [
+      -29.49684,
+      -51.95013
+    ]
+  },
+  {
+    "nome": "Antônio J. Mendes",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49626,
+      -51.95021
+    ]
+  },
+  {
+    "nome": "Destak Materiais de Construção",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Britto, 530 - Centro",
+    "coords": [
+      -29.49995,
+      -51.95868
+    ]
+  },
+  {
+    "nome": "Cristo Vive",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49861,
+      -51.96037
+    ]
+  },
+  {
+    "nome": "Fülber Pneus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel Britto, 396 - Centro",
+    "coords": [
+      -29.49991,
+      -51.95983
+    ]
+  },
+  {
+    "nome": "Joe's Bar e Restaurante",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Avenida Rio Branco, 775 - Estados",
+    "coords": [
+      -29.49224,
+      -51.96033
+    ]
+  },
+  {
+    "nome": "Mundial Igreja do Poder de Deus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Rio Branco, 751 - Estados",
+    "coords": [
+      -29.49253,
+      -51.96046
+    ]
+  },
+  {
+    "nome": "Associação Espírita Ramatís",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Carlos de Laer, 501 - São Cristóvão",
+    "coords": [
+      -29.44339,
+      -51.96831
+    ]
+  },
+  {
+    "nome": "Restaurante Casa da Montanha",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.4508,
+      -51.98243
+    ]
+  },
+  {
+    "nome": "Lojas GZT",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46529,
+      -51.96362
+    ]
+  },
+  {
+    "nome": "Mecânica do Sílvio",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45782,
+      -51.9252
+    ]
+  },
+  {
+    "nome": "Droga Raia",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Avenida Benjamin Constant, 2634",
+    "coords": [
+      -29.45315,
+      -51.976
+    ]
+  },
+  {
+    "nome": "Esquinão Express",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.44957,
+      -52.00217
+    ]
+  },
+  {
+    "nome": "McDonald's",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.45396,
+      -51.96659
+    ]
+  },
+  {
+    "nome": "McDonald's Sobremesas",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Senador Alberto Pasqualini",
+    "coords": [
+      -29.45407,
+      -51.96676
+    ]
+  },
+  {
+    "nome": "Unidade de Pronto Atendimento - UPA",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.46105,
+      -51.997
+    ]
+  },
+  {
+    "nome": "Lojas taQi",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45854,
+      -51.97242
+    ]
+  },
+  {
+    "nome": "Hélio Automóveis",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45858,
+      -51.97199
+    ]
+  },
+  {
+    "nome": "CeiCar",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Carlos Spohr Filho, 1409",
+    "coords": [
+      -29.46588,
+      -51.97937
+    ]
+  },
+  {
+    "nome": "Bambo Kids",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant",
+    "coords": [
+      -29.4514,
+      -51.98091
+    ]
+  },
+  {
+    "nome": "IMEC Montanha",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.45031,
+      -51.98119
+    ]
+  },
+  {
+    "nome": "Ely Automóveis",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45241,
+      -51.97654
+    ]
+  },
+  {
+    "nome": "Madeireira Trevo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45138,
+      -51.9784
+    ]
+  },
+  {
+    "nome": "Brigada Militar",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46658,
+      -51.96457
+    ]
+  },
+  {
+    "nome": "Havan",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46776,
+      -51.95563
+    ]
+  },
+  {
+    "nome": "Concha Acústica",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46698,
+      -51.97119
+    ]
+  },
+  {
+    "nome": "Justiça do Trabalho",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Paulo Frederico Schumacher, 115",
+    "coords": [
+      -29.45634,
+      -51.98068
+    ]
+  },
+  {
+    "nome": "Fórum de Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45643,
+      -51.97973
+    ]
+  },
+  {
+    "nome": "Presídio Feminino de Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45214,
+      -51.97704
+    ]
+  },
+  {
+    "nome": "São João",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.45671,
+      -51.973
+    ]
+  },
+  {
+    "nome": "São João",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.45689,
+      -51.9736
+    ]
+  },
+  {
+    "nome": "TK Pneus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45313,
+      -51.97474
+    ]
+  },
+  {
+    "nome": "Distribuidora Titaniun",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida 7 de Setembro",
+    "coords": [
+      -29.45362,
+      -51.97544
+    ]
+  },
+  {
+    "nome": "Apolo Auto Peças",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45335,
+      -51.97549
+    ]
+  },
+  {
+    "nome": "Quinta Roda",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida 7 de Setembro",
+    "coords": [
+      -29.45388,
+      -51.97551
+    ]
+  },
+  {
+    "nome": "Autec",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida 7 de Setembro, 139",
+    "coords": [
+      -29.45418,
+      -51.97608
+    ]
+  },
+  {
+    "nome": "Residencial Geriatrico Aliança",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46153,
+      -51.97616
+    ]
+  },
+  {
+    "nome": "Beer Dog",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.45728,
+      -51.97321
+    ]
+  },
+  {
+    "nome": "Panvel",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.45806,
+      -51.97201
+    ]
+  },
+  {
+    "nome": "Mega Compra",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 1344 - Centro",
+    "coords": [
+      -29.45979,
+      -51.96921
+    ]
+  },
+  {
+    "nome": "Brincasa Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45968,
+      -51.96941
+    ]
+  },
+  {
+    "nome": "Lojas Lebes",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45998,
+      -51.96918
+    ]
+  },
+  {
+    "nome": "Banrisul",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.45916,
+      -51.96906
+    ]
+  },
+  {
+    "nome": "Florestal Pneus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45531,
+      -51.97383
+    ]
+  },
+  {
+    "nome": "Sicredi",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.45544,
+      -51.97329
+    ]
+  },
+  {
+    "nome": "AS Pneus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45417,
+      -51.97351
+    ]
+  },
+  {
+    "nome": "Marreta",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida ACVAT, 67",
+    "coords": [
+      -29.45612,
+      -51.96628
+    ]
+  },
+  {
+    "nome": "GT Pneus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45274,
+      -51.96656
+    ]
+  },
+  {
+    "nome": "Giraffas",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.44908,
+      -51.96502
+    ]
+  },
+  {
+    "nome": "Zé Pneus",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4488,
+      -51.96494
+    ]
+  },
+  {
+    "nome": "Red Container",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.44383,
+      -51.95478
+    ]
+  },
+  {
+    "nome": "Panvel",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.46177,
+      -51.9663
+    ]
+  },
+  {
+    "nome": "São João",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.46238,
+      -51.96533
+    ]
+  },
+  {
+    "nome": "Lojas Colombo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46219,
+      -51.96548
+    ]
+  },
+  {
+    "nome": "Tio Hélio",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.46811,
+      -51.96245
+    ]
+  },
+  {
+    "nome": "Comando de Polícia Ostensiva do Vale do Taquari",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Marechal Deodoro, 202 - Centro",
+    "coords": [
+      -29.46803,
+      -51.96226
+    ]
+  },
+  {
+    "nome": "Crisales",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45397,
+      -51.98323
+    ]
+  },
+  {
+    "nome": "Maxxi Econômica Fármacias",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Avenida João Alberto Schmidt, 605 - Montanha",
+    "coords": [
+      -29.45039,
+      -51.9852
+    ]
+  },
+  {
+    "nome": "Lancheria Fogo de Chão",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.4501,
+      -51.98954
+    ]
+  },
+  {
+    "nome": "Animal Center",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 3838 - Montanha",
+    "coords": [
+      -29.45038,
+      -51.98957
+    ]
+  },
+  {
+    "nome": "São João",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Lajeado/RS (Saúde)",
+    "coords": [
+      -29.46803,
+      -51.9749
+    ]
+  },
+  {
+    "nome": "Escola Municipal Ensino Infantil Aprender Brincando",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Carlos Spohr Filho, 2451 - Moinhos",
+    "coords": [
+      -29.46325,
+      -51.98801
+    ]
+  },
+  {
+    "nome": "Skol",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46026,
+      -51.96795
+    ]
+  },
+  {
+    "nome": "Posto Faleiro",
+    "tipo": "posto",
+    "categoria": "Posto de Combustível",
+    "detalhe": "Rua Júlio de Castilhos, 1348",
+    "coords": [
+      -29.46006,
+      -51.96794
+    ]
+  },
+  {
+    "nome": "BR Mania",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.45537,
+      -51.96678
+    ]
+  },
+  {
+    "nome": "ampm",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Lajeado/RS (Supermercado)",
+    "coords": [
+      -29.46566,
+      -51.96532
+    ]
+  },
+  {
+    "nome": "Farmácia São João",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 745 - São Cristovão",
+    "coords": [
+      -29.45431,
+      -51.96661
+    ]
+  },
+  {
+    "nome": "Sicoob",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Lajeado/RS (Banco)",
+    "coords": [
+      -29.44767,
+      -51.96437
+    ]
+  },
+  {
+    "nome": "Escola Municipal de Educação Infantil Saber, Educar e Respeitar",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Arnoldo Uhry, 2180 - Santo Antônio",
+    "coords": [
+      -29.48353,
+      -51.98763
+    ]
+  },
+  {
+    "nome": "Lothar Johann",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 3038",
+    "coords": [
+      -29.45138,
+      -51.98135
+    ]
+  },
+  {
+    "nome": "Casttini",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant",
+    "coords": [
+      -29.45138,
+      -51.98124
+    ]
+  },
+  {
+    "nome": "Vithall",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant",
+    "coords": [
+      -29.45139,
+      -51.98113
+    ]
+  },
+  {
+    "nome": "Mais Lux",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant",
+    "coords": [
+      -29.4514,
+      -51.98102
+    ]
+  },
+  {
+    "nome": "Dutra's & MotorMonkeys",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 3986 - Montanha",
+    "coords": [
+      -29.45041,
+      -51.99037
+    ]
+  },
+  {
+    "nome": "Fam Car Select",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 3974 - Montanha",
+    "coords": [
+      -29.45042,
+      -51.99024
+    ]
+  },
+  {
+    "nome": "VidaCard",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Avenida Benjamin Constant, 1968 - Florestal",
+    "coords": [
+      -29.45708,
+      -51.97326
+    ]
+  },
+  {
+    "nome": "Oral Sim",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant - Centro",
+    "coords": [
+      -29.45971,
+      -51.96926
+    ]
+  },
+  {
+    "nome": "Delegacia de Polícia de Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Coronel João Batista de Mello, 509",
+    "coords": [
+      -29.46559,
+      -51.96679
+    ]
+  },
+  {
+    "nome": "O Boticário",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Júlio de Castilhos, 801 - Centro",
+    "coords": [
+      -29.46358,
+      -51.96476
+    ]
+  },
+  {
+    "nome": "Lojas Benoit filial Lajeado III",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Júlio de Castilhos, 1329",
+    "coords": [
+      -29.45962,
+      -51.96793
+    ]
+  },
+  {
+    "nome": "Subway",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Rua Júlio de Castilhos, 1285",
+    "coords": [
+      -29.4597,
+      -51.96729
+    ]
+  },
+  {
+    "nome": "Chiquinho Sorvetes",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45987,
+      -51.96705
+    ]
+  },
+  {
+    "nome": "Safe Park",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.46397,
+      -51.96753
+    ]
+  },
+  {
+    "nome": "Vovó Faz Bolo",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Bento Gonçalves, 1076 - Centro",
+    "coords": [
+      -29.46122,
+      -51.96531
+    ]
+  },
+  {
+    "nome": "Banrisul",
+    "tipo": "banco",
+    "categoria": "Banco",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 1469 - São Cristovão",
+    "coords": [
+      -29.4484,
+      -51.96395
+    ]
+  },
+  {
+    "nome": "Tubétio",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Senador Alberto Pasqualini, 1441",
+    "coords": [
+      -29.44868,
+      -51.96401
+    ]
+  },
+  {
+    "nome": "Meu Escritório Gourmet",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Piraí, 196 - São Cristovão",
+    "coords": [
+      -29.44683,
+      -51.96628
+    ]
+  },
+  {
+    "nome": "Rabaioli Compagnoni",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rodovia Governador Leonel de Moura Brizola - Olarias",
+    "coords": [
+      -29.44093,
+      -51.98818
+    ]
+  },
+  {
+    "nome": "Shopping Lajeado",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.44939,
+      -51.96902
+    ]
+  },
+  {
+    "nome": "Atacarejo Rede Polo",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "BR-386, 2088 - Americano",
+    "coords": [
+      -29.45435,
+      -51.96205
+    ]
+  },
+  {
+    "nome": "EEEF Pedro Scherer",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Irmando R. Weishelmer, 681 - Montanha",
+    "coords": [
+      -29.4434,
+      -51.9859
+    ]
+  },
+  {
+    "nome": "Escola de Educação Infantil Arco-Íris",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida Benjamin Constant, 3881 - Montanha",
+    "coords": [
+      -29.4503,
+      -51.98682
+    ]
+  },
+  {
+    "nome": "EMEI Pequeno Cidadão",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua das Laranjeiras, 597 - Montanha",
+    "coords": [
+      -29.45089,
+      -51.98758
+    ]
+  },
+  {
+    "nome": "EMEI Jeito de Criança",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Waldemar Schossler, 256 - Moinhos d'Água",
+    "coords": [
+      -29.45292,
+      -52.00391
+    ]
+  },
+  {
+    "nome": "Círculo das Águas",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4696,
+      -51.96062
+    ]
+  },
+  {
+    "nome": "Tecnicar Martelinho de Ouro",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua João Abott, 329 - Centro",
+    "coords": [
+      -29.46796,
+      -51.96654
+    ]
+  },
+  {
+    "nome": "Supermercado Montanha",
+    "tipo": "mercado",
+    "categoria": "Supermercado",
+    "detalhe": "Rua João Sebastiany, 1050 - Montanha",
+    "coords": [
+      -29.45343,
+      -51.98664
+    ]
+  },
+  {
+    "nome": "Alternativa Veículos",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.45757,
+      -51.97293
+    ]
+  },
+  {
+    "nome": "Roque Tratores",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.47448,
+      -52.0113
+    ]
+  },
+  {
+    "nome": "EMEI Sonho de Criança",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Eugênia Mello de Oliveira Kirchheim, 413 - Bom Pastor",
+    "coords": [
+      -29.43833,
+      -52.00455
+    ]
+  },
+  {
+    "nome": "Mercado Redefort",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.4036,
+      -51.94369
+    ]
+  },
+  {
+    "nome": "Igreja Matriz",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.40145,
+      -51.94515
+    ]
+  },
+  {
+    "nome": "Hospital São José",
+    "tipo": "hospital",
+    "categoria": "Saúde",
+    "detalhe": "Rua Júlio de Castilhos, 314",
+    "coords": [
+      -29.40255,
+      -51.94656
+    ]
+  },
+  {
+    "nome": "Restaurante Dois Irmãos",
+    "tipo": "restaurante",
+    "categoria": "Alimentação",
+    "detalhe": "Lajeado/RS (Alimentação)",
+    "coords": [
+      -29.43483,
+      -52.00609
+    ]
+  },
+  {
+    "nome": "Autoglass",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.43532,
+      -51.99741
+    ]
+  },
+  {
+    "nome": "Centro Pedro Albino Müller de Atendimento à Criança e ao Adolescente",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Bernardino Pinto, 355 - Santo Antônio",
+    "coords": [
+      -29.48939,
+      -51.98583
+    ]
+  },
+  {
+    "nome": "Saidan",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Rua Bernardino Pinto, 300 - Morro Vinte e Cinco",
+    "coords": [
+      -29.49116,
+      -51.98615
+    ]
+  },
+  {
+    "nome": "Au Au Banho e Tosa",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49258,
+      -51.96145
+    ]
+  },
+  {
+    "nome": "Orca Confecções",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49258,
+      -51.96108
+    ]
+  },
+  {
+    "nome": "Rei da Bike",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49247,
+      -51.96101
+    ]
+  },
+  {
+    "nome": "EMEI São João",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Lajeado/RS (Educação)",
+    "coords": [
+      -29.49357,
+      -51.96294
+    ]
+  },
+  {
+    "nome": "Rota Indústria Gráfica",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.49408,
+      -51.9501
+    ]
+  },
+  {
+    "nome": "Rodoviária de Estrela",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Avenida dos Estados, 310 - Estados",
+    "coords": [
+      -29.48885,
+      -51.95639
+    ]
+  },
+  {
+    "nome": "Colégio São Miguel",
+    "tipo": "escola",
+    "categoria": "Educação",
+    "detalhe": "Rua Júlio de Castilhos, 414 - Centro",
+    "coords": [
+      -29.40172,
+      -51.94762
+    ]
+  },
+  {
+    "nome": "Associação Galpão dos Patrões",
+    "tipo": "comercio",
+    "categoria": "Estabelecimento",
+    "detalhe": "Lajeado/RS (Estabelecimento)",
+    "coords": [
+      -29.42607,
+      -51.9641
+    ]
+  }
+]
