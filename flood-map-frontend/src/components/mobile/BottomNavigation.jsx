@@ -37,7 +37,8 @@ const BottomNavigation = ({
         <span className="text-[10px]">Rotas</span>
       </button>
 
-      {/* 3. Gráficos */}
+      {/* 3. Gráficos (Temporariamente Desativado) */}
+      {/*
       <button
         onClick={onGraficosClick}
         className={`flex flex-col items-center gap-0.5 py-1 px-3 transition ${
@@ -47,6 +48,7 @@ const BottomNavigation = ({
         <LineChart size={20} strokeWidth={abaAtiva === "graficos" ? 2.2 : 1.6} />
         <span className="text-[10px]">Gráficos</span>
       </button>
+      */}
 
       {/* 4. Simular */}
       <button
