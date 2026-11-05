@@ -126,26 +126,7 @@ const MapaInterativo = ({
 	const [senhaInput, setSenhaInput] = useState("");
 	const [nomeInput, setNomeInput] = useState("");
 
-	const contasGoogleDisponiveis = [
-		{
-			nome: "Rodolfo Bosse de Jesus",
-			email: "engenharia6@medicalsan.com.br",
-			iniciais: "R",
-			cor: "bg-orange-600",
-		},
-		{
-			nome: "RODOLFO BOSSE DE JESUS",
-			email: "rodolfo.jesus@universo.univates.br",
-			iniciais: "R",
-			cor: "bg-blue-600",
-		},
-		{
-			nome: "Rodolfo Bosse",
-			email: "rodolfobosse@gmail.com",
-			iniciais: "R",
-			cor: "bg-green-600",
-		},
-	];
+	const contasGoogleDisponiveis = [];
 
 	const [casaEndereco, setCasaEndereco] = useState("");
 	const [casaNumero, setCasaNumero] = useState("");
@@ -1585,8 +1566,8 @@ const MapaInterativo = ({
 					center={config.centro}
 					zoom={config.zoom}
 					style={{ width: "100%", height: "100%" }}
-					maxBounds={config.bounds}
-					maxBoundsViscosity={0.8}>
+					minZoom={10}
+					maxZoom={19}>
 					<CapturadorDeCliques
 						modoSelecao={modoSelecao}
 						onPontoSelecionado={selecionarPontoNoMapa}

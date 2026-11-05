@@ -7,6 +7,7 @@ import BottomNavigation from "./components/mobile/BottomNavigation";
 import AuthLGPDModal from "./components/mobile/AuthLGPDModal";
 import PerfilLGPDModal from "./components/mobile/PerfilLGPDModal";
 import PrevisaoClimaModal from "./components/mobile/PrevisaoClimaModal";
+import InstallPWABanner from "./components/mobile/InstallPWABanner";
 
 function App() {
 	const [cotaAtual, setCotaAtual] = useState(null);
@@ -283,6 +284,9 @@ function App() {
 				onAbrirConfigCasa={() => setModalCasaAberto(true)}
 				cotaAtual={cotaAtual?.nivel || cotaReal || 13.24}
 			/>
+
+			{/* Banner de Instalação PWA */}
+			<InstallPWABanner />
 
 			{/* Modal de Previsão do Tempo e Chuvas */}
 			<PrevisaoClimaModal
