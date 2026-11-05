@@ -325,18 +325,63 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from apps.flood.models import PerfilSentinela
 
-def obter_altitude_satelite(lat, lon):
+import math
+
+def calcular_distancia_metros_py(lat1, lon1, lat2, lon2):
+    R = 6371000
+    rad = math.pi / 180
+    dlat = (lat2 - lat1) * rad
+    dlon = (lon2 - lon1) * rad
+    a = math.sin(dlat / 2)**2 + math.cos(lat1 * rad) * math.cos(lat2 * rad) * math.sin(dlon / 2)**2
+    return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+def obter_altitude_satelite(lat, lon, endereco=""):
+    # 1. Tenta buscar pela malha oficial calibrada de ruas do banco de dados
+    try:
+        from apps.flood.models import RuaAltimetria
+        melhor_dist = float('inf')
+        melhor_cota = None
+        
+        # Filtro por nome de rua se disponível
+        end_limpo = (endereco or '').lower()
+        ruas_qs = RuaAltimetria.objects.filter(coordenadas_json__isnull=False)
+        
+        for r in ruas_qs:
+            r_nome = (r.nome or '').lower()
+            eh_mesma_rua = r_nome and (r_nome in end_limpo or end_limpo in r_nome)
+            try:
+                cj = json.loads(r.coordenadas_json)
+                if isinstance(cj, list):
+                    for seg in cj:
+                        cota_seg = seg.get('cota') or r.cota_bloqueio or r.altitude_min
+                        for p in seg.get('coords', []):
+                            d = calcular_distancia_metros_py(lat, lon, p[0], p[1])
+                            if eh_mesma_rua and d < 350 and cota_seg:
+                                return float(cota_seg)
+                            if d < melhor_dist and cota_seg:
+                                melhor_dist = d
+                                melhor_cota = cota_seg
+            except Exception:
+                pass
+                
+        if melhor_cota and melhor_dist < 1000:
+            return float(melhor_cota)
+    except Exception as err_bd:
+        logger.warning(f"Erro buscando cota no BD: {err_bd}")
+
+    # 2. Tenta Open-Elevation online
     try:
         url = f"https://api.open-elevation.com/api/v1/lookup?locations={lat},{lon}"
-        resp = requests.get(url, timeout=5)
+        resp = requests.get(url, timeout=3)
         if resp.status_code == 200:
             dados = resp.json()
             if dados.get('results'):
                 return float(dados['results'][0]['elevation'])
     except Exception:
         pass
-    # Fallback seguro da cota média urbana de Lajeado
-    return 22.0
+
+    # Fallback urbano calibrado
+    return 29.2
 
 @csrf_exempt
 def salvar_perfil_sentinela(request):
@@ -352,13 +397,16 @@ def salvar_perfil_sentinela(request):
         bairro = data.get('bairro', '')
         lat = data.get('latitude')
         lon = data.get('longitude')
+        cota_req = data.get('cota_terreno')
         
         if not email:
             return JsonResponse({'erro': 'Email é obrigatório'}, status=400)
             
-        cota = 22.0
-        if lat and lon:
-            cota = obter_altitude_satelite(lat, lon)
+        cota = 29.2
+        if cota_req and float(cota_req) > 0:
+            cota = float(cota_req)
+        elif lat and lon:
+            cota = obter_altitude_satelite(lat, lon, endereco)
 
         perfil, criado = PerfilSentinela.objects.update_or_create(
             email=email,

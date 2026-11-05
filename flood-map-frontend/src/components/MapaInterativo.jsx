@@ -15,7 +15,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import AuthLGPDModal from "./mobile/AuthLGPDModal";
 
-import { buscarDestinosCalibrados, LOCAIS_OFICIAIS_LAJEADO } from "../services/locaisLajeado";
+import { buscarDestinosCalibrados, estimarCotaTerreno, LOCAIS_OFICIAIS_LAJEADO } from "../services/locaisLajeado";
 // Ícones Customizados
 const iconeBloqueio = new L.DivIcon({
 	html: '<div style="background-color: #dc2626; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.35);">⛔</div>',
@@ -394,6 +394,14 @@ const MapaInterativo = ({
 			}
 		}
 
+		// Calcula a cota precisa imediata baseada na malha viária oficial calibrada
+		const cotaEstimadaOficial = estimarCotaTerreno(
+			coordsFinais[0],
+			coordsFinais[1],
+			enderecoCompleto,
+			listaRuas
+		);
+
 		try {
 			const resp = await fetch(`${API_BASE}/api/v1/perfil/salvar/`, {
 				method: "POST",
@@ -406,11 +414,12 @@ const MapaInterativo = ({
 					bairro: casaBairro,
 					latitude: coordsFinais[0],
 					longitude: coordsFinais[1],
+					cota_terreno: cotaEstimadaOficial,
 				}),
 			});
 
 			const data = await resp.json();
-			const cotaCalculada = data?.perfil?.cota_terreno || 29.2;
+			const cotaCalculada = data?.perfil?.cota_terreno || cotaEstimadaOficial || 29.2;
 
 			const usuarioAtualizado = {
 				...usuario,
@@ -437,7 +446,7 @@ const MapaInterativo = ({
 					bairro: casaBairro,
 					whatsapp: casaWhatsapp,
 					coords: coordsFinais,
-					cota: 29.2,
+					cota: cotaEstimadaOficial || 29.2,
 				},
 			};
 			setUsuario(usuarioAtualizado);
@@ -454,6 +463,12 @@ const MapaInterativo = ({
 	const handleArrastarCasa = async (e) => {
 		const novaPos = e.target.getLatLng();
 		const novasCoords = [novaPos.lat, novaPos.lng];
+		const cotaEstimadaArrasto = estimarCotaTerreno(
+			novasCoords[0],
+			novasCoords[1],
+			usuario.residencia?.endereco || "",
+			listaRuas
+		);
 
 		try {
 			const resp = await fetch(`${API_BASE}/api/v1/perfil/salvar/`, {
@@ -468,12 +483,13 @@ const MapaInterativo = ({
 					bairro: usuario.residencia?.bairro || "",
 					latitude: novasCoords[0],
 					longitude: novasCoords[1],
+					cota_terreno: cotaEstimadaArrasto,
 				}),
 			});
 
 			const data = await resp.json();
 			const cotaNova =
-				data?.perfil?.cota_terreno || usuario.residencia?.cota || 29.2;
+				data?.perfil?.cota_terreno || cotaEstimadaArrasto || usuario.residencia?.cota || 29.2;
 
 			const usuarioAtualizado = {
 				...usuario,
@@ -489,7 +505,21 @@ const MapaInterativo = ({
 			if (usuario?.email) {
 				localStorage.setItem("dados_perfil_" + usuario.email, JSON.stringify(usuarioAtualizado));
 			}
-		} catch (err) {}
+		} catch (err) {
+			const usuarioAtualizado = {
+				...usuario,
+				residencia: {
+					...usuario.residencia,
+					coords: novasCoords,
+					cota: cotaEstimadaArrasto || usuario.residencia?.cota || 29.2,
+				},
+			};
+			setUsuario(usuarioAtualizado);
+			localStorage.setItem("usuario_sentinela", JSON.stringify(usuarioAtualizado));
+			if (usuario?.email) {
+				localStorage.setItem("dados_perfil_" + usuario.email, JSON.stringify(usuarioAtualizado));
+			}
+		}
 	};
 
 	const handleSalvarRotaAtual = async () => {

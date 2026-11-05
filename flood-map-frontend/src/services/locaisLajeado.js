@@ -269,6 +269,105 @@ export const LOCAIS_OFICIAIS_LAJEADO = [
 ];
 
 /**
+ * Distância Haversine entre dois pontos geográficos em metros
+ */
+export function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
+	const R = 6371000;
+	const rad = Math.PI / 180;
+	const dLat = (lat2 - lat1) * rad;
+	const dLon = (lon2 - lon1) * rad;
+	const a =
+		Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+		Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
+		Math.sin(dLon / 2) * Math.sin(dLon / 2);
+	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	return R * c;
+}
+
+/**
+ * Calcula a cota precisa (altitude do solo/enchente) com base na malha oficial calibrada de ruas
+ * @param {number} lat - Latitude do ponto
+ * @param {number} lon - Longitude do ponto
+ * @param {string} [nomeRua] - Nome da rua ou endereço digitado
+ * @param {Array} [listaRuas] - Lista completa de ruas calibradas
+ * @returns {number} Cota estimada em metros
+ */
+export function estimarCotaTerreno(lat, lon, nomeRua = "", listaRuas = []) {
+	if (!lat || !lon) return 29.2;
+
+	const termoNorm = normalizarTexto(nomeRua);
+
+	// 1. Se informou nome da rua/local, tenta encontrar primeiro os segmentos exatos dessa rua
+	if (termoNorm && listaRuas.length > 0) {
+		let melhorDistRua = Infinity;
+		let melhorCotaRua = null;
+
+		for (const rua of listaRuas) {
+			const rNorm = normalizarTexto(rua.nome || "");
+			if (rNorm && (termoNorm.includes(rNorm) || rNorm.includes(termoNorm))) {
+				try {
+					const cj = typeof rua.coordenadas_json === "string" ? JSON.parse(rua.coordenadas_json) : rua.coordenadas_json;
+					if (Array.isArray(cj)) {
+						for (const seg of cj) {
+							const cota = seg.cota || rua.cota_bloqueio || rua.altitude_min;
+							if (Array.isArray(seg.coords)) {
+								for (const p of seg.coords) {
+									const d = calcularDistanciaMetros(lat, lon, p[0], p[1]);
+									if (d < melhorDistRua && cota) {
+										melhorDistRua = d;
+										melhorCotaRua = cota;
+									}
+								}
+							}
+						}
+					}
+				} catch (_) {}
+
+				if (!melhorCotaRua && (rua.cota_bloqueio || rua.altitude_min)) {
+					melhorCotaRua = rua.cota_bloqueio || rua.altitude_min;
+				}
+			}
+		}
+
+		if (melhorCotaRua !== null && melhorDistRua < 300) {
+			return Number(melhorCotaRua.toFixed(1));
+		}
+	}
+
+	// 2. Se não encontrou pela rua ou não informou rua, busca o segmento de rua mais próximo no mapa
+	if (listaRuas.length > 0) {
+		let melhorDist = Infinity;
+		let melhorCota = null;
+
+		for (const rua of listaRuas) {
+			try {
+				const cj = typeof rua.coordenadas_json === "string" ? JSON.parse(rua.coordenadas_json) : rua.coordenadas_json;
+				if (Array.isArray(cj)) {
+					for (const seg of cj) {
+						const cota = seg.cota || rua.cota_bloqueio || rua.altitude_min;
+						if (Array.isArray(seg.coords)) {
+							for (const p of seg.coords) {
+								const d = calcularDistanciaMetros(lat, lon, p[0], p[1]);
+								if (d < melhorDist && cota) {
+									melhorDist = d;
+									melhorCota = cota;
+								}
+							}
+						}
+					}
+				}
+			} catch (_) {}
+		}
+
+		if (melhorCota !== null && melhorDist < 1000) {
+			return Number(melhorCota.toFixed(1));
+		}
+	}
+
+	return 29.2;
+}
+
+/**
  * Normaliza strings para busca sem acentos e sem pontuação
  */
 export function normalizarTexto(txt = "") {

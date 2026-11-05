@@ -9,6 +9,10 @@
       "destination": "/api/auth?action=excluir-conta"
     },
     {
+      "source": "/api/v1/perfil/salvar/",
+      "destination": "/api/perfil"
+    },
+    {
       "source": "/api/v1/cota/(.*)",
       "destination": "/api/cota"
     },
