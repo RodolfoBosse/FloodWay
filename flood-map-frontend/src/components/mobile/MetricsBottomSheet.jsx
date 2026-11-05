@@ -16,6 +16,7 @@ const MetricsBottomSheet = ({
 	velocidade_formatada = null,
 	onAbrirRotas,
 	onAbrirClima,
+	onAbrirAuth,
 	// Novas Props do App.jsx
 	cotaSimulada,
 	setCotaSimulada,
@@ -403,6 +404,25 @@ const MetricsBottomSheet = ({
 
 						{/* VISTA 3: ROTAS (Aba Rotas) */}
 						{abaAtiva === "rotas" && (
+							!usuario ? (
+								<div className="flex flex-col items-center justify-center py-8 px-4 text-center animate-in fade-in duration-300">
+									<div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-inner">
+										🔒
+									</div>
+									<h3 className="font-bold text-gray-900 text-base mb-1">
+										Recurso Exclusivo para Usuários
+									</h3>
+									<p className="text-xs text-gray-500 max-w-xs mb-5">
+										O cálculo de <strong>Rotas Seguras Anti-Enchente</strong> com desvio em tempo real de ruas alagadas é exclusivo para usuários cadastrados.
+									</p>
+									<button
+										onClick={onAbrirAuth}
+										className="w-full max-w-xs bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-3 px-6 rounded-xl text-xs shadow-lg shadow-blue-500/20 transition flex items-center justify-center gap-2"
+									>
+										<span>👤 Entrar ou Criar Conta Grátis</span>
+									</button>
+								</div>
+							) : (
 							<div className="flex flex-col gap-y-3 animate-in fade-in duration-300 pb-16">
 								<h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm">
 									<span className="text-xl">🚗</span> Planejar Rota Segura (Anti-Enchente)
@@ -623,6 +643,7 @@ const MetricsBottomSheet = ({
 									</div>
 								)}
 							</div>
+							)
 						)}
 					</div>
 				)}

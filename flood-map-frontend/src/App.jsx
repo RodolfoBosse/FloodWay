@@ -225,6 +225,10 @@ function App() {
 				temRotaAtiva={!!dadosRota || !!pontoOrigem || !!pontoDestino}
 				onLimparRota={limparRota}
 				onBuscarClick={() => {
+					if (!usuario) {
+						setModalAuthAberto(true);
+						return;
+					}
 					setPainelRotaAberto(true);
 					setIsSimulando(false);
 				}}
@@ -256,6 +260,7 @@ function App() {
 				setIsSimulando={setIsSimulando}
 				temperatura={dadosClima?.current?.temperature_2m !== undefined ? `${Math.round(dadosClima.current.temperature_2m)}°` : "20°"}
 				onAbrirClima={() => setModalClimaAberto(true)}
+				onAbrirAuth={() => setModalAuthAberto(true)}
 				usuario={usuario}
 				// Props de Rotas
 				textoOrigem={textoOrigem}
@@ -285,6 +290,10 @@ function App() {
 					setIsSimulando(false);
 				}}
 				onRotasClick={() => {
+					if (!usuario) {
+						setModalAuthAberto(true);
+						return;
+					}
 					setIsSimulando(false);
 					setPainelRotaAberto(!painelRotaAberto);
 				}}

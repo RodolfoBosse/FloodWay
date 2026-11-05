@@ -74,3 +74,4 @@ export default function GoogleAdBanner({ slotId = null, className = "" }) {
     </div>
   );
 }
+
