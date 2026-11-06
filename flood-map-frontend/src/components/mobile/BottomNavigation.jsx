@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, Milestone, LineChart, Sliders } from "lucide-react";
+import { Home, Milestone, Sliders, BookOpen } from "lucide-react";
 
 const BottomNavigation = ({
   abaAtiva = "mapa",
@@ -7,6 +7,7 @@ const BottomNavigation = ({
   onRotasClick,
   onGraficosClick,
   onSimularClick,
+  onInfoClick,
   isSimulando = false,
   painelRotaAberto = false,
 }) => {
@@ -37,18 +38,16 @@ const BottomNavigation = ({
         <span className="text-[10px]">Rotas</span>
       </button>
 
-      {/* 3. Gráficos (Temporariamente Desativado) */}
-      {/*
+      {/* 3. Guia / Sobre (Conteúdo Editorial para AdSense e Utilidade Pública) */}
       <button
-        onClick={onGraficosClick}
+        onClick={onInfoClick}
         className={`flex flex-col items-center gap-0.5 py-1 px-3 transition ${
-          abaAtiva === "graficos" ? "text-gray-900 font-bold" : "text-gray-400 hover:text-gray-700"
+          abaAtiva === "info" ? "text-blue-600 font-bold" : "text-gray-400 hover:text-gray-700"
         }`}
       >
-        <LineChart size={20} strokeWidth={abaAtiva === "graficos" ? 2.2 : 1.6} />
-        <span className="text-[10px]">Gráficos</span>
+        <BookOpen size={20} strokeWidth={abaAtiva === "info" ? 2.2 : 1.6} />
+        <span className="text-[10px]">Guia & Info</span>
       </button>
-      */}
 
       {/* 4. Simular */}
       <button

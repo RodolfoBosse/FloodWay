@@ -9,6 +9,9 @@ import PerfilLGPDModal from "./components/mobile/PerfilLGPDModal";
 import PrevisaoClimaModal from "./components/mobile/PrevisaoClimaModal";
 import InstallPWABanner from "./components/mobile/InstallPWABanner";
 import GoogleAdBanner from "./components/mobile/GoogleAdBanner";
+import PoliticaPrivacidadePage from "./components/pages/PoliticaPrivacidadePage";
+import SobrePage from "./components/pages/SobrePage";
+import TermosUsoPage from "./components/pages/TermosUsoPage";
 import { estimarCotaTerreno } from "./services/locaisLajeado";
 
 function App() {
@@ -16,6 +19,16 @@ function App() {
 	const [ruas, setRuas] = useState([]);
 	const [isSimulando, setIsSimulando] = useState(false);
 	const [painelRotaAberto, setPainelRotaAberto] = useState(false);
+	const [paginaAtiva, setPaginaAtiva] = useState(() => {
+		// Suporta URLs diretas: /sobre, /politica-de-privacidade, /termos-de-uso
+		if (typeof window !== "undefined") {
+			const path = window.location.pathname.toLowerCase();
+			if (path.includes("sobre")) return "sobre";
+			if (path.includes("politica") || path.includes("privacidade")) return "politica";
+			if (path.includes("termos")) return "termos";
+		}
+		return null;
+	});
 
 	// Autenticação Real com LGPD
 	const [usuario, setUsuario] = useState(() => {
@@ -197,6 +210,38 @@ function App() {
 		return () => clearInterval(intervalo);
 	}, []);
 
+	const irParaPagina = (pag) => {
+		setPaginaAtiva(pag);
+		if (typeof window !== "undefined") {
+			const rotas = {
+				sobre: "/sobre",
+				politica: "/politica-de-privacidade",
+				termos: "/termos-de-uso",
+			};
+			if (pag && rotas[pag]) {
+				window.history.pushState(null, "", rotas[pag]);
+			} else {
+				window.history.pushState(null, "", "/");
+			}
+		}
+	};
+
+	const voltarAoMapa = () => {
+		irParaPagina(null);
+	};
+
+	if (paginaAtiva === "politica") {
+		return <PoliticaPrivacidadePage onVoltar={voltarAoMapa} />;
+	}
+
+	if (paginaAtiva === "sobre") {
+		return <SobrePage onVoltar={voltarAoMapa} />;
+	}
+
+	if (paginaAtiva === "termos") {
+		return <TermosUsoPage onVoltar={voltarAoMapa} />;
+	}
+
 	return (
 		<div className="relative w-full h-screen overflow-hidden bg-gray-900 select-none">
 			<MapaInterativo
@@ -284,10 +329,11 @@ function App() {
 			{/* Barra de Navegação Inferior */}
 			<BottomNavigation
 				className="absolute bottom-0 left-0 right-0 z-30"
-				abaAtiva={isSimulando ? "simular" : painelRotaAberto ? "rotas" : "mapa"}
+				abaAtiva={paginaAtiva || (isSimulando ? "simular" : painelRotaAberto ? "rotas" : "mapa")}
 				onMapaClick={() => {
 					setPainelRotaAberto(false);
 					setIsSimulando(false);
+					setPaginaAtiva(null);
 				}}
 				onRotasClick={() => {
 					if (!usuario) {
@@ -295,10 +341,15 @@ function App() {
 						return;
 					}
 					setIsSimulando(false);
+					setPaginaAtiva(null);
 					setPainelRotaAberto(!painelRotaAberto);
 				}}
+				onInfoClick={() => irParaPagina("sobre")}
 				onGraficosClick={() => {}}
-				onSimularClick={() => setIsSimulando(!isSimulando)}
+				onSimularClick={() => {
+					setPaginaAtiva(null);
+					setIsSimulando(!isSimulando);
+				}}
 				isSimulando={isSimulando}
 				painelRotaAberto={painelRotaAberto}
 			/>
@@ -326,6 +377,9 @@ function App() {
 				onUsuarioAtualizado={(atualizado) => setUsuario(atualizado)}
 				onAbrirConfigCasa={() => setModalCasaAberto(true)}
 				cotaAtual={cotaAtual?.nivel || cotaReal || 13.24}
+				onAbrirPolitica={() => irParaPagina("politica")}
+				onAbrirSobre={() => irParaPagina("sobre")}
+				onAbrirTermos={() => irParaPagina("termos")}
 			/>
 
 			{/* Banner de Instalação PWA */}

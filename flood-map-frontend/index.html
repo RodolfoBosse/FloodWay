@@ -4,7 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>FloodWay - Monitor de Enchentes Lajeado/RS</title>
+    
+    <!-- Metatags e SEO para Google AdSense e Crawlers -->
+    <title>FloodWay - Monitoramento do Nível do Rio Taquari e Rotas Seguras em Lajeado/RS</title>
+    <meta name="description" content="Portal oficial FloodWay: monitoramento em tempo real do nível do Rio Taquari em Lajeado/RS, cotas de inundação por rua, rotas seguras de desvio e histórico das cheias." />
+    <meta name="keywords" content="Rio Taquari, Lajeado, enchente, cota de inundação, nível do rio, rotas seguras, defesa civil lajeado, mapa de enchente" />
+    <meta name="author" content="FloodWay Brasil" />
 
     <!-- PWA e Ícone de App Mobile -->
     <link rel="manifest" href="/manifest.json" />
@@ -29,6 +34,30 @@
     ></script>
   </head>
   <body class="bg-gray-50 overflow-hidden w-screen h-screen">
+    <!-- Conteúdo estático inicial para indexação de rastreadores (Googlebot, AdSense Crawler) -->
+    <noscript>
+      <header style="padding: 20px; font-family: sans-serif; background: #1e3a8a; color: white;">
+        <h1>FloodWay - Monitor de Inundações e Nível do Rio Taquari</h1>
+        <p>Sistema de prevenção hidrológica e rotas de segurança para o Vale do Taquari (Lajeado e Estrela - RS).</p>
+      </header>
+      <main style="padding: 20px; font-family: sans-serif; max-width: 800px; line-height: 1.6;">
+        <h2>Sobre o FloodWay</h2>
+        <p>O FloodWay é uma plataforma de utilidade pública que monitora os níveis hidrológicos do Rio Taquari a partir de telemetria oficial (SGB/CPRM e Defesa Civil), cruzando altimetria precisa de vias urbanas com as cotas de cheia para orientar cidadãos e equipes de socorro em rotas seguras.</p>
+        <h2>Histórico de Cotas de Inundação</h2>
+        <ul>
+          <li>Cota de Atenção em Lajeado: 17,00 metros</li>
+          <li>Cota de Alerta: 19,00 metros</li>
+          <li>Cota de Inundação das primeiras ruas (Rua Décio Martins Costa, Parque Piraí): 19,80 metros</li>
+          <li>Cheia Histórica de Maio/2024: 29,80+ metros</li>
+        </ul>
+        <nav>
+          <a href="/sobre">Sobre o Projeto</a> | 
+          <a href="/politica-de-privacidade">Política de Privacidade</a> | 
+          <a href="/termos-de-uso">Termos de Uso</a>
+        </nav>
+      </main>
+    </noscript>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

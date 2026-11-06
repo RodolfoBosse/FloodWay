@@ -223,10 +223,13 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
                 <strong>2. Dados Coletados:</strong> Nome, e-mail para autenticação, número de WhatsApp (opcional, para avisos de emergência quando o rio atinge a cota de atenção) e localização da residência/empresa para comparação com a altimetria do terreno.
               </p>
               <p>
-                <strong>3. Segurança e Criptografia:</strong> Suas credenciais são armazenadas com hash criptográfico irreversível. Nenhuma informação pessoal ou de localização é comercializada ou compartilhada com terceiros para fins de marketing.
+                <strong>3. Cookies e Google AdSense:</strong> O FloodWay veicula anúncios institucionais por meio do Google AdSense. O Google utiliza cookies para veicular anúncios com base em visitas anteriores. Os usuários podem desativar a personalização de anúncios acessando as Configurações de Anúncios do Google.
               </p>
               <p>
-                <strong>4. Seus Direitos (Art. 18 da LGPD):</strong> Você pode a qualquer momento consultar seus dados, solicitar correção ou requerer a exclusão completa e definitiva de sua conta e histórico em nosso sistema.
+                <strong>4. Segurança e Criptografia:</strong> Suas credenciais são armazenadas com hash criptográfico irreversível. Nenhuma informação pessoal ou de localização é comercializada ou compartilhada com terceiros para fins de marketing.
+              </p>
+              <p>
+                <strong>5. Seus Direitos (Art. 18 da LGPD):</strong> Você pode a qualquer momento consultar seus dados, solicitar correção ou requerer a exclusão completa e definitiva de sua conta e histórico em nosso sistema.
               </p>
             </div>
             <button

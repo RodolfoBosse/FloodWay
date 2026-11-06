@@ -10,7 +10,10 @@ export default function PerfilLGPDModal({
   onLogout,
   onUsuarioAtualizado,
   onAbrirConfigCasa,
-  cotaAtual = 13.24
+  cotaAtual = 13.24,
+  onAbrirPolitica,
+  onAbrirSobre,
+  onAbrirTermos
 }) {
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
@@ -354,6 +357,39 @@ export default function PerfilLGPDModal({
               {erro}
             </div>
           )}
+
+          {/* Links Institucionais e LGPD */}
+          <div className="pt-2 border-t border-gray-100 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-gray-500">
+            <button
+              onClick={() => {
+                onClose();
+                if (onAbrirSobre) onAbrirSobre();
+              }}
+              className="hover:text-blue-600 underline transition"
+            >
+              Sobre o FloodWay
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => {
+                onClose();
+                if (onAbrirPolitica) onAbrirPolitica();
+              }}
+              className="hover:text-blue-600 underline transition"
+            >
+              Política de Privacidade
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => {
+                onClose();
+                if (onAbrirTermos) onAbrirTermos();
+              }}
+              className="hover:text-blue-600 underline transition"
+            >
+              Termos de Uso
+            </button>
+          </div>
 
           {/* Ações */}
           <div className="pt-2 space-y-2">
