@@ -129,6 +129,8 @@ const MapaInterativo = ({
 	const contasGoogleDisponiveis = [];
 
 	const [casaEndereco, setCasaEndereco] = useState("");
+	const [casaCep, setCasaCep] = useState("");
+	const [buscandoCep, setBuscandoCep] = useState(false);
 	const [casaNumero, setCasaNumero] = useState("");
 	const [casaBairro, setCasaBairro] = useState("");
 	const [casaWhatsapp, setCasaWhatsapp] = useState("");
@@ -320,6 +322,41 @@ const MapaInterativo = ({
 		localStorage.setItem("usuario_sentinela", JSON.stringify(user));
 		setModalAuthAberto(false);
 		if (!user.residencia) setModalCasaAberto(true);
+	};
+
+	const handleBuscarCep = async (cepDigitado) => {
+		const cepLimpo = (cepDigitado || "").replace(/\D/g, "");
+		setCasaCep(cepDigitado);
+
+		if (cepLimpo.length === 8) {
+			setBuscandoCep(true);
+			try {
+				const resp = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+				if (resp.ok) {
+					const data = await resp.json();
+					if (!data.erro) {
+						if (data.logradouro) setCasaEndereco(data.logradouro);
+						if (data.bairro) setCasaBairro(data.bairro);
+
+						// Busca coordenadas da rua localizada pelo CEP
+						const lista = Array.isArray(ruas) ? ruas : [];
+						const nomeBusca = data.logradouro;
+						const matchRua = lista.find((r) =>
+							(r.nome || "").toLowerCase().includes(nomeBusca.toLowerCase()) ||
+							nomeBusca.toLowerCase().includes((r.nome || "").toLowerCase())
+						);
+						if (matchRua) {
+							const c = matchRua.coords || (matchRua.pontos && matchRua.pontos[0]);
+							if (c) setCasaCoords(c);
+						}
+					}
+				}
+			} catch (e) {
+				console.warn("Erro ao buscar CEP:", e);
+			} finally {
+				setBuscandoCep(false);
+			}
+		}
 	};
 
 	const handleSalvarCasa = async (e) => {
@@ -1229,7 +1266,35 @@ const MapaInterativo = ({
 							</div>
 						)}
 
-						<form onSubmit={handleSalvarCasa} className="space-y-3 mt-2">
+						<form onSubmit={handleSalvarCasa} className="space-y-3.5 mt-2">
+							{/* CAMPO CEP COM AUTO-PREENCHIMENTO */}
+							<div>
+								<div className="flex items-center justify-between mb-1">
+									<label className="text-[11px] font-semibold text-gray-700 block">
+										CEP (Opcional)
+									</label>
+									{buscandoCep && (
+										<span className="text-[10px] text-blue-600 font-bold animate-pulse">
+											Buscando endereço...
+										</span>
+									)}
+								</div>
+								<div className="relative">
+									<input
+										type="text"
+										maxLength={9}
+										placeholder="95900-000"
+										value={casaCep}
+										onChange={(e) => handleBuscarCep(e.target.value)}
+										className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition"
+									/>
+									<span className="absolute right-3 top-2.5 text-xs text-gray-400">
+										📮
+									</span>
+								</div>
+							</div>
+
+							{/* CAMPO RUA / ENDEREÇO */}
 							<div className="relative">
 								<label className="text-[11px] font-semibold text-gray-700 mb-1 block">
 									Rua ou Local
@@ -1243,7 +1308,7 @@ const MapaInterativo = ({
 											setCasaEndereco(e.target.value);
 											buscarDestinos(e.target.value, setSugestoesCasa);
 										}}
-										className="flex-1 text-xs p-2.5 border border-gray-300 rounded-lg focus:outline-none"
+										className="flex-1 text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition"
 										required
 									/>
 									<button
@@ -1252,7 +1317,7 @@ const MapaInterativo = ({
 											setModoSelecao("casa");
 											setModalCasaAberto(false);
 										}}
-										className="bg-amber-100 border border-amber-300 text-amber-900 text-[11px] px-2.5 py-1.5 rounded-lg font-bold">
+										className="bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 text-[11px] px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1 active:scale-95 shadow-sm">
 										🎯 No Mapa
 									</button>
 								</div>
@@ -1298,10 +1363,10 @@ const MapaInterativo = ({
 									</label>
 									<input
 										type="text"
-										placeholder="Ex: 529"
+										placeholder="Ex: 145"
 										value={casaNumero}
 										onChange={(e) => setCasaNumero(e.target.value)}
-										className="w-full text-xs p-2.5 border border-gray-300 rounded-lg focus:outline-none font-bold"
+										className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none font-bold transition"
 									/>
 								</div>
 								<div className="flex-1">
@@ -1310,10 +1375,10 @@ const MapaInterativo = ({
 									</label>
 									<input
 										type="text"
-										placeholder="Ex: Centro"
+										placeholder="Ex: Carneiros, Centro..."
 										value={casaBairro}
 										onChange={(e) => setCasaBairro(e.target.value)}
-										className="w-full text-xs p-2.5 border border-gray-300 rounded-lg focus:outline-none"
+										className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition"
 									/>
 								</div>
 							</div>
@@ -1321,7 +1386,7 @@ const MapaInterativo = ({
 							<button
 								type="submit"
 								disabled={salvandoCasa}
-								className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-3 rounded-xl text-xs shadow-md transition">
+								className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold py-3 rounded-xl text-xs shadow-md transition active:scale-98">
 								{salvandoCasa
 									? "⏳ Calculando altitude segura..."
 									: "Salvar Minha Residência"}
