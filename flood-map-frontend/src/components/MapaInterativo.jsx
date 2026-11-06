@@ -390,32 +390,41 @@ const MapaInterativo = ({
 		const enderecoCompleto = `${casaEndereco}${casaNumero ? ", " + casaNumero : ""}`;
 
 		if (!coordsFinais && casaEndereco) {
-			// Localiza??o autom?tica caso o usu?rio tenha digitado sem clicar na sugest?o
-			const termoNorm = casaEndereco
-				.toLowerCase()
-				.normalize("NFD")
-				.replace(/[\u0300-\u036f]/g, "")
-				.trim();
-			const matchLocal = LOCAIS_OFICIAIS_LAJEADO.find((l) =>
-				(l.nome || "")
+			// Localização automática através da busca calibrada caso o usuário tenha digitado sem clicar na sugestão
+			try {
+				const busca = await buscarDestinosCalibrados(enderecoCompleto, listaRuas);
+				if (busca && busca.length > 0) {
+					coordsFinais = busca[0].coords;
+				}
+			} catch (_) {}
+
+			if (!coordsFinais) {
+				const termoNorm = casaEndereco
 					.toLowerCase()
 					.normalize("NFD")
 					.replace(/[\u0300-\u036f]/g, "")
-					.includes(termoNorm),
-			);
-			if (matchLocal) {
-				coordsFinais = matchLocal.coords;
-			} else {
-				const matchRua = listaRuas.find((r) =>
-					(r.nome || "")
+					.trim();
+				const matchLocal = LOCAIS_OFICIAIS_LAJEADO.find((l) =>
+					(l.nome || "")
 						.toLowerCase()
 						.normalize("NFD")
 						.replace(/[\u0300-\u036f]/g, "")
 						.includes(termoNorm),
 				);
-				if (matchRua) {
-					coordsFinais = matchRua.coords ||
-						(matchRua.pontos && matchRua.pontos[0]) || [-29.4668, -51.9614];
+				if (matchLocal) {
+					coordsFinais = matchLocal.coords;
+				} else {
+					const matchRua = listaRuas.find((r) =>
+						(r.nome || "")
+							.toLowerCase()
+							.normalize("NFD")
+							.replace(/[\u0300-\u036f]/g, "")
+							.includes(termoNorm),
+					);
+					if (matchRua) {
+						coordsFinais = matchRua.coords ||
+							(matchRua.pontos && matchRua.pontos[0]) || [-29.4668, -51.9614];
+					}
 				}
 			}
 		}
@@ -1347,6 +1356,15 @@ const MapaInterativo = ({
 
 								{sugestoesCasa.length > 0 && (
 									<div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden divide-y divide-gray-100 max-h-52 overflow-y-auto">
+										<div className="p-1.5 bg-gray-50 flex items-center justify-between text-[10px] text-gray-500 font-bold border-b border-gray-100">
+											<span>Sugestões Encontradas</span>
+											<button
+												type="button"
+												onClick={() => setSugestoesCasa([])}
+												className="text-gray-400 hover:text-gray-700 px-1">
+												✕ Fechar
+											</button>
+										</div>
 										{sugestoesCasa.map((s, idx) => (
 											<div
 												key={idx}
@@ -1373,6 +1391,11 @@ const MapaInterativo = ({
 														{s.detalhe}
 													</p>
 												</div>
+												{s.cota && (
+													<span className="text-[10px] bg-amber-100 text-amber-800 font-black px-1.5 py-0.5 rounded">
+														{s.cota.toFixed(1)}m
+													</span>
+												)}
 											</div>
 										))}
 									</div>

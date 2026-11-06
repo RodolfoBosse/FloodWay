@@ -57,14 +57,33 @@ export default function PerfilLGPDModal({
 
   const pontos = usuario.pontosInteresse || [];
 
-  const handleSalvarPonto = () => {
-    if (!novoNome.trim()) return;
+  const handleSalvarPonto = async () => {
+    const enderecoFormatado = novoEndereco.trim();
+    if (!enderecoFormatado) return;
+
+    let coordsFinais = novasCoords;
+    let cotaFinal = parseFloat(novaCota) || 24.0;
+
+    // Se o usuário digitou livremente (ex: "Rua Bento Gonçalves, 529") sem clicar na lista suspensa
+    if (!coordsFinais && enderecoFormatado) {
+      try {
+        const busca = await buscarDestinosCalibrados(enderecoFormatado);
+        if (busca && busca.length > 0) {
+          const primeiro = busca[0];
+          coordsFinais = primeiro.coords;
+          if (primeiro.cota) cotaFinal = primeiro.cota;
+        }
+      } catch (_) {}
+    }
+
+    const nomeFinal = novoNome.trim() || enderecoFormatado.split(',')[0].trim();
+
     const pontoObj = {
       id: Date.now(),
-      nome: novoNome.trim(),
-      endereco: novoEndereco.trim() || 'Lajeado, RS',
-      cota: parseFloat(novaCota) || 24.0,
-      coords: novasCoords || null,
+      nome: nomeFinal,
+      endereco: enderecoFormatado,
+      cota: cotaFinal,
+      coords: coordsFinais || null,
     };
     const novosPontos = [...pontos, pontoObj];
     const usuarioAtualizado = {
@@ -236,6 +255,16 @@ export default function PerfilLGPDModal({
                   {/* Sugestões Automáticas em Tempo Real */}
                   {sugestoesPonto.length > 0 && (
                     <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 divide-y divide-gray-100 max-h-48 overflow-y-auto">
+                      <div className="p-1.5 bg-gray-50 flex items-center justify-between text-[10px] text-gray-500 font-bold border-b border-gray-100">
+                        <span>Sugestões Encontradas</span>
+                        <button
+                          type="button"
+                          onClick={() => setSugestoesPonto([])}
+                          className="text-gray-400 hover:text-gray-700 px-1"
+                        >
+                          ✕ Fechar
+                        </button>
+                      </div>
                       {sugestoesPonto.map((s, idx) => (
                         <div
                           key={idx}

@@ -488,6 +488,8 @@ async function buscarPhoton(termo) {
 
 let _cacheEstabelecimentos = null;
 let _carregandoEstabelecimentos = null;
+let _cacheRuasCalibradas = null;
+let _carregandoRuasCalibradas = null;
 
 async function carregarEstabelecimentosLajeado() {
 	if (_cacheEstabelecimentos) return _cacheEstabelecimentos;
@@ -512,6 +514,74 @@ async function carregarEstabelecimentosLajeado() {
 	return _carregandoEstabelecimentos;
 }
 
+async function carregarRuasCalibradasLajeado() {
+	if (_cacheRuasCalibradas) return _cacheRuasCalibradas;
+	if (_carregandoRuasCalibradas) return _carregandoRuasCalibradas;
+
+	_carregandoRuasCalibradas = (async () => {
+		try {
+			const res = await fetch("/ruas_calibradas.json");
+			if (!res.ok) throw new Error("Falha ao buscar ruas calibradas");
+			const dados = await res.json();
+			_cacheRuasCalibradas = Array.isArray(dados) ? dados : [];
+			return _cacheRuasCalibradas;
+		} catch (e) {
+			console.warn("Não foi possível carregar ruas_calibradas.json:", e);
+			_cacheRuasCalibradas = [];
+			return [];
+		} finally {
+			_carregandoRuasCalibradas = null;
+		}
+	})();
+
+	return _carregandoRuasCalibradas;
+}
+
+/**
+ * Interpolação precisa de coordenadas e cota altimétrica com base no número predial na extensão da via
+ */
+function estimarCoordenadaECotaPorNumero(rua, numero) {
+	let segs = [];
+	try {
+		const j = JSON.parse(rua.coordenadas_json);
+		if (Array.isArray(j)) segs = j;
+	} catch (e) {}
+
+	const coordsComCota = [];
+	segs.forEach((seg) => {
+		if (Array.isArray(seg.coords)) {
+			seg.coords.forEach((pt) => {
+				coordsComCota.push({ coord: pt, cota: seg.cota });
+			});
+		}
+	});
+
+	if (coordsComCota.length === 0) {
+		const pt = [rua.latitude_inicio, rua.longitude_inicio].filter(Boolean);
+		return {
+			coords: pt.length === 2 ? pt : [-29.4668, -51.9614],
+			cota: rua.cota_bloqueio || rua.altitude_min || 30.0,
+		};
+	}
+
+	if (!numero) {
+		return {
+			coords: coordsComCota[0].coord,
+			cota: coordsComCota[0].cota || rua.cota_bloqueio || 30.0,
+		};
+	}
+
+	// Estima a posição relativa na extensão da via pelo número predial aproximado (base 2000 números)
+	const maxNum = 2000;
+	const fator = Math.min(Math.max(numero / maxNum, 0.05), 0.95);
+	const idx = Math.floor(fator * (coordsComCota.length - 1));
+	const item = coordsComCota[idx];
+	return {
+		coords: item.coord,
+		cota: item.cota || rua.cota_bloqueio || 30.0,
+	};
+}
+
 /**
  * Função de busca inteligente e calibrada de destinos em Lajeado
  * 1. Base Calibrada Local (Univates, CEAT, HBB, etc.)
@@ -526,7 +596,8 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 
 	const tNorm = normalizarTexto(termo);
 	const numPredial = extrairNumeroPredial(termo);
-	const tokens = tNorm.split(" ").filter((t) => t.length >= 2 && !/^\d+$/.test(t));
+	const tSemNumero = normalizarTexto(termo.replace(/,\s*\d+.*$/, "").replace(/\d+/g, ""));
+	const tokens = tSemNumero.split(" ").filter((t) => t.length >= 2);
 	const resultados = [];
 	const idsVistos = new Set();
 
@@ -604,30 +675,43 @@ export async function buscarDestinosCalibrados(termo, listaRuas = []) {
 		console.warn("Erro ao filtrar estabelecimentos:", e);
 	}
 
-	// 3. Busca na base de Ruas de Lajeado (com suporte a número predial)
-	for (const rua of listaRuas) {
+	// 3. Busca na base de Ruas de Lajeado (com suporte a número predial e cota de precisão)
+	// Se listaRuas estiver vazia, tenta usar as ruas calibradas carregadas do JSON
+	let ruasParaBuscar = Array.isArray(listaRuas) && listaRuas.length > 0 ? listaRuas : null;
+	if (!ruasParaBuscar) {
+		try {
+			ruasParaBuscar = await carregarRuasCalibradasLajeado();
+		} catch (_) {
+			ruasParaBuscar = [];
+		}
+	}
+
+	// Inicia busca na base de Ruas de Lajeado (com suporte a número predial e cota de precisão)
+	for (const rua of ruasParaBuscar) {
 		const rNorm = normalizarTexto(rua.nome || "");
 		const bNorm = normalizarTexto(rua.bairro || "");
 
-		const matchDireto = rNorm.includes(tNorm) || tNorm.includes(rNorm);
+		const matchExato = rNorm === tSemNumero;
+		const matchDireto = rNorm.length >= 4 && (tNorm.includes(rNorm) || rNorm.includes(tSemNumero));
 		const matchTokens =
 			tokens.length > 0 &&
-			tokens.every((tok) => rNorm.includes(tok) || bNorm.includes(tok));
+			rNorm.length >= 3 &&
+			tokens.every((tok) => rNorm.includes(tok));
 
-		if (matchDireto || matchTokens) {
-			const coordsRua = estimarCoordenadaPorNumero(rua, numPredial);
+		if (matchExato || matchDireto || matchTokens) {
+			const { coords, cota } = estimarCoordenadaECotaPorNumero(rua, numPredial);
 
-			if (coordsRua) {
-				const idKey = `${coordsRua[0].toFixed(4)},${coordsRua[1].toFixed(4)}`;
+			if (coords) {
+				const idKey = `${coords[0].toFixed(4)},${coords[1].toFixed(4)}`;
 				if (!idsVistos.has(idKey)) {
 					idsVistos.add(idKey);
 					resultados.push({
 						nome: numPredial ? `${rua.nome}, ${numPredial}` : rua.nome,
 						tipo: "rua",
 						detalhe: rua.bairro ? `Bairro ${rua.bairro}` : "Lajeado - RS",
-						coords: coordsRua,
-						cota: rua.cota_bloqueio || rua.altitude_min || rua.cota || null,
-						prioridade: 4,
+						coords: coords,
+						cota: cota || rua.cota_bloqueio || rua.altitude_min || null,
+						prioridade: matchExato ? 0.8 : matchDireto ? 1.2 : 4,
 					});
 				}
 			}
