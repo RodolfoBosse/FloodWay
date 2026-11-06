@@ -25,10 +25,33 @@ const iconeBloqueio = new L.DivIcon({
 });
 
 const iconeCasa = new L.DivIcon({
-	html: '<div style="background-color: #eab308; color: #1e293b; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 4px 14px rgba(0,0,0,0.45); cursor: grab;">🏠</div>',
-	className: "custom-house-icon",
-	iconSize: [38, 38],
-	iconAnchor: [19, 19],
+	html: `
+		<div style="position: relative; width: 36px; height: 46px; display: flex; flex-direction: column; align-items: center; cursor: grab; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));">
+			<div style="width: 36px; height: 36px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: 2.5px solid white; box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);">
+				<span style="transform: rotate(45deg); font-size: 17px; margin-top: -1px; margin-left: -1px;">🏠</span>
+			</div>
+			<div style="width: 8px; height: 8px; background: rgba(0,0,0,0.25); border-radius: 50%; margin-top: 1px; filter: blur(1px);"></div>
+		</div>
+	`,
+	className: "custom-house-pin",
+	iconSize: [36, 46],
+	iconAnchor: [18, 44],
+	popupAnchor: [0, -42],
+});
+
+const iconePontoInteresse = new L.DivIcon({
+	html: `
+		<div style="position: relative; width: 32px; height: 42px; display: flex; flex-direction: column; align-items: center; cursor: pointer; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.35));">
+			<div style="width: 32px; height: 32px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);">
+				<span style="transform: rotate(45deg); font-size: 15px; margin-top: -1px; margin-left: -1px;">📍</span>
+			</div>
+			<div style="width: 6px; height: 6px; background: rgba(0,0,0,0.2); border-radius: 50%; margin-top: 1px; filter: blur(1px);"></div>
+		</div>
+	`,
+	className: "custom-interest-pin",
+	iconSize: [32, 42],
+	iconAnchor: [16, 40],
+	popupAnchor: [0, -38],
 });
 
 const iconeOrigem = new L.DivIcon({
@@ -1865,20 +1888,20 @@ const MapaInterativo = ({
 							<Popup>
 								<div className="text-xs p-1 font-sans min-w-[200px]">
 									<h4 className="font-bold text-gray-900 text-sm">
-										?? {usuario.residencia.endereco || "Minha Resid?ncia"}
+										🏠 {usuario.residencia.endereco || "Minha Residência"}
 									</h4>
 									{usuario.residencia.bairro && (
 										<p className="text-gray-500">{usuario.residencia.bairro}</p>
 									)}
 									<div className="mt-1.5 pt-1.5 border-t border-gray-100 flex flex-col gap-0.5">
 										<p className="text-gray-700">
-											Cota Terreno:{" "}
-											<strong className="text-emerald-700">
+											Altitude do Solo:{" "}
+											<strong className="text-blue-700">
 												{usuario.residencia.cota}m
 											</strong>
 										</p>
 										<p className="text-gray-700">
-											Margem Atual:{" "}
+											Situação Atual:{" "}
 											<strong
 												className={
 													margemCasa > 1
@@ -1888,8 +1911,8 @@ const MapaInterativo = ({
 															: "text-red-600"
 												}>
 												{margemCasa > 0
-													? `+${margemCasa}m livres`
-													: `${Math.abs(margemCasa)}m submerso`}
+													? `🟢 +${margemCasa}m de margem livre`
+													: `🔴 Submerso por ${Math.abs(margemCasa)}m`}
 											</strong>
 										</p>
 									</div>
@@ -1897,6 +1920,57 @@ const MapaInterativo = ({
 							</Popup>
 						</Marker>
 					)}
+
+					{/* TODOS OS DEMAIS PONTOS DE INTERESSE SALVOS DO USUÁRIO */}
+					{usuario?.pontosInteresse?.map((pt) => {
+						if (!pt.coords || !Array.isArray(pt.coords)) return null;
+						const cotaPt = Number(pt.cota || 24.0);
+						const margemPt = Number((cotaPt - nivelAtivo).toFixed(1));
+
+						return (
+							<Marker
+								key={`pt-interesse-${pt.id}`}
+								position={pt.coords}
+								icon={iconePontoInteresse}>
+								<Popup>
+									<div className="text-xs p-1 font-sans min-w-[200px]">
+										<div className="flex items-center gap-1.5 mb-0.5">
+											<span className="text-base">📍</span>
+											<h4 className="font-bold text-gray-900 text-sm truncate">
+												{pt.nome}
+											</h4>
+										</div>
+										<p className="text-gray-500 text-[11px] mb-1.5">
+											{pt.endereco}
+										</p>
+										<div className="pt-1.5 border-t border-gray-100 flex flex-col gap-0.5">
+											<p className="text-gray-700">
+												Altitude:{" "}
+												<strong className="text-blue-700">
+													{cotaPt.toFixed(1)}m
+												</strong>
+											</p>
+											<p className="text-gray-700">
+												Situação:{" "}
+												<strong
+													className={
+														margemPt > 1
+															? "text-emerald-600"
+															: margemPt > 0
+																? "text-amber-600"
+																: "text-red-600"
+													}>
+													{margemPt > 0
+														? `🟢 +${margemPt}m de margem livre`
+														: `🔴 Submerso por ${Math.abs(margemPt)}m`}
+												</strong>
+											</p>
+										</div>
+									</div>
+								</Popup>
+							</Marker>
+						);
+					})}
 					{pontoOrigem && <Marker position={pontoOrigem} icon={iconeOrigem} />}
 					{pontoDestino && (
 						<Marker position={pontoDestino} icon={iconeDestino} />

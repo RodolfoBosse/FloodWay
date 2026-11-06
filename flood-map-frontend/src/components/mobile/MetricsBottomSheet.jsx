@@ -385,24 +385,87 @@ const MetricsBottomSheet = ({
 									</div>
 								</div>
 
-								<div className="relative w-full h-3 bg-gradient-to-r from-emerald-500 via-yellow-400 to-red-500 rounded-full overflow-visible">
-									<div className="absolute top-5 left-[40%] text-[10px] font-bold text-gray-400">
-										16.00m
-									</div>
-									<div className="absolute top-5 left-[60%] text-[10px] font-bold text-gray-400">
-										19.00m
-									</div>
-									<div className="absolute top-5 right-0 text-[10px] font-bold text-gray-400">
-										26.00m (Casa)
-									</div>
-									<div
-										className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-gray-800 rounded-full shadow-md transition-all duration-500"
-										style={{
-											left: `${Math.min(Math.max(((Number(cotaReal) - 13) / (26 - 13)) * 100, 0), 100)}%`,
-											marginLeft: "-8px",
-										}}
-									/>
-								</div>
+								{/* RÉGUA COLORIDA DO NÍVEL DO RIO ATÉ 40M COM PONTOS DE INTERESSE */}
+								{(() => {
+									const minRuler = 10;
+									const maxRuler = 40;
+									const range = maxRuler - minRuler;
+									const getPct = (cota) => Math.min(Math.max(((Number(cota) - minRuler) / range) * 100, 0), 100);
+
+									// Coleta a casa e todos os pontos de interesse monitorados pelo usuário
+									const pontosMarcadores = [];
+									if (usuario?.residencia?.cota) {
+										pontosMarcadores.push({
+											id: 'casa',
+											nome: 'Minha Casa',
+											icone: '🏠',
+											cota: Number(usuario.residencia.cota),
+											cor: 'text-amber-600',
+											bg: 'bg-amber-500',
+										});
+									}
+									if (Array.isArray(usuario?.pontosInteresse)) {
+										usuario.pontosInteresse.forEach((p) => {
+											if (p.cota) {
+												pontosMarcadores.push({
+													id: `pt-${p.id}`,
+													nome: p.nome,
+													icone: '📍',
+													cota: Number(p.cota),
+													cor: 'text-blue-600',
+													bg: 'bg-blue-600',
+												});
+											}
+										});
+									}
+
+									return (
+										<div className="relative w-full pt-6 pb-5">
+											{/* PONTOS DE INTERESSE / CASA EM CIMA DA RÉGUA */}
+											{pontosMarcadores.map((m) => {
+												const pct = getPct(m.cota);
+												return (
+													<div
+														key={m.id}
+														className="absolute top-0 -translate-x-1/2 flex flex-col items-center pointer-events-auto z-10 transition-all duration-300 group cursor-pointer"
+														style={{ left: `${pct}%` }}
+														title={`${m.nome} (${m.cota.toFixed(1)}m)`}
+													>
+														<div className="flex items-center gap-0.5 bg-white/95 px-1.5 py-0.5 rounded-full shadow-sm border border-gray-200 text-[10px] font-bold text-gray-700 whitespace-nowrap scale-90 sm:scale-100 mb-0.5">
+															<span>{m.icone}</span>
+															<span className="hidden sm:inline truncate max-w-[65px]">{m.nome}</span>
+															<span className="text-[9px] text-gray-500">({m.cota.toFixed(0)}m)</span>
+														</div>
+														{/* Tracinho vertical conectando à barra */}
+														<div className={`w-0.5 h-2 ${m.bg} opacity-70`}></div>
+													</div>
+												);
+											})}
+
+											{/* BARRA COLORIDA (10m até 40m) */}
+											<div className="relative w-full h-3 bg-gradient-to-r from-emerald-500 via-yellow-400 via-50% via-orange-500 to-red-600 rounded-full overflow-visible shadow-inner">
+												{/* PIN DA COTA ATUAL DO RIO */}
+												<div
+													className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-gray-900 rounded-full shadow-lg transition-all duration-500 z-20"
+													style={{
+														left: `${getPct(cotaReal || 13)}%`,
+														marginLeft: "-8px",
+													}}
+													title={`Nível do Rio: ${Number(cotaReal).toFixed(2)}m`}
+												/>
+											</div>
+
+											{/* MARCAS DE REFERÊNCIA INFERIORES */}
+											<div className="relative w-full text-[10px] font-bold text-gray-400 mt-2 flex justify-between">
+												<span>10m</span>
+												<span className="text-yellow-600/80">19m (Atenção)</span>
+												<span className="text-orange-600/80">24m</span>
+												<span className="text-red-600/80">29.8m (Maio/24)</span>
+												<span>40m</span>
+											</div>
+										</div>
+									);
+								})()}
 
 								{(() => {
 									const velNum = velocidade_cm_h !== null && velocidade_cm_h !== undefined
