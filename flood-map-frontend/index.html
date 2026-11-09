@@ -33,27 +33,35 @@
       crossorigin="anonymous"
     ></script>
   </head>
-  <body class="bg-gray-50 overflow-hidden w-screen h-screen">
-    <!-- Conteúdo estático inicial para indexação de rastreadores (Googlebot, AdSense Crawler) -->
+  <body class="bg-gray-50 overflow-y-auto min-h-screen">
+    <!-- Conteúdo editorial inicial para rastreadores (Googlebot, AdSense Crawler) -->
     <noscript>
-      <header style="padding: 20px; font-family: sans-serif; background: #1e3a8a; color: white;">
-        <h1>FloodWay - Monitor de Inundações e Nível do Rio Taquari</h1>
-        <p>Sistema de prevenção hidrológica e rotas de segurança para o Vale do Taquari (Lajeado e Estrela - RS).</p>
+      <header style="padding: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: white;">
+        <h1>FloodWay - Monitor Hidrológico e Rotas Seguras no Rio Taquari</h1>
+        <p>Sistema comunitário de prevenção a inundações, cotas de alagamento por rua e rotas de fuga em Lajeado e Estrela / RS.</p>
       </header>
-      <main style="padding: 20px; font-family: sans-serif; max-width: 800px; line-height: 1.6;">
-        <h2>Sobre o FloodWay</h2>
-        <p>O FloodWay é uma plataforma de utilidade pública que monitora os níveis hidrológicos do Rio Taquari a partir de telemetria oficial (SGB/CPRM e Defesa Civil), cruzando altimetria precisa de vias urbanas com as cotas de cheia para orientar cidadãos e equipes de socorro em rotas seguras.</p>
-        <h2>Histórico de Cotas de Inundação</h2>
+      <main style="padding: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 860px; line-height: 1.7; color: #1e293b;">
+        <h2>Sobre o FloodWay & Prevenção no Vale do Taquari</h2>
+        <p>O <strong>FloodWay</strong> é um portal e ferramenta de utilidade pública desenvolvido para a população da Bacia Hidrográfica do Rio Taquari-Antas. O sistema monitora as medições dos sensores fluviométricos do Serviço Geológico do Brasil (SGB/CPRM) e Agência Nacional de Águas (ANA), correlacionando as cotas do rio com o modelo digital de elevação (DEM) e altimetria de cada logradouro de Lajeado e cidades vizinhas.</p>
+        
+        <h2>Tabela de Cotas Oficiais de Inundação</h2>
         <ul>
-          <li>Cota de Atenção em Lajeado: 17,00 metros</li>
-          <li>Cota de Alerta: 19,00 metros</li>
-          <li>Cota de Inundação das primeiras ruas (Rua Décio Martins Costa, Parque Piraí): 19,80 metros</li>
-          <li>Cheia Histórica de Maio/2024: 29,80+ metros</li>
+          <li><strong>13,00m a 17,00m:</strong> Nível Normal / Estável (sem riscos urbanos)</li>
+          <li><strong>17,00m:</strong> Cota de Atenção (Defesa Civil aciona estado de prontidão)</li>
+          <li><strong>19,00m:</strong> Cota de Alerta (famílias em áreas baixas devem preparar desocupação)</li>
+          <li><strong>19,80m:</strong> Início do alagamento de vias públicas (Rua Décio Martins Costa e Parque Piraí)</li>
+          <li><strong>29,80m+:</strong> Maior enchente da história registrada (Maio de 2024)</li>
         </ul>
-        <nav>
-          <a href="/sobre">Sobre o Projeto</a> | 
-          <a href="/politica-de-privacidade">Política de Privacidade</a> | 
-          <a href="/termos-de-uso">Termos de Uso</a>
+
+        <h2>Como Funcionam as Rotas Seguras Anti-Enchente</h2>
+        <p>Durante a elevação do rio, as vias que atingem sua cota de alagamento são desativadas dinamicamente na malha viária, calculando trajetos de desvio exclusivamente por colinas e pontos altos não inundáveis.</p>
+
+        <nav style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+          <a href="/" style="color: #2563eb; font-weight: bold; margin-right: 15px;">Início / Portal</a>
+          <a href="/mapa" style="color: #2563eb; font-weight: bold; margin-right: 15px;">Mapa Interativo</a>
+          <a href="/sobre" style="color: #2563eb; font-weight: bold; margin-right: 15px;">Guia Informativo</a>
+          <a href="/politica-de-privacidade" style="color: #2563eb; font-weight: bold; margin-right: 15px;">Política de Privacidade & LGPD</a>
+          <a href="/termos-de-uso" style="color: #2563eb; font-weight: bold;">Termos de Uso</a>
         </nav>
       </main>
     </noscript>

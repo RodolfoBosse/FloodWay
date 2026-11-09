@@ -8,10 +8,10 @@ import AuthLGPDModal from "./components/mobile/AuthLGPDModal";
 import PerfilLGPDModal from "./components/mobile/PerfilLGPDModal";
 import PrevisaoClimaModal from "./components/mobile/PrevisaoClimaModal";
 import InstallPWABanner from "./components/mobile/InstallPWABanner";
-import GoogleAdBanner from "./components/mobile/GoogleAdBanner";
 import PoliticaPrivacidadePage from "./components/pages/PoliticaPrivacidadePage";
 import SobrePage from "./components/pages/SobrePage";
 import TermosUsoPage from "./components/pages/TermosUsoPage";
+import PortalEditorialPage from "./components/pages/PortalEditorialPage";
 import { estimarCotaTerreno } from "./services/locaisLajeado";
 
 function App() {
@@ -20,14 +20,15 @@ function App() {
 	const [isSimulando, setIsSimulando] = useState(false);
 	const [painelRotaAberto, setPainelRotaAberto] = useState(false);
 	const [paginaAtiva, setPaginaAtiva] = useState(() => {
-		// Suporta URLs diretas: /sobre, /politica-de-privacidade, /termos-de-uso
+		// Abre na página do Portal Editorial por padrão (garantindo conteúdo do editor para o AdSense)
+		// Se o usuário acessar rotas específicas na URL, respeita a rota
 		if (typeof window !== "undefined") {
 			const path = window.location.pathname.toLowerCase();
-			if (path.includes("sobre")) return "sobre";
 			if (path.includes("politica") || path.includes("privacidade")) return "politica";
 			if (path.includes("termos")) return "termos";
+			if (path === "/mapa") return null;
 		}
-		return null;
+		return "portal";
 	});
 
 	// Autenticação Real com LGPD
@@ -214,12 +215,16 @@ function App() {
 		setPaginaAtiva(pag);
 		if (typeof window !== "undefined") {
 			const rotas = {
+				portal: "/",
 				sobre: "/sobre",
 				politica: "/politica-de-privacidade",
 				termos: "/termos-de-uso",
+				mapa: "/mapa",
 			};
 			if (pag && rotas[pag]) {
 				window.history.pushState(null, "", rotas[pag]);
+			} else if (pag === null) {
+				window.history.pushState(null, "", "/mapa");
 			} else {
 				window.history.pushState(null, "", "/");
 			}
@@ -229,6 +234,17 @@ function App() {
 	const voltarAoMapa = () => {
 		irParaPagina(null);
 	};
+
+	if (paginaAtiva === "portal") {
+		return (
+			<PortalEditorialPage
+				cotaAtual={cotaAtual}
+				onIniciarNavegacao={() => irParaPagina(null)}
+				onAbrirPolitica={() => irParaPagina("politica")}
+				onAbrirTermos={() => irParaPagina("termos")}
+			/>
+		);
+	}
 
 	if (paginaAtiva === "politica") {
 		return <PoliticaPrivacidadePage onVoltar={voltarAoMapa} />;
@@ -344,7 +360,7 @@ function App() {
 					setPaginaAtiva(null);
 					setPainelRotaAberto(!painelRotaAberto);
 				}}
-				onInfoClick={() => irParaPagina("sobre")}
+				onInfoClick={() => irParaPagina("portal")}
 				onGraficosClick={() => {}}
 				onSimularClick={() => {
 					setPaginaAtiva(null);
@@ -353,9 +369,6 @@ function App() {
 				isSimulando={isSimulando}
 				painelRotaAberto={painelRotaAberto}
 			/>
-
-			{/* Anúncio Google AdSense (Minimizável, fixado sobre a barra) */}
-			<GoogleAdBanner />
 
 			{/* Modais Globais de Autenticação e Perfil LGPD */}
 			<AuthLGPDModal
