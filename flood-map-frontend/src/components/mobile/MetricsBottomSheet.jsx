@@ -160,8 +160,8 @@ const MetricsBottomSheet = ({
 	const getMaxHeight = () => Math.round(window.innerHeight * 0.88);
 	const getMidHeight = () => {
 		if (abaAtiva === "rotas") return dadosRota ? 520 : 450;
-		if (abaAtiva === "simular") return 310;
-		return 295;
+		if (abaAtiva === "simular") return 320;
+		return 335;
 	};
 	const getMinHeight = () => 60;
 
@@ -170,9 +170,9 @@ const MetricsBottomSheet = ({
 		if (abaAtiva === "rotas") {
 			setCurrentHeight(dadosRota ? 520 : 450);
 		} else if (abaAtiva === "simular") {
-			setCurrentHeight(310);
+			setCurrentHeight(320);
 		} else {
-			setCurrentHeight(295);
+			setCurrentHeight(335);
 		}
 	}, [abaAtiva, !!dadosRota]);
 
@@ -333,7 +333,7 @@ const MetricsBottomSheet = ({
 				{/* CABEÇALHO (Lajeado RS + Clima) */}
 				<div
 					onClick={toggleSnap}
-					className="w-full flex items-center justify-between cursor-pointer mb-6 transition-opacity duration-300"
+					className="w-full flex items-center justify-between cursor-pointer mb-3 transition-opacity duration-300"
 					style={{ opacity: isMinimized ? 0.5 : 1 }}>
 					<div className="flex items-center gap-2">
 						<h2 className="text-[26px] font-extrabold text-gray-900 tracking-tight">
@@ -366,16 +366,16 @@ const MetricsBottomSheet = ({
 
 				{/* MÉTRICAS PRINCIPAIS (ESTILO NOVO LAYOUT) */}
 				{!isMinimized && (
-					<div className="flex flex-col gap-y-6 pt-1">
+					<div className="flex flex-col gap-y-3.5 pt-0.5">
 						{/* VISTA 1: MÉTRICAS (Aba Mapa) */}
 						{abaAtiva === "mapa" && (
-							<div className="flex flex-col gap-y-6 animate-in fade-in duration-300">
+							<div className="flex flex-col gap-y-3.5 animate-in fade-in duration-300">
 								<div className="flex justify-between items-end">
 									<div>
-										<p className="text-[12px] text-gray-500 font-medium mb-1">
+										<p className="text-[12px] text-gray-500 font-medium mb-0.5">
 											Cota atual
 										</p>
-										<p className="text-[48px] font-black text-gray-900 leading-none tracking-tighter">
+										<p className="text-[38px] font-black text-gray-900 leading-none tracking-tight">
 											{cotaReal ? Number(cotaReal).toFixed(2) : "13.84"}m
 										</p>
 									</div>
@@ -420,7 +420,7 @@ const MetricsBottomSheet = ({
 									}
 
 									return (
-										<div className="relative w-full pt-6 pb-5">
+										<div className="relative w-full pt-4 pb-2">
 											{/* PONTOS DE INTERESSE / CASA EM CIMA DA RÉGUA */}
 											{pontosMarcadores.map((m) => {
 												const pct = getPct(m.cota);
@@ -437,7 +437,7 @@ const MetricsBottomSheet = ({
 															<span className="text-[9px] text-gray-500">({m.cota.toFixed(0)}m)</span>
 														</div>
 														{/* Tracinho vertical conectando à barra */}
-														<div className={`w-0.5 h-2 ${m.bg} opacity-70`}></div>
+														<div className={`w-0.5 h-1.5 ${m.bg} opacity-70`}></div>
 													</div>
 												);
 											})}
@@ -456,7 +456,7 @@ const MetricsBottomSheet = ({
 											</div>
 
 											{/* MARCAS DE REFERÊNCIA INFERIORES */}
-											<div className="relative w-full text-[10px] font-bold text-gray-400 mt-2 flex justify-between">
+											<div className="relative w-full text-[10px] font-bold text-gray-400 mt-1 flex justify-between">
 												<span>10m</span>
 												<span className="text-yellow-600/80">19m (Atenção)</span>
 												<span className="text-orange-600/80">24m</span>
@@ -487,7 +487,7 @@ const MetricsBottomSheet = ({
 											: "bg-emerald-100 text-emerald-700 border border-emerald-200";
 
 									return (
-										<div className="grid grid-cols-2 gap-4 items-center">
+										<div className="grid grid-cols-2 gap-4 items-center pt-0.5">
 											<div className="flex items-center gap-1.5 flex-wrap">
 												<span className="text-xs text-gray-500 font-medium">
 													Tendência:

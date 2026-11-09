@@ -1,18 +1,19 @@
 import React from "react";
 import { 
   ArrowRight, 
-  Map, 
-  Waves, 
+  MapPin, 
   Compass, 
   ShieldCheck, 
   AlertTriangle, 
   Navigation, 
   BarChart3, 
-  BookOpen, 
   CheckCircle2, 
-  FileText, 
-  Lock, 
-  ExternalLink 
+  CloudRain, 
+  TrendingUp, 
+  Info,
+  ChevronRight,
+  PhoneCall,
+  Map as MapIcon
 } from "lucide-react";
 import GoogleAdSenseBlock from "../common/GoogleAdSenseBlock";
 
@@ -22,229 +23,232 @@ export default function PortalEditorialPage({
   onAbrirPolitica, 
   onAbrirTermos 
 }) {
-  const nivelRio = cotaAtual?.nivel || 13.24;
+  const nivelRio = cotaAtual?.nivel || 13.23;
   const statusRio = cotaAtual?.status || "Normal";
-  const tendenciStatus = cotaAtual?.tendencia || "Estável";
+  const tendenciStatus = cotaAtual?.velocidade_formatada || "Estável";
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center overflow-y-auto selection:bg-blue-600 selection:text-white">
-      {/* CABEÇALHO HERO COM IDENTIDADE OFICIAL */}
-      <header className="w-full bg-gradient-to-b from-blue-950 via-slate-900 to-slate-900 border-b border-slate-800/80 px-4 pt-8 pb-10 flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-400/30 text-blue-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-5 shadow-xs">
-          <Waves size={14} className="animate-pulse" />
-          <span>Monitor Hidrológico do Vale do Taquari • Lajeado e Estrela / RS</span>
-        </div>
-
-        <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white max-w-2xl leading-tight">
-          Prevenção de Inundações & <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Rotas Seguras</span> em Tempo Real
-        </h1>
-
-        <p className="mt-4 text-slate-300 text-sm sm:text-base max-w-xl leading-relaxed">
-          O <strong>FloodWay</strong> analisa a telemetria hidrológica do Rio Taquari cruzada com a altimetria precisa de cada rua, calculando rotas seguras de desvio pelas colinas e avisos preventivos para sua residência.
-        </p>
-
-        {/* CARTÃO DE STATUS DO RIO EM DESTAQUE */}
-        <div className="mt-6 w-full max-w-md bg-slate-800/90 border border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-xl flex items-center justify-between gap-4 backdrop-blur-md">
-          <div className="text-left">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Nível Atual do Rio Taquari</span>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-3xl font-black text-cyan-400">{Number(nivelRio).toFixed(2)}m</span>
-              <span className="text-xs text-slate-400 font-medium">({tendenciStatus})</span>
-            </div>
-            <span className="text-xs text-slate-300 block mt-1">Cota normal: 13,00m • Alerta: 19,00m</span>
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center overflow-y-auto selection:bg-blue-600 selection:text-white">
+      
+      {/* BARRA SUPERIOR CLEAN NO PADRÃO DO APP */}
+      <header className="w-full bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-sm font-black text-sm">
+            FW
           </div>
-
-          <div className="text-right">
-            <span className="inline-block text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              {statusRio}
-            </span>
+          <div>
+            <h1 className="font-extrabold text-base text-gray-900 tracking-tight leading-none">
+              FloodWay
+            </h1>
+            <span className="text-[10px] text-gray-500 font-medium">Lajeado & Estrela / RS</span>
           </div>
         </div>
 
-        {/* BOTÃO PRINCIPAL DE ENTRADA NO MAPA */}
-        <div className="mt-7 flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
-          <button
-            onClick={onIniciarNavegacao}
-            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-black text-base py-4 px-6 rounded-2xl shadow-lg shadow-blue-500/25 active:scale-98 transition transform cursor-pointer"
-          >
-            <Map size={22} />
-            <span>Abrir Mapa Interativo & Rotas</span>
-            <ArrowRight size={20} />
-          </button>
-        </div>
-        <span className="text-[11px] text-slate-400 mt-2 block">
-          Acesso livre e gratuito para toda a comunidade
-        </span>
+        <button
+          onClick={onIniciarNavegacao}
+          className="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+        >
+          <MapIcon size={14} />
+          <span>Ver no Mapa</span>
+        </button>
       </header>
 
-      {/* BLOCO EDITORIAL DE ALTO VALOR (ADSENSE COMPLIANT) */}
-      <main className="w-full max-w-4xl px-4 py-8 space-y-10">
+      {/* CONTEÚDO PRINCIPAL (LAYOUT CLEAN, CARD COM BORDAS ARREDONDADAS E SOMBRA LEVE) */}
+      <main className="w-full max-w-xl px-4 py-6 space-y-5">
         
-        {/* ARTIGO 1: COMO FUNCIONA O SISTEMA */}
-        <section className="bg-slate-800/50 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4">
-          <div className="flex items-center gap-3 text-cyan-400">
-            <Compass size={24} />
-            <h2 className="text-xl sm:text-2xl font-black text-white">
-              Como o FloodWay calcula o risco de inundação?
-            </h2>
+        {/* CARD PRINCIPAL DE STATUS DO RIO (MESMO ESTILO DO METRICS BOTTOM SHEET) */}
+        <section className="bg-white rounded-3xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100 space-y-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
+                Nível do Rio Taquari
+              </span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight">
+                  {Number(nivelRio).toFixed(2)}m
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-end gap-1.5">
+              <span className="px-3.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                {statusRio}
+              </span>
+              <span className="text-[11px] text-gray-500 font-medium">
+                {tendenciStatus}
+              </span>
+            </div>
           </div>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Diferente de consultas manuais de réguas pluviométricas, o FloodWay mapeia trecho a trecho as vias de Lajeado e Estrela. Quando o nível do Rio Taquari sobe ou entra em projeção de enchente, o algoritmo identifica as vias que atingiram sua <em>cota de bloqueio</em> e remove-as do grafo de navegação, sugerindo caminhos de fuga alternativos por bairros e colinas mais elevadas.
+
+          {/* RÉGUA VISUAL DE COTAS */}
+          <div className="pt-2">
+            <div className="relative w-full h-2.5 bg-gradient-to-r from-emerald-500 via-yellow-400 via-50% via-orange-500 to-red-600 rounded-full shadow-inner">
+              <div
+                className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-gray-900 rounded-full shadow-md transition-all"
+                style={{
+                  left: `${Math.min(Math.max(((Number(nivelRio) - 10) / 30) * 100, 0), 100)}%`,
+                  marginLeft: "-8px",
+                }}
+              />
+            </div>
+            <div className="flex justify-between text-[10px] font-bold text-gray-400 mt-2">
+              <span>10m</span>
+              <span className="text-yellow-600">19m (Atenção)</span>
+              <span className="text-orange-600">24m</span>
+              <span className="text-red-600">29.8m (Maio/24)</span>
+              <span>40m</span>
+            </div>
+          </div>
+
+          {/* BOTÃO PRINCIPAL DE ACESSO AO MAPA */}
+          <div className="pt-2">
+            <button
+              onClick={onIniciarNavegacao}
+              className="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold text-sm py-3 px-4 rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Abrir Mapa Interativo de Ruas</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        </section>
+
+        {/* ARTIGO EDITORIAL 1: O QUE É O FLOODWAY */}
+        <section className="bg-white rounded-3xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100 space-y-3">
+          <div className="flex items-center gap-2 text-blue-600 font-extrabold text-sm">
+            <Compass size={18} />
+            <span>Sobre a Plataforma</span>
+          </div>
+          <h2 className="text-lg font-black text-gray-900 leading-snug">
+            Monitoramento de cheias e rotas de desvio pelas colinas
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+            O <strong>FloodWay</strong> é um serviço de utilidade pública criado para transformar números brutos de réguas fluviométricas em decisões práticas para os moradores de Lajeado e Estrela. Ao cruzar as medições oficiais do Rio Taquari com a altimetria precisa de cada rua, o sistema calcula quais vias estão seguras e projeta caminhos livres de alagamento por vias mais altas.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-            <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-              <div className="text-blue-400 font-black text-lg flex items-center gap-1.5 mb-1">
-                <Navigation size={18} /> Rotas pelas Colinas
-              </div>
-              <p className="text-xs text-slate-400">
-                Desvios calculados por vias de cumeada acima de 30m, 40m e 50m para garantir tráfego sem represamento.
+          <div className="grid grid-cols-2 gap-2.5 pt-2">
+            <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
+              <span className="text-xs font-bold text-gray-900 block mb-1">Rotas Seguras</span>
+              <p className="text-[11px] text-gray-500">
+                Desvios automáticos evitando cruzamentos que atingiram cota de bloqueio.
               </p>
             </div>
-
-            <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-              <div className="text-amber-400 font-black text-lg flex items-center gap-1.5 mb-1">
-                <ShieldCheck size={18} /> Cota da Residência
-              </div>
-              <p className="text-xs text-slate-400">
-                Altimetria calibrada por número predial, mostrando quantos metros o rio precisa subir para afetar o imóvel.
-              </p>
-            </div>
-
-            <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-              <div className="text-cyan-400 font-black text-lg flex items-center gap-1.5 mb-1">
-                <BarChart3 size={18} /> Histórico & Projeções
-              </div>
-              <p className="text-xs text-slate-400">
-                Comparativo com as cheias históricas (1941, Set/23, Nov/23 e Maio/24 a 29,80m).
+            <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
+              <span className="text-xs font-bold text-gray-900 block mb-1">Cota por Residência</span>
+              <p className="text-[11px] text-gray-500">
+                Altimetria calibrada por número predial e margem de segurança ao vivo.
               </p>
             </div>
           </div>
         </section>
 
-        {/* BLOCO DE ANÚNCIO EDITORIAL ADSENSE (ENTRE ARTIGOS) */}
-        <div className="w-full bg-slate-800/30 rounded-2xl p-2 border border-slate-800">
+        {/* ANÚNCIO EDITORIAL ADSENSE PERFEITAMENTE INTEGRADO */}
+        <div className="bg-white rounded-3xl p-2 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
           <GoogleAdSenseBlock />
         </div>
 
-        {/* ARTIGO 2: GUIA OFICIAL DE COTAS DO RIO TAQUARI */}
-        <section className="bg-slate-800/50 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-5">
-          <div className="flex items-center gap-3 text-amber-400">
-            <AlertTriangle size={24} />
-            <h2 className="text-xl sm:text-2xl font-black text-white">
-              Tabela Oficial de Cotas de Cheia em Lajeado
-            </h2>
+        {/* ARTIGO EDITORIAL 2: GUIA DE COTAS OFICIAIS */}
+        <section className="bg-white rounded-3xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100 space-y-3">
+          <div className="flex items-center gap-2 text-amber-600 font-extrabold text-sm">
+            <AlertTriangle size={18} />
+            <span>Entenda as Cotas da Defesa Civil</span>
           </div>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Acompanhe o significado das marcas na régua oficial do Rio Taquari para saber exatamente quando agir e iniciar a retirada preventiva de pertences e veículos:
-          </p>
+          <h2 className="text-lg font-black text-gray-900 leading-snug">
+            Níveis de referência da régua em Lajeado
+          </h2>
 
-          <div className="space-y-3">
-            <div className="p-4 bg-slate-900/90 rounded-2xl border-l-4 border-l-blue-500 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="space-y-2.5 pt-1 text-xs">
+            <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-2xl flex items-center justify-between">
               <div>
-                <span className="text-blue-400 font-bold text-sm block">13,00m a 17,00m • Situação Normal</span>
-                <span className="text-xs text-slate-400">Navegação sem perigo. O rio escoa sem bloqueio de vias públicas.</span>
+                <span className="font-bold text-blue-900 block">13m a 17m • Normal</span>
+                <span className="text-[11px] text-blue-700">Fluxo habitual dentro da calha do rio.</span>
               </div>
-              <span className="text-xs font-semibold px-2 py-1 bg-blue-500/10 text-blue-300 rounded self-start sm:self-center">Observação</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">Seguro</span>
             </div>
 
-            <div className="p-4 bg-slate-900/90 rounded-2xl border-l-4 border-l-amber-500 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="p-3 bg-yellow-50/60 border border-yellow-100 rounded-2xl flex items-center justify-between">
               <div>
-                <span className="text-amber-400 font-bold text-sm block">17,00m • Cota de Atenção da Defesa Civil</span>
-                <span className="text-xs text-slate-400">A Defesa Civil Municipal e o Corpo de Bombeiros entram em plantão e monitoram afluentes.</span>
+                <span className="font-bold text-yellow-900 block">17,00m • Cota de Atenção</span>
+                <span className="text-[11px] text-yellow-700">Equipes de socorro monitoram as cabeceiras.</span>
               </div>
-              <span className="text-xs font-semibold px-2 py-1 bg-amber-500/10 text-amber-300 rounded self-start sm:self-center">Atenção</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-800">Atenção</span>
             </div>
 
-            <div className="p-4 bg-slate-900/90 rounded-2xl border-l-4 border-l-orange-500 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="p-3 bg-orange-50/60 border border-orange-100 rounded-2xl flex items-center justify-between">
               <div>
-                <span className="text-orange-400 font-bold text-sm block">19,00m • Cota de Alerta</span>
-                <span className="text-xs text-slate-400">Famílias de áreas ribeirinhas baixas devem iniciar a preparação para evacuação segura.</span>
+                <span className="font-bold text-orange-900 block">19,00m • Cota de Alerta</span>
+                <span className="text-[11px] text-orange-700">Moradores de áreas ribeirinhas iniciam preparativos.</span>
               </div>
-              <span className="text-xs font-semibold px-2 py-1 bg-orange-500/10 text-orange-300 rounded self-start sm:self-center">Alerta</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-800">Alerta</span>
             </div>
 
-            <div className="p-4 bg-slate-900/90 rounded-2xl border-l-4 border-l-red-500 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="p-3 bg-red-50/60 border border-red-100 rounded-2xl flex items-center justify-between">
               <div>
-                <span className="text-red-400 font-bold text-sm block">19,80m+ • Início do Alagamento de Ruas</span>
-                <span className="text-xs text-slate-400">A água extravasa sobre as vias Décio Martins Costa e Parque Piraí, exigindo interdições.</span>
+                <span className="font-bold text-red-900 block">19,80m+ • Início do Alagamento de Ruas</span>
+                <span className="text-[11px] text-red-700">Primeiras águas atingem a Décio Martins Costa.</span>
               </div>
-              <span className="text-xs font-semibold px-2 py-1 bg-red-500/10 text-red-300 rounded self-start sm:self-center">Inundação</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-800">Inundação</span>
             </div>
           </div>
         </section>
 
-        {/* ARTIGO 3: CHECKLIST DE PREVENÇÃO & FONTES OFICIAIS */}
-        <section className="bg-slate-800/50 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4">
-          <div className="flex items-center gap-3 text-emerald-400">
-            <CheckCircle2 size={24} />
-            <h2 className="text-xl sm:text-2xl font-black text-white">
-              Fontes Oficiais & Telefones Úteis de Emergência
-            </h2>
+        {/* CONTATOS DE EMERGÊNCIA */}
+        <section className="bg-white rounded-3xl p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100 space-y-3">
+          <div className="flex items-center gap-2 text-gray-900 font-extrabold text-sm">
+            <PhoneCall size={18} className="text-red-500" />
+            <span>Telefones Úteis de Emergência</span>
           </div>
-          <p className="text-slate-300 text-sm leading-relaxed">
-            O FloodWay agrega telemetria de sensores oficiais do <strong>Serviço Geológico do Brasil (SGB/CPRM)</strong>, <strong>ANA</strong> e boletins da <strong>Defesa Civil de Lajeado</strong>. Em caso de necessidade de socorro, mantenha sempre à mão:
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-center">
-            <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
-              <span className="text-xl font-black text-red-400 block">199</span>
-              <span className="text-[11px] text-slate-400 font-medium">Defesa Civil</span>
+          <div className="grid grid-cols-4 gap-2 text-center pt-1">
+            <div className="p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+              <span className="text-base font-black text-red-600 block">199</span>
+              <span className="text-[10px] text-gray-500 font-semibold">Defesa Civil</span>
             </div>
-            <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
-              <span className="text-xl font-black text-red-400 block">193</span>
-              <span className="text-[11px] text-slate-400 font-medium">Bombeiros</span>
+            <div className="p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+              <span className="text-base font-black text-red-600 block">193</span>
+              <span className="text-[10px] text-gray-500 font-semibold">Bombeiros</span>
             </div>
-            <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
-              <span className="text-xl font-black text-blue-400 block">190</span>
-              <span className="text-[11px] text-slate-400 font-medium">Brigada Militar</span>
+            <div className="p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+              <span className="text-base font-black text-blue-600 block">190</span>
+              <span className="text-[10px] text-gray-500 font-semibold">Brigada</span>
             </div>
-            <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800">
-              <span className="text-xl font-black text-emerald-400 block">192</span>
-              <span className="text-[11px] text-slate-400 font-medium">SAMU</span>
+            <div className="p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+              <span className="text-base font-black text-emerald-600 block">192</span>
+              <span className="text-[10px] text-gray-500 font-semibold">SAMU</span>
             </div>
           </div>
         </section>
 
-        {/* CHAMADA DE AÇÃO FINAL */}
-        <div className="text-center pt-4 pb-6 space-y-4">
+        {/* BOTÃO FINAL INICIAR */}
+        <div className="pt-2 text-center">
           <button
             onClick={onIniciarNavegacao}
-            className="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-base py-3.5 px-8 rounded-2xl shadow-lg shadow-blue-600/30 active:scale-98 transition transform cursor-pointer"
+            className="w-full bg-gray-900 hover:bg-black active:scale-[0.98] text-white font-bold text-sm py-3.5 px-4 rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Map size={20} />
-            <span>Acessar o Mapa Interativo de Enchentes</span>
-            <ArrowRight size={18} />
+            <MapIcon size={18} />
+            <span>Acessar Mapa & Rotas</span>
           </button>
         </div>
 
       </main>
 
-      {/* RODAPÉ INSTITUCIONAL CLÁSSICO COM LINKS LGPD E ADSENSE */}
-      <footer className="w-full bg-slate-950 border-t border-slate-800/80 py-8 px-4 text-center text-xs text-slate-500">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-left">
-            <span className="font-bold text-slate-300 text-sm block">FloodWay Brasil</span>
-            <span>Tecnologia cidadã de prevenção hidrológica e rotas de segurança • Lajeado/RS</span>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 text-slate-400">
-            <button onClick={onAbrirPolitica} className="hover:text-blue-400 underline transition cursor-pointer">
+      {/* RODAPÉ LIMPO E FORMAL */}
+      <footer className="w-full border-t border-gray-200/80 bg-white py-6 px-4 mt-6 text-center text-xs text-gray-500">
+        <div className="max-w-xl mx-auto flex flex-col items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3 font-semibold text-gray-600">
+            <button onClick={onAbrirPolitica} className="hover:text-blue-600 underline transition cursor-pointer">
               Política de Privacidade
             </button>
             <span>•</span>
-            <button onClick={onAbrirTermos} className="hover:text-blue-400 underline transition cursor-pointer">
+            <button onClick={onAbrirTermos} className="hover:text-blue-600 underline transition cursor-pointer">
               Termos de Uso
             </button>
             <span>•</span>
-            <button onClick={onIniciarNavegacao} className="hover:text-blue-400 underline transition cursor-pointer">
-              Mapa & Rotas
+            <button onClick={onIniciarNavegacao} className="hover:text-blue-600 underline transition cursor-pointer">
+              Mapa
             </button>
           </div>
-        </div>
-
-        <div className="mt-6 pt-4 border-t border-slate-900 text-[11px] text-slate-600">
-          © 2026 FloodWay • Este portal disponibiliza dados de utilidade pública sem finalidade lucrativa direta.
+          <span className="text-[11px] text-gray-400">
+            © 2026 FloodWay • Plataforma de Prevenção e Rotas no Vale do Taquari
+          </span>
         </div>
       </footer>
     </div>
