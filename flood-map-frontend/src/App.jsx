@@ -8,6 +8,7 @@ import AuthLGPDModal from "./components/mobile/AuthLGPDModal";
 import PerfilLGPDModal from "./components/mobile/PerfilLGPDModal";
 import PrevisaoClimaModal from "./components/mobile/PrevisaoClimaModal";
 import InstallPWABanner from "./components/mobile/InstallPWABanner";
+import AutoUpdateNotifier from "./components/common/AutoUpdateNotifier";
 import PoliticaPrivacidadePage from "./components/pages/PoliticaPrivacidadePage";
 import SobrePage from "./components/pages/SobrePage";
 import TermosUsoPage from "./components/pages/TermosUsoPage";
@@ -397,6 +398,9 @@ function App() {
 
 			{/* Banner de Instalação PWA */}
 			<InstallPWABanner />
+
+			{/* Notificador e Atualizador Automático de Versão PWA */}
+			<AutoUpdateNotifier />
 
 			{/* Modal de Previsão do Tempo e Chuvas */}
 			<PrevisaoClimaModal
