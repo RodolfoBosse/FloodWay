@@ -68,6 +68,18 @@ const iconeDestino = new L.DivIcon({
 	iconAnchor: [17, 34],
 });
 
+const iconeUsuarioGPS = new L.DivIcon({
+	html: `
+		<div style="position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+			<div style="position: absolute; width: 32px; height: 32px; border-radius: 50%; background-color: rgba(59, 130, 246, 0.4); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+			<div style="position: relative; width: 18px; height: 18px; background-color: #2563eb; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.4); margin: auto;"></div>
+		</div>
+	`,
+	className: "custom-user-gps-pulse",
+	iconSize: [32, 32],
+	iconAnchor: [16, 16],
+});
+
 // BASE OFICIAL VERIFICADA DE MARCOS E ESTABELECIMENTOS DE LAJEADO/RS
 
 const CapturadorDeCliques = ({ modoSelecao, onPontoSelecionado }) => {
@@ -159,6 +171,46 @@ const MapaInterativo = ({
 	const [casaWhatsapp, setCasaWhatsapp] = useState("");
 	const [casaCoords, setCasaCoords] = useState(null);
 	const [salvandoCasa, setSalvandoCasa] = useState(false);
+
+	// Estado do GPS / Localização Atual do Usuário
+	const [localizacaoGPS, setLocalizacaoGPS] = useState(null);
+	const [obtendoGPS, setObtendoGPS] = useState(false);
+	const mapRef = useRef(null);
+
+	const capturarLocalizacaoAtual = (comoOrigem = false) => {
+		if (!("geolocation" in navigator)) {
+			alert("Geolocalização não é suportada pelo seu dispositivo ou navegador.");
+			return;
+		}
+
+		setObtendoGPS(true);
+		navigator.geolocation.getCurrentPosition(
+			(pos) => {
+				const coords = [pos.coords.latitude, pos.coords.longitude];
+				setLocalizacaoGPS(coords);
+				setObtendoGPS(false);
+
+				if (comoOrigem) {
+					setPontoOrigem(coords);
+					setTextoOrigem("Minha Posição Atual (GPS)");
+					setSugestoesOrigem([]);
+				}
+
+				if (mapRef.current) {
+					mapRef.current.flyTo(coords, 16, { animate: true, duration: 1.2 });
+				}
+			},
+			(err) => {
+				setObtendoGPS(false);
+				let msg = "Não foi possível obter a sua localização GPS.";
+				if (err.code === 1) msg = "Permissão de GPS negada. Por favor, autorize a localização nas configurações do navegador.";
+				else if (err.code === 2) msg = "Sinal de GPS indisponível no momento.";
+				else if (err.code === 3) msg = "Tempo esgotado ao buscar sinal GPS.";
+				alert(msg);
+			},
+			{ enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+		);
+	};
 
 	// Registro do Service Worker para Push
 	useEffect(() => {
@@ -1459,18 +1511,16 @@ const MapaInterativo = ({
 					</div>
 
 					<div className="space-y-3">
-						{usuario?.residencia && (
-							<div className="flex gap-2">
-								<button
-									onClick={() => {
-										setPontoOrigem(usuario.residencia.coords);
-										setTextoOrigem(
-											`Minha Casa (${usuario.residencia.endereco})`,
-										);
-									}}
-									className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1">
-									🏠 Sair de Casa
-								</button>
+						{/* Atalhos Rápidos: GPS e Residência */}
+						<div className="flex gap-1.5 pb-0.5">
+							<button
+								onClick={() => capturarLocalizacaoAtual(true)}
+								disabled={obtendoGPS}
+								className="flex-1 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-900 text-[11px] font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition active:scale-95 shadow-xs cursor-pointer">
+								<span>{obtendoGPS ? "🛰️ Localizando..." : "📍 Minha Posição Atual (GPS)"}</span>
+							</button>
+
+							{usuario?.residencia?.coords && (
 								<button
 									onClick={() => {
 										setPontoDestino(usuario.residencia.coords);
@@ -1478,11 +1528,11 @@ const MapaInterativo = ({
 											`Minha Casa (${usuario.residencia.endereco})`,
 										);
 									}}
-									className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1">
-									🏁 Ir para Casa
+									className="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 transition active:scale-95 shadow-xs cursor-pointer">
+									🏁 Ir p/ Casa
 								</button>
-							</div>
-						)}
+							)}
+						</div>
 
 						{/* PONTO A */}
 						<div className="relative">
@@ -1704,6 +1754,7 @@ const MapaInterativo = ({
 				)}
 
 				<MapContainer zoomControl={false}
+					ref={mapRef}
 					center={config.centro}
 					zoom={config.zoom}
 					style={{ width: "100%", height: "100%" }}
@@ -1882,6 +1933,31 @@ const MapaInterativo = ({
 										A partir deste ponto a via encontra-se{" "}
 										<strong>submersa ou intransponível</strong>.
 									</p>
+								</div>
+							</Popup>
+						</Marker>
+					)}
+
+					{/* Marcador da Localização GPS Atual do Usuário */}
+					{localizacaoGPS && (
+						<Marker position={localizacaoGPS} icon={iconeUsuarioGPS}>
+							<Popup>
+								<div className="text-xs p-1 font-sans">
+									<h4 className="font-bold text-blue-700 text-sm flex items-center gap-1">
+										📍 Você está aqui
+									</h4>
+									<p className="text-gray-500 text-[11px] mt-0.5">
+										Posição obtida pelo GPS do seu dispositivo.
+									</p>
+									<button
+										onClick={() => {
+											setPontoOrigem(localizacaoGPS);
+											setTextoOrigem("Minha Posição Atual (GPS)");
+											setPainelRotaAberto(true);
+										}}
+										className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-[11px] transition shadow-xs cursor-pointer">
+										Traçar Rota a Partir Daqui
+									</button>
 								</div>
 							</Popup>
 						</Marker>

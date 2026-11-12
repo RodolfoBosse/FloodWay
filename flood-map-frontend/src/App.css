@@ -113,10 +113,8 @@ button, a {
 /* Reset para garantir rolagem correta de páginas e viewport mobile */
 html, body {
   width: 100%;
-  min-height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
 

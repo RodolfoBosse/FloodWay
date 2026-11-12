@@ -160,8 +160,7 @@ export default function AnalyticsDashboard({ onVoltar }) {
 
   return (
     <div 
-      className="min-h-screen w-full bg-slate-900 text-slate-100 flex flex-col font-sans overflow-y-auto overscroll-y-contain selection:bg-blue-600 selection:text-white"
-      style={{ touchAction: 'pan-y' }}
+      className="w-full min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white"
     >
       
       {/* Barra de Topo do Painel */}

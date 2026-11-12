@@ -4,7 +4,7 @@ import GoogleAdSenseBlock from "../common/GoogleAdSenseBlock";
 
 export default function TermosUsoPage({ onVoltar }) {
   return (
-    <div className="min-h-screen w-full bg-slate-50 text-slate-800 flex flex-col items-center p-4 sm:p-6 overflow-y-auto overscroll-y-contain" style={{ touchAction: 'pan-y' }}>
+    <div className="w-full bg-slate-50 text-slate-800 flex flex-col items-center p-4 sm:p-6">
       <div className="w-full max-w-3xl bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-10 my-4">
         {onVoltar && (
           <button
