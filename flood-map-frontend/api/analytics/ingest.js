@@ -1,10 +1,9 @@
 /**
  * Endpoint Serverless na Vercel: /api/analytics/ingest
- * Recebe lotes de eventos telemétricos via POST ou sendBeacon
- * Extrai cabeçalhos de rede (IP City, Região) e armazena os eventos
+ * Recebe lotes de eventos telemétricos com Rate Limiting e CORS seguro
  */
+import { setSecureCorsHeaders, checkRateLimit } from '../_security.js';
 
-// Buffer em memória para a instância serverless (mantém contadores e últimos eventos para agregação)
 let memoryStore = globalThis.__floodway_analytics_store || {
   totalEvents: 0,
   pageViews: {},
@@ -19,10 +18,7 @@ let memoryStore = globalThis.__floodway_analytics_store || {
 globalThis.__floodway_analytics_store = memoryStore;
 
 export default async function handler(req, res) {
-  // CORS permissivo para chamadas da própria aplicação e beacon
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setSecureCorsHeaders(req, res, 'POST,OPTIONS');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -30,6 +26,11 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido' });
+  }
+
+  // Rate Limiting: Máximo de 30 envios de lote por minuto por IP
+  if (!checkRateLimit(req, 30, 60)) {
+    return res.status(429).json({ error: 'Muitas requisições. Rate limit excedido.' });
   }
 
   try {
@@ -44,29 +45,31 @@ export default async function handler(req, res) {
 
     const events = Array.isArray(body?.events) ? body.events : (body ? [body] : []);
     
-    // Headers geográficos automáticos providos pela Vercel Edge Network
+    // Proteção contra payload excessivo (máximo 50 eventos por lote)
+    const sanitizedEvents = events.slice(0, 50);
+
     const clientCity = req.headers['x-vercel-ip-city'] || 'Lajeado';
     const clientRegion = req.headers['x-vercel-ip-country-region'] || 'RS';
     const clientCountry = req.headers['x-vercel-ip-country'] || 'BR';
 
-    for (const evt of events) {
+    for (const evt of sanitizedEvents) {
       if (!evt || !evt.event_type) continue;
 
       memoryStore.totalEvents++;
 
       // Agregação de Páginas
       if (evt.event_type === 'page_view') {
-        const p = evt.data?.page || 'desconhecida';
+        const p = String(evt.data?.page || 'desconhecida').substring(0, 40);
         memoryStore.pageViews[p] = (memoryStore.pageViews[p] || 0) + 1;
       }
 
       // Dispositivos e PWA
       if (evt.device?.os) {
-        const os = evt.device.os;
+        const os = String(evt.device.os).substring(0, 20);
         memoryStore.devices[os] = (memoryStore.devices[os] || 0) + 1;
       }
       if (evt.device?.browser) {
-        const b = evt.device.browser;
+        const b = String(evt.device.browser).substring(0, 20);
         memoryStore.browsers[b] = (memoryStore.browsers[b] || 0) + 1;
       }
       if (evt.device?.isPWA) {
@@ -76,14 +79,14 @@ export default async function handler(req, res) {
       }
 
       // Geo / Cidades
-      const locKey = `${decodeURIComponent(clientCity)}/${clientRegion}`;
+      const locKey = `${decodeURIComponent(clientCity)}/${clientRegion}`.substring(0, 50);
       memoryStore.cidades[locKey] = (memoryStore.cidades[locKey] || 0) + 1;
 
       // Simulações de Cota
       if (evt.event_type === 'river_simulation' && evt.data?.cota_simulada) {
         memoryStore.simulacoes.push({
-          cota: evt.data.cota_simulada,
-          delta: evt.data.delta || 0,
+          cota: Number(evt.data.cota_simulada) || 0,
+          delta: Number(evt.data.delta) || 0,
           timestamp: evt.timestamp || new Date().toISOString()
         });
         if (memoryStore.simulacoes.length > 200) {
@@ -91,7 +94,7 @@ export default async function handler(req, res) {
         }
       }
 
-      // Guarda os últimos 100 eventos detalhados com carimbo e geo da Vercel
+      // Guarda os últimos 100 eventos detalhados
       memoryStore.recentEvents.unshift({
         ...evt,
         geo: {
@@ -106,7 +109,7 @@ export default async function handler(req, res) {
       }
     }
 
-    return res.status(200).json({ status: 'ok', received: events.length });
+    return res.status(200).json({ status: 'ok', received: sanitizedEvents.length });
   } catch (err) {
     console.error('Erro ao processar ingestão analítica:', err);
     return res.status(500).json({ error: 'Erro interno ao processar telemetria' });

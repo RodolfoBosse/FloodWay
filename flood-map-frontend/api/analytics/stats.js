@@ -1,15 +1,13 @@
 /**
  * Endpoint Serverless na Vercel: /api/analytics/stats
- * Fornece os dados consolidados e métricas agregadas para o painel de monitoramento interno.
- * Protegido por Token de Administrador via header Authorization: Bearer <ADMIN_KEY>
+ * Fornece métricas consolidadas com autenticação Bearer Token e CORS restrito
  */
+import { setSecureCorsHeaders } from '../_security.js';
 
 const ADMIN_SECRET = process.env.ANALYTICS_ADMIN_KEY || 'floodway2026admin';
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  setSecureCorsHeaders(req, res, 'GET,OPTIONS');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();

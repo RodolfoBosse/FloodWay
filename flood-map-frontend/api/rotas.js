@@ -1,17 +1,21 @@
 /**
  * Handler serverless para Rotas Favoritas do Usuário na Vercel
- * Salvar, Listar e Excluir rotas salvas
+ * Com CORS restrito e sanitização
  */
+import { setSecureCorsHeaders, checkRateLimit } from './_security.js';
+
 let _rotasMemoria = [];
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  setSecureCorsHeaders(req, res, 'GET,POST,OPTIONS,DELETE');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+
+  // Rate Limiting: máx 40 requisições de rotas por minuto
+  if (!checkRateLimit(req, 40, 60)) {
+    return res.status(429).json({ erro: 'Muitas requisições. Aguarde um instante.' });
   }
 
   const { action, email, id } = req.query;
@@ -38,30 +42,34 @@ export default async function handler(req, res) {
 
       const novaRota = {
         id: Date.now(),
-        email: rEmail.toLowerCase().trim(),
-        nome: nome || 'Minha Rota',
-        origem_nome: origem_nome || '',
+        email: String(rEmail).toLowerCase().trim().substring(0, 100),
+        nome: String(nome || 'Minha Rota').substring(0, 80),
+        origem_nome: String(origem_nome || '').substring(0, 150),
         origem_coords: origem_coords || null,
-        destino_nome: destino_nome || '',
+        destino_nome: String(destino_nome || '').substring(0, 150),
         destino_coords: destino_coords || null,
-        distancia: distancia || '0',
-        tempo: tempo || 5,
+        distancia: String(distancia || '0').substring(0, 20),
+        tempo: Number(tempo) || 5,
         criado_em: new Date().toISOString()
       };
 
-      _rotasMemoria.unshift(novaRota);
-      return res.status(200).json({ status: 'sucesso', id: novaRota.id, rota: novaRota });
+      _rotasMemoria.push(novaRota);
+      if (_rotasMemoria.length > 300) {
+        _rotasMemoria.shift();
+      }
+
+      return res.status(201).json({ status: 'sucesso', rota: novaRota });
     } catch (err) {
       return res.status(500).json({ erro: err.message });
     }
   }
 
   // 3. Excluir rota
-  if (action === 'excluir' || req.method === 'DELETE') {
-    const idNum = parseInt(id, 10);
-    _rotasMemoria = _rotasMemoria.filter(r => r.id !== idNum);
-    return res.status(200).json({ status: 'sucesso' });
+  if (req.method === 'DELETE' || action === 'excluir') {
+    const rotaId = parseInt(id, 10);
+    _rotasMemoria = _rotasMemoria.filter(r => r.id !== rotaId);
+    return res.status(200).json({ status: 'sucesso', mensagem: 'Rota removida' });
   }
 
-  return res.status(404).json({ erro: 'Ação não encontrada' });
+  return res.status(405).json({ erro: 'Método não permitido' });
 }

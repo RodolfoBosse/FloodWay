@@ -1,19 +1,22 @@
 /**
  * Handler serverless na Vercel para /api/v1/perfil/salvar/
- * Garante que quando o usuário salva o perfil ou arrasta o pin da casa na Vercel,
- * o endpoint responda com status 200 e retorne a cota_terreno enviada ou calculada.
+ * Com CORS restrito e validação de dados
  */
+import { setSecureCorsHeaders, checkRateLimit } from './_security.js';
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  setSecureCorsHeaders(req, res, 'GET,POST,OPTIONS');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
   if (req.method === 'POST') {
+    // Rate limit: máx 30 atualizações de perfil por minuto
+    if (!checkRateLimit(req, 30, 60)) {
+      return res.status(429).json({ erro: 'Muitas requisições. Aguarde um instante.' });
+    }
+
     try {
       const data = req.body || {};
       const { email, nome, whatsapp, endereco_completo, bairro, latitude, longitude, cota_terreno } = data;
@@ -23,11 +26,11 @@ export default async function handler(req, res) {
       return res.status(200).json({
         status: 'sucesso',
         perfil: {
-          nome: nome || 'Usuário',
-          email: email || '',
-          whatsapp: whatsapp || '',
-          endereco: endereco_completo || '',
-          bairro: bairro || '',
+          nome: String(nome || 'Usuário').substring(0, 100),
+          email: String(email || '').substring(0, 100),
+          whatsapp: String(whatsapp || '').substring(0, 30),
+          endereco: String(endereco_completo || '').substring(0, 200),
+          bairro: String(bairro || '').substring(0, 80),
           latitude: latitude || null,
           longitude: longitude || null,
           cota_terreno: Math.round(cota * 10) / 10
@@ -40,4 +43,3 @@ export default async function handler(req, res) {
 
   return res.status(405).json({ erro: 'Método não permitido' });
 }
-

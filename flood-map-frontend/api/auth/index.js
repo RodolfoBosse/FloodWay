@@ -1,15 +1,19 @@
 /**
  * Handler serverless para autenticação Google, Perfil e Exclusão de Conta
- * Garante persistência e funcionamento tanto na Vercel quanto em desenvolvimento.
+ * Com CORS restrito e validação oficial de token Google
  */
+import { setSecureCorsHeaders, checkRateLimit } from '../_security.js';
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  setSecureCorsHeaders(req, res, 'GET,POST,OPTIONS,DELETE');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+
+  // Rate Limiting para evitar ataques de força bruta no endpoint de auth
+  if (!checkRateLimit(req, 20, 60)) {
+    return res.status(429).json({ erro: 'Muitas tentativas de autenticação. Aguarde um minuto.' });
   }
 
   const { action } = req.query;
@@ -27,7 +31,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ erro: 'Credencial do Google não informada.' });
       }
 
-      // Validação oficial junto ao Google
+      // Validação oficial junto ao Google OAuth2
       const verifyResp = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
       if (!verifyResp.ok) {
         return res.status(401).json({ erro: 'Token Google inválido ou expirado.' });
@@ -48,10 +52,10 @@ export default async function handler(req, res) {
         }
       });
     } catch (err) {
-      return res.status(500).json({ erro: 'Falha ao autenticar com o Google: ' + err.message });
+      console.error('Erro na validação de login:', err);
+      return res.status(500).json({ erro: 'Erro interno ao validar credencial do Google.' });
     }
   }
 
-  return res.status(404).json({ erro: 'Ação não encontrada' });
+  return res.status(405).json({ erro: 'Método não permitido.' });
 }
-
