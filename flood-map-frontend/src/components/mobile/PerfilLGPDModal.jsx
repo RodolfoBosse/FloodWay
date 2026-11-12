@@ -13,7 +13,8 @@ export default function PerfilLGPDModal({
   cotaAtual = 13.24,
   onAbrirPolitica,
   onAbrirSobre,
-  onAbrirTermos
+  onAbrirTermos,
+  onAbrirAnalytics
 }) {
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
@@ -418,6 +419,20 @@ export default function PerfilLGPDModal({
             >
               Termos de Uso
             </button>
+            {onAbrirAnalytics && (
+              <>
+                <span>•</span>
+                <button
+                  onClick={() => {
+                    onClose();
+                    onAbrirAnalytics();
+                  }}
+                  className="hover:text-blue-600 underline transition text-gray-400"
+                >
+                  Analytics & Telemetria
+                </button>
+              </>
+            )}
           </div>
 
           {/* Ações */}

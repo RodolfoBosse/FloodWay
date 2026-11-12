@@ -9,11 +9,14 @@ import PerfilLGPDModal from "./components/mobile/PerfilLGPDModal";
 import PrevisaoClimaModal from "./components/mobile/PrevisaoClimaModal";
 import InstallPWABanner from "./components/mobile/InstallPWABanner";
 import AutoUpdateNotifier from "./components/common/AutoUpdateNotifier";
+import CookieConsentBanner from "./components/common/CookieConsentBanner";
+import AnalyticsDashboard from "./components/admin/AnalyticsDashboard";
 import PoliticaPrivacidadePage from "./components/pages/PoliticaPrivacidadePage";
 import SobrePage from "./components/pages/SobrePage";
 import TermosUsoPage from "./components/pages/TermosUsoPage";
 import PortalEditorialPage from "./components/pages/PortalEditorialPage";
 import { estimarCotaTerreno } from "./services/locaisLajeado";
+import { trackPageView, trackSimulacao } from "./services/telemetryTracker";
 
 function App() {
 	const [cotaAtual, setCotaAtual] = useState(null);
@@ -27,6 +30,8 @@ function App() {
 			const path = window.location.pathname.toLowerCase();
 			if (path.includes("politica") || path.includes("privacidade")) return "politica";
 			if (path.includes("termos")) return "termos";
+			if (path.includes("sobre")) return "sobre";
+			if (path.includes("analytics") || path.includes("admin")) return "analytics";
 			if (path === "/mapa") return null;
 		}
 		return "portal";
@@ -214,12 +219,14 @@ function App() {
 
 	const irParaPagina = (pag) => {
 		setPaginaAtiva(pag);
+		trackPageView(pag || 'mapa');
 		if (typeof window !== "undefined") {
 			const rotas = {
 				portal: "/",
 				sobre: "/sobre",
 				politica: "/politica-de-privacidade",
 				termos: "/termos-de-uso",
+				analytics: "/analytics",
 				mapa: "/mapa",
 			};
 			if (pag && rotas[pag]) {
@@ -238,13 +245,21 @@ function App() {
 
 	if (paginaAtiva === "portal") {
 		return (
-			<PortalEditorialPage
-				cotaAtual={cotaAtual}
-				onIniciarNavegacao={() => irParaPagina(null)}
-				onAbrirPolitica={() => irParaPagina("politica")}
-				onAbrirTermos={() => irParaPagina("termos")}
-			/>
+			<>
+				<PortalEditorialPage
+					cotaAtual={cotaAtual}
+					onIniciarNavegacao={() => irParaPagina(null)}
+					onAbrirPolitica={() => irParaPagina("politica")}
+					onAbrirTermos={() => irParaPagina("termos")}
+					onAbrirAnalytics={() => irParaPagina("analytics")}
+				/>
+				<CookieConsentBanner onAbrirPolitica={() => irParaPagina("politica")} />
+			</>
 		);
+	}
+
+	if (paginaAtiva === "analytics") {
+		return <AnalyticsDashboard onVoltar={voltarAoMapa} />;
 	}
 
 	if (paginaAtiva === "politica") {
@@ -394,6 +409,7 @@ function App() {
 				onAbrirPolitica={() => irParaPagina("politica")}
 				onAbrirSobre={() => irParaPagina("sobre")}
 				onAbrirTermos={() => irParaPagina("termos")}
+				onAbrirAnalytics={() => irParaPagina("analytics")}
 			/>
 
 			{/* Banner de Instalação PWA */}
@@ -408,6 +424,9 @@ function App() {
 				onClose={() => setModalClimaAberto(false)}
 				dadosClima={dadosClima}
 			/>
+
+			{/* Banner de Consentimento de Cookies LGPD */}
+			<CookieConsentBanner onAbrirPolitica={() => irParaPagina("politica")} />
 		</div>
 	);
 }

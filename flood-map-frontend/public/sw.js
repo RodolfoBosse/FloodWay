@@ -1,4 +1,4 @@
-﻿// Versão do Service Worker (atualizada automaticamente com o build)
+// Versão do Service Worker (atualizada automaticamente com o build)
 const CACHE_VERSION = 'floodway-v-' + Date.now();
 
 // Força a ativação imediata do novo Service Worker sem esperar o usuário fechar as abas

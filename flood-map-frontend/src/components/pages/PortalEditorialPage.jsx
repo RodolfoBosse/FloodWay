@@ -21,7 +21,8 @@ export default function PortalEditorialPage({
   cotaAtual, 
   onIniciarNavegacao, 
   onAbrirPolitica, 
-  onAbrirTermos 
+  onAbrirTermos,
+  onAbrirAnalytics
 }) {
   const nivelRio = cotaAtual?.nivel || 13.23;
   const statusRio = cotaAtual?.status || "Normal";
@@ -245,6 +246,14 @@ export default function PortalEditorialPage({
             <button onClick={onIniciarNavegacao} className="hover:text-blue-600 underline transition cursor-pointer">
               Mapa
             </button>
+            {onAbrirAnalytics && (
+              <>
+                <span>•</span>
+                <button onClick={onAbrirAnalytics} className="hover:text-blue-600 text-gray-400 hover:underline transition cursor-pointer">
+                  Painel de Acessos
+                </button>
+              </>
+            )}
           </div>
           <span className="text-[11px] text-gray-400">
             © 2026 FloodWay • Plataforma de Prevenção e Rotas no Vale do Taquari
