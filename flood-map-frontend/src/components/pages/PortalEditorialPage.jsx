@@ -29,7 +29,7 @@ export default function PortalEditorialPage({
   const tendenciStatus = cotaAtual?.velocidade_formatada || "Estável";
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center overflow-y-auto selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen w-full bg-gray-50 text-gray-900 flex flex-col items-center overflow-y-auto overscroll-y-contain selection:bg-blue-600 selection:text-white" style={{ touchAction: 'pan-y' }}>
       
       {/* BARRA SUPERIOR CLEAN NO PADRÃO DO APP */}
       <header className="w-full bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
@@ -246,14 +246,6 @@ export default function PortalEditorialPage({
             <button onClick={onIniciarNavegacao} className="hover:text-blue-600 underline transition cursor-pointer">
               Mapa
             </button>
-            {onAbrirAnalytics && (
-              <>
-                <span>•</span>
-                <button onClick={onAbrirAnalytics} className="hover:text-blue-600 text-gray-400 hover:underline transition cursor-pointer">
-                  Painel de Acessos
-                </button>
-              </>
-            )}
           </div>
           <span className="text-[11px] text-gray-400">
             © 2026 FloodWay • Plataforma de Prevenção e Rotas no Vale do Taquari

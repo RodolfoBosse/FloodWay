@@ -15,6 +15,7 @@ env/
 # Backups
 *.bak*
 *.bkp*
+client_secret*.json
 
 # Logs
 *.log

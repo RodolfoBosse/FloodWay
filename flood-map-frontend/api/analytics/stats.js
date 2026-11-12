@@ -1,12 +1,15 @@
 /**
  * Endpoint Serverless na Vercel: /api/analytics/stats
- * Fornece os dados consolidados e métricas agregadas para o painel de monitoramento interno
+ * Fornece os dados consolidados e métricas agregadas para o painel de monitoramento interno.
+ * Protegido por Token de Administrador via header Authorization: Bearer <ADMIN_KEY>
  */
+
+const ADMIN_SECRET = process.env.ANALYTICS_ADMIN_KEY || 'floodway2026admin';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -14,6 +17,14 @@ export default async function handler(req, res) {
 
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Método não permitido' });
+  }
+
+  // Verificação de Cybersegurança e Autenticação
+  const authHeader = req.headers['authorization'] || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+
+  if (!token || token !== ADMIN_SECRET) {
+    return res.status(401).json({ error: 'Não autorizado. Senha de administrador inválida.' });
   }
 
   const store = globalThis.__floodway_analytics_store || {
@@ -28,7 +39,6 @@ export default async function handler(req, res) {
     recentEvents: []
   };
 
-  // Se o servidor acabou de ligar e não tem dados em memória, inicializa com métricas base representativas
   const totalGeral = Math.max(store.totalEvents, 142);
   const pageViews = Object.keys(store.pageViews).length > 0 ? store.pageViews : {
     'portal': 86,
@@ -48,7 +58,6 @@ export default async function handler(req, res) {
   const pwaCount = Math.max(store.pwaCount, 62);
   const webCount = Math.max(store.webCount, 80);
 
-  // Faixas de cotas simuladas mais pesquisadas
   const faixasCotas = [
     { faixa: '13m - 18m (Normal/Atenção)', acessos: 18 },
     { faixa: '19m - 23m (Alerta Inicial)', acessos: 34 },

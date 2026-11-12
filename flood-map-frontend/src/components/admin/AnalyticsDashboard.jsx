@@ -1,26 +1,85 @@
 import React, { useState, useEffect } from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
-  PieChart, Pie, Cell, LineChart, Line, CartesianGrid 
+  PieChart, Pie, Cell, CartesianGrid 
 } from 'recharts';
 import { 
-  Activity, Users, Smartphone, Globe, ArrowLeft, RefreshCw, 
-  ShieldCheck, MapPin, Gauge, Layers, Filter 
+  Activity, Users, Smartphone, ArrowLeft, RefreshCw, 
+  ShieldCheck, Gauge, Layers, Lock, KeyRound, AlertCircle
 } from 'lucide-react';
 
 const COLORS = ['#2563eb', '#06b6d4', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+const ADMIN_STORAGE_KEY = 'fw_adm_token_session';
 
 export default function AnalyticsDashboard({ onVoltar }) {
-  const [loading, setLoading] = useState(true);
+  const [autenticado, setAutenticado] = useState(false);
+  const [senhaInput, setSenhaInput] = useState('');
+  const [erroLogin, setErroLogin] = useState('');
+  const [loadingLogin, setLoadingLogin] = useState(false);
+
+  const [loading, setLoading] = useState(false);
   const [metricas, setMetricas] = useState(null);
   const [erro, setErro] = useState(null);
   const [abaAtiva, setAbaAtiva] = useState('visao_geral'); // visao_geral | simulacoes | eventos
 
-  const carregarMetricas = async () => {
+  // Verifica se já estava logado na sessão do navegador
+  useEffect(() => {
+    const tokenSalvo = sessionStorage.getItem(ADMIN_STORAGE_KEY);
+    if (tokenSalvo) {
+      setAutenticado(true);
+      carregarMetricas(tokenSalvo);
+    }
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!senhaInput.trim()) return;
+    setLoadingLogin(true);
+    setErroLogin('');
+
+    try {
+      const resp = await fetch('/api/analytics/stats', {
+        headers: {
+          'Authorization': `Bearer ${senhaInput.trim()}`
+        }
+      });
+
+      if (resp.status === 401) {
+        throw new Error('Senha de administrador incorreta.');
+      }
+
+      if (!resp.ok) {
+        throw new Error('Erro ao autenticar. Tente novamente.');
+      }
+
+      const data = await resp.json();
+      sessionStorage.setItem(ADMIN_STORAGE_KEY, senhaInput.trim());
+      setAutenticado(true);
+      setMetricas(data);
+    } catch (err) {
+      setErroLogin(err.message);
+    } finally {
+      setLoadingLogin(false);
+    }
+  };
+
+  const carregarMetricas = async (customToken) => {
+    const token = customToken || sessionStorage.getItem(ADMIN_STORAGE_KEY);
+    if (!token) return;
+
     setLoading(true);
     setErro(null);
     try {
-      const resp = await fetch('/api/analytics/stats');
+      const resp = await fetch('/api/analytics/stats', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (resp.status === 401) {
+        sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+        setAutenticado(false);
+        throw new Error('Sessão expirada. Digite a senha novamente.');
+      }
       if (!resp.ok) throw new Error('Não foi possível carregar as métricas.');
       const data = await resp.json();
       setMetricas(data);
@@ -31,25 +90,89 @@ export default function AnalyticsDashboard({ onVoltar }) {
     }
   };
 
-  useEffect(() => {
-    carregarMetricas();
-    // Atualiza a cada 30 segundos automaticamente
-    const interval = setInterval(carregarMetricas, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  // Se não estiver autenticado, exibe a tela de bloqueio com chave secreta
+  if (!autenticado) {
+    return (
+      <div 
+        className="min-h-screen w-full bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4 selection:bg-blue-600 selection:text-white"
+        style={{ touchAction: 'pan-y' }}
+      >
+        <div className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-200">
+          
+          <div className="text-center space-y-2">
+            <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mx-auto shadow-inner">
+              <Lock className="w-6 h-6" />
+            </div>
+            <h2 className="text-xl font-bold text-white tracking-tight">Painel Reservado</h2>
+            <p className="text-xs text-slate-400">
+              Digite a chave mestre de administrador para acessar a telemetria e o tráfego do FloodWay.
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                Senha de Acesso
+              </label>
+              <div className="relative">
+                <input
+                  type="password"
+                  value={senhaInput}
+                  onChange={(e) => setSenhaInput(e.target.value)}
+                  placeholder="••••••••••••"
+                  autoFocus
+                  className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition font-mono"
+                />
+                <KeyRound className="w-4 h-4 text-slate-600 absolute right-3 top-3 pointer-events-none" />
+              </div>
+            </div>
+
+            {erroLogin && (
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs animate-in fade-in">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{erroLogin}</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loadingLogin || !senhaInput}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-600/20 transition disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+            >
+              {loadingLogin ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Desbloquear Painel'}
+            </button>
+          </form>
+
+          <div className="pt-2 text-center border-t border-slate-800/80">
+            <button
+              onClick={onVoltar}
+              className="text-xs text-slate-500 hover:text-slate-300 transition flex items-center gap-1.5 mx-auto cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Voltar ao FloodWay</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
+    <div 
+      className="min-h-screen w-full bg-slate-900 text-slate-100 flex flex-col font-sans overflow-y-auto overscroll-y-contain selection:bg-blue-600 selection:text-white"
+      style={{ touchAction: 'pan-y' }}
+    >
       
       {/* Barra de Topo do Painel */}
-      <header className="bg-slate-800/80 backdrop-blur-md border-b border-slate-700/60 sticky top-0 z-20 px-4 py-3.5">
+      <header className="bg-slate-800/90 backdrop-blur-md border-b border-slate-700/60 sticky top-0 z-20 px-4 py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           
           <div className="flex items-center gap-3">
             <button
               onClick={onVoltar}
-              className="p-2 hover:bg-slate-700 rounded-xl transition text-slate-300 hover:text-white"
-              title="Voltar ao portal"
+              className="p-2 hover:bg-slate-700 rounded-xl transition text-slate-300 hover:text-white cursor-pointer"
+              title="Voltar ao mapa"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -59,7 +182,7 @@ export default function AnalyticsDashboard({ onVoltar }) {
                   FloodWay Analytics & Telemetria
                 </h1>
                 <span className="text-[10px] font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full">
-                  Admin Live
+                  Admin Restrito
                 </span>
               </div>
               <p className="text-xs text-slate-400">
@@ -70,26 +193,36 @@ export default function AnalyticsDashboard({ onVoltar }) {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={carregarMetricas}
+              onClick={() => carregarMetricas()}
               disabled={loading}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 active:scale-95 text-xs font-semibold rounded-lg text-slate-200 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 active:scale-95 text-xs font-semibold rounded-lg text-slate-200 transition cursor-pointer"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Atualizar</span>
+            </button>
+            <button
+              onClick={() => {
+                sessionStorage.removeItem(ADMIN_STORAGE_KEY);
+                setAutenticado(false);
+              }}
+              className="px-2.5 py-1.5 text-xs font-semibold text-slate-400 hover:text-red-400 hover:bg-slate-700/50 rounded-lg transition cursor-pointer"
+              title="Bloquear painel"
+            >
+              Bloquear
             </button>
           </div>
 
         </div>
       </header>
 
-      {/* Conteúdo Principal */}
+      {/* Conteúdo Principal com Rolagem Livre */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
         {/* Abas */}
-        <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+        <div className="flex items-center gap-2 border-b border-slate-800 pb-2 overflow-x-auto">
           <button
             onClick={() => setAbaAtiva('visao_geral')}
-            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition ${
+            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition whitespace-nowrap cursor-pointer ${
               abaAtiva === 'visao_geral'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -99,7 +232,7 @@ export default function AnalyticsDashboard({ onVoltar }) {
           </button>
           <button
             onClick={() => setAbaAtiva('simulacoes')}
-            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition ${
+            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition whitespace-nowrap cursor-pointer ${
               abaAtiva === 'simulacoes'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -109,7 +242,7 @@ export default function AnalyticsDashboard({ onVoltar }) {
           </button>
           <button
             onClick={() => setAbaAtiva('eventos')}
-            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition ${
+            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition whitespace-nowrap cursor-pointer ${
               abaAtiva === 'eventos'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -139,7 +272,7 @@ export default function AnalyticsDashboard({ onVoltar }) {
 
           <div className="bg-slate-800/90 border border-slate-700/60 rounded-2xl p-4 flex flex-col justify-between shadow-lg">
             <div className="flex items-center justify-between text-slate-400">
-              <span className="text-xs font-medium">Usuários Únicos Estimados</span>
+              <span className="text-xs font-medium">Usuários Estimados</span>
               <Users className="w-4 h-4 text-cyan-400" />
             </div>
             <div className="mt-2">

@@ -419,20 +419,6 @@ export default function PerfilLGPDModal({
             >
               Termos de Uso
             </button>
-            {onAbrirAnalytics && (
-              <>
-                <span>•</span>
-                <button
-                  onClick={() => {
-                    onClose();
-                    onAbrirAnalytics();
-                  }}
-                  className="hover:text-blue-600 underline transition text-gray-400"
-                >
-                  Analytics & Telemetria
-                </button>
-              </>
-            )}
           </div>
 
           {/* Ações */}
