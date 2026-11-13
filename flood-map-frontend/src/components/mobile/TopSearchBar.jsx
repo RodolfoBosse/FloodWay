@@ -1,11 +1,13 @@
 import React from "react";
-import { Search, Bell, User, X } from "lucide-react";
+import { Search, Bell, User, X, Crosshair } from "lucide-react";
 
 const TopSearchBar = ({
   textoBusca = "",
   onBuscarClick,
   onNotifClick,
   onPerfilClick,
+  onGpsClick,
+  obtendoGPS = false,
   usuario = null,
   temRotaAtiva = false,
   onLimparRota,
@@ -41,7 +43,23 @@ const TopSearchBar = ({
         </button>
       )}
 
-      <div className="flex items-center gap-2.5 ml-2 shrink-0 border-l border-gray-100 pl-2.5">
+      <div className="flex items-center gap-1.5 ml-2 shrink-0 border-l border-gray-100 pl-2">
+        {onGpsClick && (
+          <button
+            type="button"
+            onClick={onGpsClick}
+            disabled={obtendoGPS}
+            className={`p-1.5 rounded-full transition active:scale-90 ${
+              obtendoGPS
+                ? "bg-blue-100 text-blue-600 animate-spin"
+                : "text-blue-600 hover:bg-blue-50 bg-blue-50/50"
+            }`}
+            title="Minha Localização GPS"
+          >
+            <Crosshair size={16} strokeWidth={2.4} />
+          </button>
+        )}
+
         <button
           type="button"
           onClick={onNotifClick}

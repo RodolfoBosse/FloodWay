@@ -115,6 +115,8 @@ const MapaInterativo = ({
 	setPontoDestino: setPontoDestinoProp,
 	dadosRota: dadosRotaProp,
 	setDadosRota: setDadosRotaProp,
+	onGpsCapturado,
+	onGpsLoadingChange,
 }) => {
 	const config = {
 		centro: [-29.4669, -51.9611],
@@ -184,11 +186,15 @@ const MapaInterativo = ({
 		}
 
 		setObtendoGPS(true);
+		if (onGpsLoadingChange) onGpsLoadingChange(true);
+
 		navigator.geolocation.getCurrentPosition(
 			(pos) => {
 				const coords = [pos.coords.latitude, pos.coords.longitude];
 				setLocalizacaoGPS(coords);
 				setObtendoGPS(false);
+				if (onGpsLoadingChange) onGpsLoadingChange(false);
+				if (onGpsCapturado) onGpsCapturado(coords);
 
 				if (comoOrigem) {
 					setPontoOrigem(coords);
@@ -202,6 +208,7 @@ const MapaInterativo = ({
 			},
 			(err) => {
 				setObtendoGPS(false);
+				if (onGpsLoadingChange) onGpsLoadingChange(false);
 				let msg = "Não foi possível obter a sua localização GPS.";
 				if (err.code === 1) msg = "Permissão de GPS negada. Por favor, autorize a localização nas configurações do navegador.";
 				else if (err.code === 2) msg = "Sinal de GPS indisponível no momento.";
@@ -211,6 +218,23 @@ const MapaInterativo = ({
 			{ enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
 		);
 	};
+
+	// Solicita automaticamente o GPS quando o mapa é aberto (para mostrar 'Você está aqui' de imediato)
+	useEffect(() => {
+		if ("geolocation" in navigator) {
+			navigator.geolocation.getCurrentPosition(
+				(pos) => {
+					const coords = [pos.coords.latitude, pos.coords.longitude];
+					setLocalizacaoGPS(coords);
+					if (onGpsCapturado) onGpsCapturado(coords);
+				},
+				() => {
+					// Usuário ainda não autorizou ou cancelou silenciosamente
+				},
+				{ enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+			);
+		}
+	}, []);
 
 	// Registro do Service Worker para Push
 	useEffect(() => {

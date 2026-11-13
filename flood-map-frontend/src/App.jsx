@@ -63,6 +63,8 @@ function App() {
 	const [pontoDestino, setPontoDestino] = useState(null);
 	const [dadosRota, setDadosRota] = useState(null);
 	const [calculandoRota, setCalculandoRota] = useState(false);
+	const [localizacaoGPS, setLocalizacaoGPS] = useState(null);
+	const [obtendoGPS, setObtendoGPS] = useState(false);
 
 	const limparRota = () => {
 		setDadosRota(null);
@@ -294,6 +296,8 @@ function App() {
 				setUsuario={setUsuario}
 				modalCasaAberto={modalCasaAberto}
 				setModalCasaAberto={setModalCasaAberto}
+				onGpsCapturado={(coords) => setLocalizacaoGPS(coords)}
+				onGpsLoadingChange={(loading) => setObtendoGPS(loading)}
 			/>
 
 			{/* Barra de Pesquisa e Perfil Superior Fixa */}
@@ -301,6 +305,29 @@ function App() {
 				usuario={usuario}
 				temRotaAtiva={!!dadosRota || !!pontoOrigem || !!pontoDestino}
 				onLimparRota={limparRota}
+				obtendoGPS={obtendoGPS}
+				onGpsClick={() => {
+					if (!("geolocation" in navigator)) {
+						alert("Geolocalização não é suportada pelo seu dispositivo.");
+						return;
+					}
+					setObtendoGPS(true);
+					navigator.geolocation.getCurrentPosition(
+						(pos) => {
+							const coords = [pos.coords.latitude, pos.coords.longitude];
+							setLocalizacaoGPS(coords);
+							setObtendoGPS(false);
+							setPontoOrigem(coords);
+							setTextoOrigem("Minha Posição Atual (GPS)");
+							setPainelRotaAberto(true);
+						},
+						(err) => {
+							setObtendoGPS(false);
+							alert("Por favor, autorize o acesso à localização nas configurações do seu navegador para ver sua posição no mapa.");
+						},
+						{ enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+					);
+				}}
 				onBuscarClick={() => {
 					if (!usuario) {
 						setModalAuthAberto(true);
