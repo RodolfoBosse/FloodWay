@@ -321,9 +321,10 @@ const MapaInterativo = ({
 	const [animando, setAnimando] = useState(false);
 	const animRef = useRef(null);
 
-	const nivelAtivo = isSimulando
+	const cotaRealCalculada = cotaAtual?.nivel || cotaReal || 13.39;
+	const nivelAtivo = (cotaSimulada && Math.abs(cotaSimulada - cotaRealCalculada) > 0.05)
 		? cotaSimulada
-		: cotaAtual?.nivel || cotaReal || 13.39;
+		: (isSimulando ? cotaSimulada : cotaRealCalculada);
 
 	const limparRotaAtual = () => {
 		setDadosRota(null);
