@@ -250,6 +250,16 @@ export default function AnalyticsDashboard({ onVoltar }) {
           >
             Feed de Telemetria (Logs)
           </button>
+          <button
+            onClick={() => setAbaAtiva('demografia')}
+            className={`px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition whitespace-nowrap cursor-pointer ${
+              abaAtiva === 'demografia'
+                ? 'bg-purple-600 text-white shadow-sm'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            👥 Perfil & Demografia (Idade/Gênero)
+          </button>
         </div>
 
         {/* Cartões de Indicadores Chave (KPIs) */}
@@ -411,6 +421,96 @@ export default function AnalyticsDashboard({ onVoltar }) {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Conteúdo da Aba: Demografia e Perfis */}
+        {abaAtiva === 'demografia' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* Gráfico 1: Faixas Etárias */}
+              <div className="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-5 shadow-lg">
+                <h3 className="text-sm sm:text-base font-bold text-white mb-1 flex items-center gap-2">
+                  <span>🎂</span> Distribuição por Faixa Etária
+                </h3>
+                <p className="text-xs text-slate-400 mb-4">
+                  Idades informadas pelos moradores no perfil comunitário e rastreadas via GA4 Signals
+                </p>
+
+                <div className="h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={Object.entries(metricas?.demografia?.faixas || {}).map(([faixa, total]) => ({ faixa, total }))}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                      <XAxis dataKey="faixa" stroke="#94a3b8" fontSize={11} />
+                      <YAxis stroke="#94a3b8" fontSize={11} allowDecimals={false} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', borderRadius: '8px', color: '#fff' }}
+                      />
+                      <Bar dataKey="total" fill="#8b5cf6" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Gráfico 2: Proporção por Gênero */}
+              <div className="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-5 shadow-lg">
+                <h3 className="text-sm sm:text-base font-bold text-white mb-1 flex items-center gap-2">
+                  <span>⚧️</span> Proporção por Gênero
+                </h3>
+                <p className="text-xs text-slate-400 mb-4">
+                  Público atendido entre moradores e socorristas
+                </p>
+
+                <div className="h-64 w-full flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={Object.entries(metricas?.demografia?.genero || {}).map(([nome, valor]) => ({ nome, valor }))}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={55}
+                        outerRadius={85}
+                        paddingAngle={4}
+                        dataKey="valor"
+                        nameKey="nome"
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {Object.entries(metricas?.demografia?.genero || {}).map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', borderRadius: '8px', color: '#fff' }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Banner de Integração com Google Analytics 4 */}
+            <div className="bg-gradient-to-r from-blue-900/40 via-purple-900/30 to-slate-900 p-5 rounded-2xl border border-blue-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                  <span>⚡</span> Google Analytics 4 (GA4 Signals) Ativo
+                </h4>
+                <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                  A tag de mensuração do Google Analytics está instalada e configurada com <strong>allow_google_signals: true</strong>. Relatórios detalhados com inferência de idade e afinidades de interesse podem ser acessados diretamente em tempo real pelo console do GA4 sem custos.
+                </p>
+              </div>
+              <a
+                href="https://analytics.google.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-md transition whitespace-nowrap active:scale-95"
+              >
+                Abrir Console GA4 ↗
+              </a>
             </div>
           </div>
         )}

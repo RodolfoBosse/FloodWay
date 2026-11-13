@@ -10,11 +10,21 @@ let memoryStore = globalThis.__floodway_analytics_store || {
   devices: { Android: 0, iOS: 0, Windows: 0, macOS: 0, Linux: 0, Outro: 0 },
   browsers: {},
   cidades: {},
+  demografia: {
+    faixas: { '18-24': 0, '25-34': 0, '35-49': 0, '50-64': 0, '65+': 0 },
+    genero: { 'Feminino': 0, 'Masculino': 0, 'Outro': 0 }
+  },
   pwaCount: 0,
   webCount: 0,
   simulacoes: [],
   recentEvents: []
 };
+if (!memoryStore.demografia) {
+  memoryStore.demografia = {
+    faixas: { '18-24': 0, '25-34': 0, '35-49': 0, '50-64': 0, '65+': 0 },
+    genero: { 'Feminino': 0, 'Masculino': 0, 'Outro': 0 }
+  };
+}
 globalThis.__floodway_analytics_store = memoryStore;
 
 export default async function handler(req, res) {
@@ -76,6 +86,16 @@ export default async function handler(req, res) {
         memoryStore.pwaCount++;
       } else {
         memoryStore.webCount++;
+      }
+
+      // Demografia Opt-in
+      if (evt.event_type === 'demografia_optin' && evt.data) {
+        if (evt.data.faixa_etaria && memoryStore.demografia.faixas[evt.data.faixa_etaria] !== undefined) {
+          memoryStore.demografia.faixas[evt.data.faixa_etaria]++;
+        }
+        if (evt.data.genero && memoryStore.demografia.genero[evt.data.genero] !== undefined) {
+          memoryStore.demografia.genero[evt.data.genero]++;
+        }
       }
 
       // Geo / Cidades

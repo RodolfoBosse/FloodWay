@@ -21,8 +21,43 @@ export default function PerfilLGPDModal({
   const [excluindo, setExcluindo] = useState(false);
   const [erro, setErro] = useState('');
 
-  // Novo Ponto de Interesse
-  const [adicionandoPonto, setAdicionandoPonto] = useState(false);
+  const [faixaEtaria, setFaixaEtaria] = useState(usuario?.faixaEtaria || '');
+  const [genero, setGenero] = useState(usuario?.genero || '');
+  const [salvandoDemo, setSalvandoDemo] = useState(false);
+  const [demoSalvaMsg, setDemoSalvaMsg] = useState(false);
+
+  const handleSalvarDemografia = () => {
+    setSalvandoDemo(true);
+    const usuarioAtualizado = {
+      ...usuario,
+      faixaEtaria,
+      genero
+    };
+    localStorage.setItem('usuario_sentinela', JSON.stringify(usuarioAtualizado));
+    if (usuario.email) {
+      localStorage.setItem(`dados_perfil_${usuario.email}`, JSON.stringify(usuarioAtualizado));
+    }
+    if (onUsuarioAtualizado) onUsuarioAtualizado(usuarioAtualizado);
+
+    // Envia evento anônimo demográfico para telemetria
+    try {
+      fetch('/api/analytics/ingest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_type: 'demografia_optin',
+          data: { faixa_etaria: faixaEtaria, genero: genero },
+          timestamp: new Date().toISOString()
+        })
+      }).catch(() => {});
+    } catch (_) {}
+
+    setTimeout(() => {
+      setSalvandoDemo(false);
+      setDemoSalvaMsg(true);
+      setTimeout(() => setDemoSalvaMsg(false), 2500);
+    }, 400);
+  };
   const [novoNome, setNovoNome] = useState('');
   const [novoEndereco, setNovoEndereco] = useState('');
   const [novaCota, setNovaCota] = useState('24.0');
@@ -370,6 +405,68 @@ export default function PerfilLGPDModal({
                 </div>
               );
             })}
+          </div>
+
+          {/* Seção Opcional de Perfil Demográfico para Prevenção */}
+          <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                  <span>📊</span> Perfil da Comunidade (Opcional)
+                </h4>
+                <p className="text-[10px] text-gray-500">
+                  Ajuda a mapear o perfil demográfico da população do Vale do Taquari em áreas de alerta.
+                </p>
+              </div>
+              {demoSalvaMsg && (
+                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  Salvo!
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <label className="text-[10px] font-bold text-gray-600 block mb-1">Faixa Etária</label>
+                <select
+                  value={faixaEtaria}
+                  onChange={(e) => setFaixaEtaria(e.target.value)}
+                  className="w-full bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs text-gray-700 outline-none focus:border-blue-500"
+                >
+                  <option value="">Prefiro não informar</option>
+                  <option value="18-24">18 a 24 anos</option>
+                  <option value="25-34">25 a 34 anos</option>
+                  <option value="35-49">35 a 49 anos</option>
+                  <option value="50-64">50 a 64 anos</option>
+                  <option value="65+">65 anos ou mais</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-gray-600 block mb-1">Gênero</label>
+                <select
+                  value={genero}
+                  onChange={(e) => setGenero(e.target.value)}
+                  className="w-full bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs text-gray-700 outline-none focus:border-blue-500"
+                >
+                  <option value="">Prefiro não informar</option>
+                  <option value="Feminino">Feminino</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+            </div>
+
+            {(faixaEtaria !== (usuario?.faixaEtaria || '') || genero !== (usuario?.genero || '')) && (
+              <button
+                type="button"
+                onClick={handleSalvarDemografia}
+                disabled={salvandoDemo}
+                className="w-full mt-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-1.5 rounded-lg text-xs transition flex items-center justify-center gap-1"
+              >
+                {salvandoDemo ? 'Salvando...' : 'Salvar Informações Demográficas'}
+              </button>
+            )}
           </div>
 
           {/* Dados LGPD */}

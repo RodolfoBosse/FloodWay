@@ -24,6 +24,20 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+    <!-- Google Analytics 4 (GA4) Oficial FloodWay com Google Signals -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N1115T8L6P"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      // Suporte configurado para relatórios demográficos, sinais e atribuição integrada ao AdSense
+      gtag('config', 'G-N1115T8L6P', {
+        send_page_view: true,
+        allow_google_signals: true,
+        cookie_flags: 'SameSite=None;Secure'
+      });
+    </script>
+
     <!-- Google Identity Services (One Tap & Sign In Oficial) -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 

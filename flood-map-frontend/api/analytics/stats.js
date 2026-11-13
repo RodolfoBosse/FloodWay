@@ -72,6 +72,10 @@ export default async function handler(req, res) {
     paginas: Object.entries(pageViews).map(([nome, views]) => ({ nome, views })),
     dispositivos: Object.entries(devices).map(([nome, valor]) => ({ nome, valor })),
     cidades: Object.entries(store.cidades).map(([cidade, total]) => ({ cidade, total })),
+    demografia: store.demografia || {
+      faixas: { '18-24': 0, '25-34': 0, '35-49': 0, '50-64': 0, '65+': 0 },
+      genero: { 'Feminino': 0, 'Masculino': 0, 'Outro': 0 }
+    },
     cotasSimuladas: faixasCotas,
     ultimosEventos: (store.recentEvents || []).slice(0, 30)
   });
