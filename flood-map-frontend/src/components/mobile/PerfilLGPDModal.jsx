@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, Home, Shield, LogOut, Trash2, X, MapPin, Bell, Plus, Check } from 'lucide-react';
 import { API_BASE } from '../../services/config';
 import { buscarDestinosCalibrados } from '../../services/locaisLajeado';
+import { trackDemografia } from '../../services/telemetryTracker';
 
 export default function PerfilLGPDModal({
   isOpen,
@@ -39,17 +40,9 @@ export default function PerfilLGPDModal({
     }
     if (onUsuarioAtualizado) onUsuarioAtualizado(usuarioAtualizado);
 
-    // Envia evento anônimo demográfico para telemetria
+    // Envia evento anônimo demográfico para telemetria estruturada e com flush imediato
     try {
-      fetch('/api/analytics/ingest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event_type: 'demografia_optin',
-          data: { faixa_etaria: faixaEtaria, genero: genero },
-          timestamp: new Date().toISOString()
-        })
-      }).catch(() => {});
+      trackDemografia(faixaEtaria, genero);
     } catch (_) {}
 
     setTimeout(() => {

@@ -195,6 +195,14 @@ export function trackPageView(pageName) {
   telemetry.track('page_view', { page: pageName });
 }
 
+export function trackDemografia(faixaEtaria, genero) {
+  telemetry.track('demografia_optin', {
+    faixa_etaria: faixaEtaria,
+    genero: genero
+  });
+  telemetry.flush();
+}
+
 export function trackSimulacao(cotaSimulada, cotaReal) {
   telemetry.track('river_simulation', {
     cota_simulada: cotaSimulada,

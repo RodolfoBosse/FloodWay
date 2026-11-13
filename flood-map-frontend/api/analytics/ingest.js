@@ -53,10 +53,8 @@ export default async function handler(req, res) {
       }
     }
 
-    const events = Array.isArray(body?.events) ? body.events : (body ? [body] : []);
-    
-    // Proteção contra payload excessivo (máximo 50 eventos por lote)
-    const sanitizedEvents = events.slice(0, 50);
+    const rawEvents = Array.isArray(body?.events) ? body.events : (body?.event_type ? [body] : []);
+    const sanitizedEvents = rawEvents.slice(0, 50);
 
     const clientCity = req.headers['x-vercel-ip-city'] || 'Lajeado';
     const clientRegion = req.headers['x-vercel-ip-country-region'] || 'RS';
@@ -90,11 +88,19 @@ export default async function handler(req, res) {
 
       // Demografia Opt-in
       if (evt.event_type === 'demografia_optin' && evt.data) {
-        if (evt.data.faixa_etaria && memoryStore.demografia.faixas[evt.data.faixa_etaria] !== undefined) {
-          memoryStore.demografia.faixas[evt.data.faixa_etaria]++;
+        if (!memoryStore.demografia) {
+          memoryStore.demografia = {
+            faixas: { '18-24': 0, '25-34': 0, '35-49': 0, '50-64': 0, '65+': 0 },
+            genero: { 'Feminino': 0, 'Masculino': 0, 'Outro': 0 }
+          };
         }
-        if (evt.data.genero && memoryStore.demografia.genero[evt.data.genero] !== undefined) {
-          memoryStore.demografia.genero[evt.data.genero]++;
+        const faixa = String(evt.data.faixa_etaria || '').trim();
+        const gen = String(evt.data.genero || '').trim();
+        if (faixa && memoryStore.demografia.faixas[faixa] !== undefined) {
+          memoryStore.demografia.faixas[faixa]++;
+        }
+        if (gen && memoryStore.demografia.genero[gen] !== undefined) {
+          memoryStore.demografia.genero[gen]++;
         }
       }
 
