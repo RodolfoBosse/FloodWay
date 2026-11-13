@@ -46,6 +46,14 @@
   ],
   "rewrites": [
     {
+      "source": "/api/analytics/stats",
+      "destination": "/api/telemetria"
+    },
+    {
+      "source": "/api/analytics/ingest",
+      "destination": "/api/telemetria"
+    },
+    {
       "source": "/api/v1/rotas/listar/(.*)",
       "destination": "/api/rotas?action=listar"
     },
