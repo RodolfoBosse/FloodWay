@@ -10,6 +10,7 @@ import PrevisaoClimaModal from "./components/mobile/PrevisaoClimaModal";
 import InstallPWABanner from "./components/mobile/InstallPWABanner";
 import AutoUpdateNotifier from "./components/common/AutoUpdateNotifier";
 import CookieConsentBanner from "./components/common/CookieConsentBanner";
+import ModoTesteBar from "./components/common/ModoTesteBar";
 import AnalyticsDashboard from "./components/admin/AnalyticsDashboard";
 import PoliticaPrivacidadePage from "./components/pages/PoliticaPrivacidadePage";
 import SobrePage from "./components/pages/SobrePage";
@@ -32,6 +33,10 @@ function App() {
 			if (path.includes("termos")) return "termos";
 			if (path.includes("sobre")) return "sobre";
 			if (path.includes("analytics") || path.includes("admin")) return "analytics";
+			if (path.includes("teste") || path.includes("sandbox") || path.includes("simulador")) {
+				// Ativação via URL /teste
+				return "mapa";
+			}
 			if (path === "/mapa") return null;
 		}
 		return "portal";
@@ -55,6 +60,13 @@ function App() {
 	// Estados de Simulação
 	const [cotaReal, setCotaReal] = useState(12.86);
 	const [cotaSimulada, setCotaSimulada] = useState(12.86);
+	const [modoTesteAtivo, setModoTesteAtivo] = useState(() => {
+		if (typeof window !== "undefined") {
+			const path = window.location.pathname.toLowerCase();
+			return path.includes("teste") || path.includes("sandbox") || path.includes("simulador");
+		}
+		return false;
+	});
 
 	// Estados de Rotas
 	const [textoOrigem, setTextoOrigem] = useState("");
@@ -380,6 +392,28 @@ function App() {
 				calculandoRota={calculandoRota}
 				setCalculandoRota={setCalculandoRota}
 				onLimparRota={limparRota}
+				localizacaoGPS={localizacaoGPS}
+				obtendoGPS={obtendoGPS}
+				onCapturarGPS={(callback) => {
+					if (!("geolocation" in navigator)) {
+						alert("Geolocalização não suportada.");
+						return;
+					}
+					setObtendoGPS(true);
+					navigator.geolocation.getCurrentPosition(
+						(pos) => {
+							const coords = [pos.coords.latitude, pos.coords.longitude];
+							setLocalizacaoGPS(coords);
+							setObtendoGPS(false);
+							if (callback) callback(coords);
+						},
+						(err) => {
+							setObtendoGPS(false);
+							alert("Não foi possível obter o sinal do GPS.");
+						},
+						{ enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+					);
+				}}
 				// Controle de Vista
 				abaAtiva={isSimulando ? "simular" : painelRotaAberto ? "rotas" : "mapa"}
 				className="absolute bottom-0 left-0 right-0 z-20"
@@ -437,7 +471,55 @@ function App() {
 				onAbrirSobre={() => irParaPagina("sobre")}
 				onAbrirTermos={() => irParaPagina("termos")}
 				onAbrirAnalytics={() => irParaPagina("analytics")}
+				onAtivarModoTeste={() => setModoTesteAtivo(true)}
 			/>
+
+			{/* Laboratório Flutuante do Modo de Testes */}
+			{modoTesteAtivo && (
+				<ModoTesteBar
+					cotaSimulada={cotaSimulada}
+					setCotaSimulada={(cota) => {
+						setCotaSimulada(cota);
+						setIsSimulando(true);
+					}}
+					onDesativar={() => {
+						setModoTesteAtivo(false);
+						setCotaSimulada(cotaReal);
+						setIsSimulando(false);
+					}}
+					onAbrirRotasTeste={() => {
+						setPainelRotaAberto(true);
+						setIsSimulando(true);
+					}}
+					onDispararNotificacaoTeste={() => {
+						if (!("Notification" in window)) {
+							alert("Seu navegador não suporta notificações Push.");
+							return;
+						}
+						Notification.requestPermission().then((perm) => {
+							if (perm === "granted") {
+								const titulo = `🚨 [TESTE] COTA DO RIO EM ${Number(cotaSimulada).toFixed(1)}m`;
+								const corpo = `Aviso simulado FloodWay: Água atingindo cotas críticas em Lajeado. Ruas centrais com bloqueio.`;
+								if ("serviceWorker" in navigator) {
+									navigator.serviceWorker.ready.then((reg) => {
+										reg.showNotification(titulo, {
+											body: corpo,
+											icon: "/icon-192.png",
+											badge: "/icon-192.png",
+											vibrate: [300, 100, 300, 100, 300],
+											tag: "teste-floodway",
+										});
+									}).catch(() => new Notification(titulo, { body: corpo, icon: "/icon-192.png" }));
+								} else {
+									new Notification(titulo, { body: corpo, icon: "/icon-192.png" });
+								}
+							} else {
+								alert("Permissão de notificação negada. Ative as notificações no navegador.");
+							}
+						});
+					}}
+				/>
+			)}
 
 			{/* Banner de Instalação PWA */}
 			<InstallPWABanner />

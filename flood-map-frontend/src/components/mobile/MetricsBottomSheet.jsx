@@ -37,6 +37,9 @@ const MetricsBottomSheet = ({
 	abaAtiva,
 	onLimparRota,
 	usuario = null,
+	localizacaoGPS = null,
+	onCapturarGPS = null,
+	obtendoGPS = false,
 }) => {
 	// Alturas em pixels: min = 60px, mid = 295px (exibe cota, barra e tendência com folga), max = 85vh (calculado dinamicamente)
 	const [currentHeight, setCurrentHeight] = useState(295);
@@ -688,9 +691,27 @@ const MetricsBottomSheet = ({
 											<label className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">
 												<span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Partida (A)
 											</label>
-											{pontoOrigem && (
-												<span className="text-[10px] text-emerald-600 font-bold">✓ Definido</span>
-											)}
+											<div className="flex items-center gap-1.5">
+												<button
+													type="button"
+													onClick={() => {
+														if (onCapturarGPS) {
+															onCapturarGPS((coords) => {
+																setPontoOrigem(coords);
+																setTextoOrigem("Minha Localização Atual (GPS)");
+																setSugestoesOrigem([]);
+															});
+														}
+													}}
+													disabled={obtendoGPS}
+													className="text-[10px] text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 font-bold px-2 py-0.5 rounded-full transition active:scale-95 flex items-center gap-1"
+												>
+													<span>📍 Usar GPS</span>
+												</button>
+												{pontoOrigem && (
+													<span className="text-[10px] text-emerald-600 font-bold">✓</span>
+												)}
+											</div>
 										</div>
 										<input
 											type="text"
@@ -699,7 +720,7 @@ const MetricsBottomSheet = ({
 												setTextoOrigem(e.target.value);
 												handleBuscar(e.target.value, setSugestoesOrigem);
 											}}
-											placeholder="Ex: Centro, Univates, CEAT, HBB, Rua..."
+											placeholder="Ex: Minha localização, Centro, Univates..."
 											className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
 										/>
 
@@ -734,9 +755,27 @@ const MetricsBottomSheet = ({
 											<label className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">
 												<span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Destino (B)
 											</label>
-											{pontoDestino && (
-												<span className="text-[10px] text-emerald-600 font-bold">✓ Definido</span>
-											)}
+											<div className="flex items-center gap-1.5">
+												<button
+													type="button"
+													onClick={() => {
+														if (onCapturarGPS) {
+															onCapturarGPS((coords) => {
+																setPontoDestino(coords);
+																setTextoDestino("Minha Localização Atual (GPS)");
+																setSugestoesDestino([]);
+															});
+														}
+													}}
+													disabled={obtendoGPS}
+													className="text-[10px] text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 font-bold px-2 py-0.5 rounded-full transition active:scale-95 flex items-center gap-1"
+												>
+													<span>📍 Usar GPS</span>
+												</button>
+												{pontoDestino && (
+													<span className="text-[10px] text-emerald-600 font-bold">✓</span>
+												)}
+											</div>
 										</div>
 										<input
 											type="text"
@@ -745,7 +784,7 @@ const MetricsBottomSheet = ({
 												setTextoDestino(e.target.value);
 												handleBuscar(e.target.value, setSugestoesDestino);
 											}}
-											placeholder="Ex: Univates, Castelinho, Hospital Bruno Born..."
+											placeholder="Ex: Minha localização, Univates, Castelinho..."
 											className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
 										/>
 

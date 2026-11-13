@@ -14,7 +14,8 @@ export default function PerfilLGPDModal({
   onAbrirPolitica,
   onAbrirSobre,
   onAbrirTermos,
-  onAbrirAnalytics
+  onAbrirAnalytics,
+  onAtivarModoTeste
 }) {
   const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
@@ -419,6 +420,20 @@ export default function PerfilLGPDModal({
             >
               Termos de Uso
             </button>
+            {onAtivarModoTeste && (
+              <>
+                <span>•</span>
+                <button
+                  onClick={() => {
+                    onClose();
+                    onAtivarModoTeste();
+                  }}
+                  className="hover:text-amber-600 font-bold text-amber-600 transition"
+                >
+                  🧪 Modo Teste / Simulação
+                </button>
+              </>
+            )}
           </div>
 
           {/* Ações */}
