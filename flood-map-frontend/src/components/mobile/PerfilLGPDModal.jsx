@@ -58,6 +58,8 @@ export default function PerfilLGPDModal({
       setTimeout(() => setDemoSalvaMsg(false), 2500);
     }, 400);
   };
+  // Novo Ponto de Interesse
+  const [adicionandoPonto, setAdicionandoPonto] = useState(false);
   const [novoNome, setNovoNome] = useState('');
   const [novoEndereco, setNovoEndereco] = useState('');
   const [novaCota, setNovaCota] = useState('24.0');
