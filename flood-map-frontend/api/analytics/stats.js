@@ -3,6 +3,7 @@
  * Fornece métricas consolidadas com autenticação Bearer Token e CORS restrito
  */
 import { setSecureCorsHeaders } from '../_security.js';
+import { getAnalyticsStore } from './_store.js';
 
 const ADMIN_SECRET = process.env.ANALYTICS_ADMIN_KEY || 'floodway2026admin';
 
@@ -25,17 +26,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Não autorizado. Senha de administrador inválida.' });
   }
 
-  const store = globalThis.__floodway_analytics_store || {
-    totalEvents: 0,
-    pageViews: {},
-    devices: { Android: 0, iOS: 0, Windows: 0, macOS: 0, Linux: 0, Outro: 0 },
-    browsers: {},
-    cidades: {},
-    pwaCount: 0,
-    webCount: 0,
-    simulacoes: [],
-    recentEvents: []
-  };
+  const store = getAnalyticsStore();
 
   const totalGeral = store.totalEvents;
   const pageViews = store.pageViews;

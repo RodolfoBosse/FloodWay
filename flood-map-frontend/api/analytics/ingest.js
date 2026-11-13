@@ -3,29 +3,7 @@
  * Recebe lotes de eventos telemétricos com Rate Limiting e CORS seguro
  */
 import { setSecureCorsHeaders, checkRateLimit } from '../_security.js';
-
-let memoryStore = globalThis.__floodway_analytics_store || {
-  totalEvents: 0,
-  pageViews: {},
-  devices: { Android: 0, iOS: 0, Windows: 0, macOS: 0, Linux: 0, Outro: 0 },
-  browsers: {},
-  cidades: {},
-  demografia: {
-    faixas: { '18-24': 0, '25-34': 0, '35-49': 0, '50-64': 0, '65+': 0 },
-    genero: { 'Feminino': 0, 'Masculino': 0, 'Outro': 0 }
-  },
-  pwaCount: 0,
-  webCount: 0,
-  simulacoes: [],
-  recentEvents: []
-};
-if (!memoryStore.demografia) {
-  memoryStore.demografia = {
-    faixas: { '18-24': 0, '25-34': 0, '35-49': 0, '50-64': 0, '65+': 0 },
-    genero: { 'Feminino': 0, 'Masculino': 0, 'Outro': 0 }
-  };
-}
-globalThis.__floodway_analytics_store = memoryStore;
+import { getAnalyticsStore, saveAnalyticsStore } from './_store.js';
 
 export default async function handler(req, res) {
   setSecureCorsHeaders(req, res, 'POST,OPTIONS');
@@ -38,8 +16,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Método não permitido' });
   }
 
-  // Rate Limiting: Máximo de 30 envios de lote por minuto por IP
-  if (!checkRateLimit(req, 30, 60)) {
+  // Rate Limiting: Máximo de 60 envios por minuto por IP
+  if (!checkRateLimit(req, 60, 60)) {
     return res.status(429).json({ error: 'Muitas requisições. Rate limit excedido.' });
   }
 
@@ -55,6 +33,8 @@ export default async function handler(req, res) {
 
     const rawEvents = Array.isArray(body?.events) ? body.events : (body?.event_type ? [body] : []);
     const sanitizedEvents = rawEvents.slice(0, 50);
+
+    const memoryStore = getAnalyticsStore();
 
     const clientCity = req.headers['x-vercel-ip-city'] || 'Lajeado';
     const clientRegion = req.headers['x-vercel-ip-country-region'] || 'RS';
@@ -134,6 +114,9 @@ export default async function handler(req, res) {
         memoryStore.recentEvents.pop();
       }
     }
+
+    // Salva estado consolidado no store persistente
+    saveAnalyticsStore(memoryStore);
 
     return res.status(200).json({ status: 'ok', received: sanitizedEvents.length });
   } catch (err) {
