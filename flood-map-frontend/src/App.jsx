@@ -10,7 +10,7 @@ import PrevisaoClimaModal from "./components/mobile/PrevisaoClimaModal";
 import InstallPWABanner from "./components/mobile/InstallPWABanner";
 import AutoUpdateNotifier from "./components/common/AutoUpdateNotifier";
 import CookieConsentBanner from "./components/common/CookieConsentBanner";
-import ModoTesteBar from "./components/common/ModoTesteBar";
+import AlertaSimulacaoAtiva from "./components/common/AlertaSimulacaoAtiva";
 import AnalyticsDashboard from "./components/admin/AnalyticsDashboard";
 import PoliticaPrivacidadePage from "./components/pages/PoliticaPrivacidadePage";
 import SobrePage from "./components/pages/SobrePage";
@@ -433,14 +433,16 @@ function App() {
 						setModalAuthAberto(true);
 						return;
 					}
-					setIsSimulando(false);
+					// Não desliga a simulação se ela estiver ativa! A rota respeita a cota simulada
 					setPaginaAtiva(null);
-					setPainelRotaAberto(!painelRotaAberto);
+					setPainelRotaAberto(true);
+					setIsSimulando(false);
 				}}
 				onInfoClick={() => irParaPagina("portal")}
 				onGraficosClick={() => {}}
 				onSimularClick={() => {
 					setPaginaAtiva(null);
+					setPainelRotaAberto(false);
 					setIsSimulando(!isSimulando);
 				}}
 				isSimulando={isSimulando}
@@ -471,52 +473,23 @@ function App() {
 				onAbrirSobre={() => irParaPagina("sobre")}
 				onAbrirTermos={() => irParaPagina("termos")}
 				onAbrirAnalytics={() => irParaPagina("analytics")}
-				onAtivarModoTeste={() => setModoTesteAtivo(true)}
+				onAtivarModoTeste={() => {
+					setCotaSimulada(24.5);
+				}}
 			/>
 
-			{/* Laboratório Flutuante do Modo de Testes */}
-			{modoTesteAtivo && (
-				<ModoTesteBar
+			{/* Alerta Discreto de Simulação Ativa no Mapa */}
+			{Math.abs(cotaSimulada - cotaReal) > 0.05 && (
+				<AlertaSimulacaoAtiva
 					cotaSimulada={cotaSimulada}
-					setCotaSimulada={(cota) => {
-						setCotaSimulada(cota);
-						setIsSimulando(true);
-					}}
-					onDesativar={() => {
-						setModoTesteAtivo(false);
+					cotaReal={cotaReal}
+					onResetarCota={() => {
 						setCotaSimulada(cotaReal);
 						setIsSimulando(false);
 					}}
-					onAbrirRotasTeste={() => {
+					onAbrirRotas={() => {
 						setPainelRotaAberto(true);
-						setIsSimulando(true);
-					}}
-					onDispararNotificacaoTeste={() => {
-						if (!("Notification" in window)) {
-							alert("Seu navegador não suporta notificações Push.");
-							return;
-						}
-						Notification.requestPermission().then((perm) => {
-							if (perm === "granted") {
-								const titulo = `🚨 [TESTE] COTA DO RIO EM ${Number(cotaSimulada).toFixed(1)}m`;
-								const corpo = `Aviso simulado FloodWay: Água atingindo cotas críticas em Lajeado. Ruas centrais com bloqueio.`;
-								if ("serviceWorker" in navigator) {
-									navigator.serviceWorker.ready.then((reg) => {
-										reg.showNotification(titulo, {
-											body: corpo,
-											icon: "/icon-192.png",
-											badge: "/icon-192.png",
-											vibrate: [300, 100, 300, 100, 300],
-											tag: "teste-floodway",
-										});
-									}).catch(() => new Notification(titulo, { body: corpo, icon: "/icon-192.png" }));
-								} else {
-									new Notification(titulo, { body: corpo, icon: "/icon-192.png" });
-								}
-							} else {
-								alert("Permissão de notificação negada. Ative as notificações no navegador.");
-							}
-						});
+						setIsSimulando(false);
 					}}
 				/>
 			)}

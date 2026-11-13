@@ -550,17 +550,54 @@ const MetricsBottomSheet = ({
 									<button
 										onClick={() => setCotaSimulada(cotaReal)}
 										className="py-2 px-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-[11px] font-bold transition">
-										Ao Vivo
+										Ao Vivo ({Number(cotaReal).toFixed(1)}m)
 									</button>
 									<button
 										onClick={() => setCotaSimulada(19.0)}
 										className="py-2 px-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-xl text-[11px] font-bold transition">
-										Alerta
+										Alerta (19m)
 									</button>
 									<button
 										onClick={() => setCotaSimulada(29.8)}
 										className="py-2 px-2 bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 rounded-xl text-[11px] font-bold transition">
-										Maio/24
+										Maio/24 (29.8m)
+									</button>
+								</div>
+
+								{/* Disparador de Alerta Push de Teste para o Celular */}
+								<div className="pt-2 border-t border-gray-100">
+									<button
+										type="button"
+										onClick={() => {
+											if (!("Notification" in window)) {
+												alert("Seu navegador não suporta notificações Push.");
+												return;
+											}
+											Notification.requestPermission().then((perm) => {
+												if (perm === "granted") {
+													const titulo = `🚨 ALERTA: RIO TAQUARI EM ${Number(cotaSimulada).toFixed(1)}m`;
+													const corpo = `Simulação de inundação: Água atingindo cotas de bloqueio no Centro e vias baixas de Lajeado.`;
+													if ("serviceWorker" in navigator) {
+														navigator.serviceWorker.ready.then((reg) => {
+															reg.showNotification(titulo, {
+																body: corpo,
+																icon: "/icon-192.png",
+																badge: "/icon-192.png",
+																vibrate: [300, 100, 300, 100, 300],
+																tag: "teste-floodway",
+															});
+														}).catch(() => new Notification(titulo, { body: corpo, icon: "/icon-192.png" }));
+													} else {
+														new Notification(titulo, { body: corpo, icon: "/icon-192.png" });
+													}
+												} else {
+													alert("Permissão de notificação não autorizada no navegador.");
+												}
+											});
+										}}
+										className="w-full py-2 px-3 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-98 shadow-xs"
+									>
+										<span>🔔 Testar Notificação de Cheia no Celular</span>
 									</button>
 								</div>
 							</div>
