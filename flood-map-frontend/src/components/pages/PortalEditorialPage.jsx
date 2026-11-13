@@ -29,7 +29,7 @@ export default function PortalEditorialPage({
   const tendenciStatus = cotaAtual?.velocidade_formatada || "Estável";
 
   return (
-    <div className="w-full bg-gray-50 text-gray-900 flex flex-col items-center selection:bg-blue-600 selection:text-white">
+    <div className="w-full min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center selection:bg-blue-600 selection:text-white" style={{ touchAction: 'auto' }}>
       
       {/* BARRA SUPERIOR CLEAN NO PADRÃO DO APP */}
       <header className="w-full bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30 px-4 py-3 flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
