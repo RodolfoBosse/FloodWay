@@ -38,7 +38,7 @@ export default function AnalyticsDashboard({ onVoltar }) {
     setErroLogin('');
 
     try {
-      const resp = await fetch('/api/analytics/stats', {
+      const resp = await fetch('/api/telemetria', {
         headers: {
           'Authorization': `Bearer ${senhaInput.trim()}`
         }
@@ -70,7 +70,7 @@ export default function AnalyticsDashboard({ onVoltar }) {
     setLoading(true);
     setErro(null);
     try {
-      const resp = await fetch('/api/analytics/stats', {
+      const resp = await fetch('/api/telemetria', {
         headers: {
           'Authorization': `Bearer ${token}`
         }

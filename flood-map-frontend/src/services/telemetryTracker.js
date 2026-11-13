@@ -1,6 +1,6 @@
 import { hasAnalyticsConsent } from '../components/common/CookieConsentBanner';
 
-const INGEST_ENDPOINT = '/api/analytics/ingest';
+const INGEST_ENDPOINT = '/api/telemetria';
 const LOCAL_QUEUE_KEY = 'floodway_analytics_queue';
 const CLIENT_ID_KEY = 'floodway_analytics_cid';
 
