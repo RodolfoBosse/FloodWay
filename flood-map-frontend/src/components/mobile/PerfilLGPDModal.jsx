@@ -403,30 +403,31 @@ export default function PerfilLGPDModal({
           </div>
 
           {/* Seção Opcional de Perfil Demográfico para Prevenção */}
-          <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl space-y-2.5">
+          <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2.5">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
-                  <span>📊</span> Perfil da Comunidade (Opcional)
+                <h4 className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                  <User size={13} className="text-slate-500" />
+                  <span>Perfil Demográfico (Opcional)</span>
                 </h4>
-                <p className="text-[10px] text-gray-500">
-                  Ajuda a mapear o perfil demográfico da população do Vale do Taquari em áreas de alerta.
+                <p className="text-[11px] text-slate-500">
+                  Estatísticas anônimas para planejamento de evacuação e defesa civil no Vale do Taquari.
                 </p>
               </div>
               {demoSalvaMsg && (
-                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                  Salvo!
+                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
+                  Salvo
                 </span>
               )}
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
-                <label className="text-[10px] font-bold text-gray-600 block mb-1">Faixa Etária</label>
+                <label className="text-[11px] font-medium text-slate-600 block mb-1">Faixa Etária</label>
                 <select
                   value={faixaEtaria}
                   onChange={(e) => setFaixaEtaria(e.target.value)}
-                  className="w-full bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs text-gray-700 outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
                 >
                   <option value="">Prefiro não informar</option>
                   <option value="18-24">18 a 24 anos</option>
@@ -438,11 +439,11 @@ export default function PerfilLGPDModal({
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-gray-600 block mb-1">Gênero</label>
+                <label className="text-[11px] font-medium text-slate-600 block mb-1">Gênero</label>
                 <select
                   value={genero}
                   onChange={(e) => setGenero(e.target.value)}
-                  className="w-full bg-white border border-gray-300 rounded-lg px-2 py-1.5 text-xs text-gray-700 outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
                 >
                   <option value="">Prefiro não informar</option>
                   <option value="Feminino">Feminino</option>
@@ -457,9 +458,9 @@ export default function PerfilLGPDModal({
                 type="button"
                 onClick={handleSalvarDemografia}
                 disabled={salvandoDemo}
-                className="w-full mt-1 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-1.5 rounded-lg text-xs transition flex items-center justify-center gap-1"
+                className="w-full mt-1 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-semibold py-1.5 rounded-xl text-xs transition flex items-center justify-center gap-1 shadow-sm"
               >
-                {salvandoDemo ? 'Salvando...' : 'Salvar Informações Demográficas'}
+                {salvandoDemo ? 'Salvando...' : 'Salvar Informações'}
               </button>
             )}
           </div>

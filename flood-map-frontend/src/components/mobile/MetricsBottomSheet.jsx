@@ -373,18 +373,25 @@ const MetricsBottomSheet = ({
 						{/* VISTA 1: MÉTRICAS (Aba Mapa) */}
 						{abaAtiva === "mapa" && (
 							<div className="flex flex-col gap-y-3.5 animate-in fade-in duration-300">
-								<div className="flex justify-between items-end">
+								<div className="flex justify-between items-baseline">
 									<div>
-										<p className="text-[12px] text-gray-500 font-medium mb-0.5">
-											Cota atual
-										</p>
-										<p className="text-[38px] font-black text-gray-900 leading-none tracking-tight">
-											{cotaReal ? Number(cotaReal).toFixed(2) : "13.84"}m
+										<span className="text-[11px] font-semibold tracking-wider uppercase text-slate-500 block mb-0.5">
+											Nível do Rio Taquari
+										</span>
+										<p className="text-[34px] font-extrabold text-slate-900 leading-none tracking-tight tabular-nums">
+											{cotaReal ? Number(cotaReal).toFixed(2) : "13.84"} <span className="text-xl font-bold text-slate-500">m</span>
 										</p>
 									</div>
 									<div
-										className={`px-4 py-1.5 rounded-full text-sm font-bold ${cotaReal >= cotaInundacao ? "bg-red-100 text-red-600" : "bg-emerald-100 text-emerald-600"}`}>
-										{cotaReal >= cotaInundacao ? "Inundação" : "Normal"}
+										className={`px-3 py-1 rounded-xl text-xs font-semibold border ${
+											cotaReal >= cotaInundacao 
+												? "bg-rose-50 border-rose-200 text-rose-700" 
+												: cotaReal >= 19.0
+												? "bg-amber-50 border-amber-200 text-amber-700"
+												: "bg-emerald-50 border-emerald-200 text-emerald-700"
+										}`}
+									>
+										{cotaReal >= cotaInundacao ? "Cota de Inundação" : cotaReal >= 19.0 ? "Atenção" : "Nível Normal"}
 									</div>
 								</div>
 
@@ -516,18 +523,23 @@ const MetricsBottomSheet = ({
 
 						{/* VISTA 2: SIMULAÇÃO (Aba Simular) */}
 						{abaAtiva === "simular" && (
-							<div className="flex flex-col gap-y-6 animate-in fade-in duration-300">
-								<div className="flex justify-between items-center">
-									<h3 className="font-bold text-gray-900 flex items-center gap-2">
-										<span className="text-xl">🎛️</span> Simulação de Cota
-									</h3>
-									<span className="text-base font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-xl border border-blue-200">
-										{Number(cotaSimulada).toFixed(2)}m
+							<div className="flex flex-col gap-y-4 animate-in fade-in duration-300">
+								<div className="flex justify-between items-center bg-slate-50 border border-slate-200/80 p-3 rounded-2xl">
+									<div>
+										<span className="text-[10px] font-semibold tracking-wider uppercase text-slate-500 block">
+											Nível Forçado para Teste
+										</span>
+										<p className="text-xs text-slate-600 mt-0.5">
+											Simula a mancha de cheia e recalcula rotas seguras
+										</p>
+									</div>
+									<span className="text-base font-bold text-slate-900 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm tabular-nums">
+										{Number(cotaSimulada).toFixed(2)} m
 									</span>
 								</div>
 
-								<div className="flex items-center gap-3">
-									<span className="text-[10px] font-bold text-gray-400">
+								<div className="flex items-center gap-3 px-1">
+									<span className="text-xs font-semibold text-slate-400">
 										13m
 									</span>
 									<input
@@ -539,33 +551,34 @@ const MetricsBottomSheet = ({
 										onChange={(e) =>
 											setCotaSimulada(parseFloat(e.target.value))
 										}
-										className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+										className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
 									/>
-									<span className="text-[10px] font-bold text-gray-400">
+									<span className="text-xs font-semibold text-slate-400">
 										36m
 									</span>
 								</div>
 
-								<div className="grid grid-cols-3 gap-2">
+								{/* Segmented Preset Buttons */}
+								<div className="grid grid-cols-3 gap-2 bg-slate-100 p-1 rounded-2xl border border-slate-200/60">
 									<button
 										onClick={() => setCotaSimulada(cotaReal)}
-										className="py-2 px-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-[11px] font-bold transition">
+										className="py-2 px-2 bg-white text-slate-800 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95">
 										Ao Vivo ({Number(cotaReal).toFixed(1)}m)
 									</button>
 									<button
 										onClick={() => setCotaSimulada(19.0)}
-										className="py-2 px-2 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-xl text-[11px] font-bold transition">
-										Alerta (19m)
+										className="py-2 px-2 hover:bg-white/80 text-slate-700 rounded-xl text-xs font-semibold transition active:scale-95">
+										Alerta (19.0m)
 									</button>
 									<button
 										onClick={() => setCotaSimulada(29.8)}
-										className="py-2 px-2 bg-red-50 hover:bg-red-100 text-red-800 border border-red-200 rounded-xl text-[11px] font-bold transition">
+										className="py-2 px-2 hover:bg-white/80 text-slate-700 rounded-xl text-xs font-semibold transition active:scale-95">
 										Maio/24 (29.8m)
 									</button>
 								</div>
 
 								{/* Disparador de Alerta Push de Teste para o Celular */}
-								<div className="pt-2 border-t border-gray-100">
+								<div className="pt-2 border-t border-slate-100">
 									<button
 										type="button"
 										onClick={() => {
@@ -575,7 +588,7 @@ const MetricsBottomSheet = ({
 											}
 											Notification.requestPermission().then((perm) => {
 												if (perm === "granted") {
-													const titulo = `🚨 ALERTA: RIO TAQUARI EM ${Number(cotaSimulada).toFixed(1)}m`;
+													const titulo = `Alerta Hidrológico: Rio Taquari em ${Number(cotaSimulada).toFixed(1)}m`;
 													const corpo = `Simulação de inundação: Água atingindo cotas de bloqueio no Centro e vias baixas de Lajeado.`;
 													if ("serviceWorker" in navigator) {
 														navigator.serviceWorker.ready.then((reg) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, Milestone, Sliders, BookOpen } from "lucide-react";
+import { Compass, Route, SlidersHorizontal, BookOpen } from "lucide-react";
 
 const BottomNavigation = ({
   abaAtiva = "mapa",
@@ -14,50 +14,50 @@ const BottomNavigation = ({
   return (
     <div
       style={{ zIndex: 1200 }}
-      className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-1.5 px-4 flex justify-around items-center pointer-events-auto shadow-[0_-2px_10px_rgba(0,0,0,0.04)]"
+      className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 py-2 px-6 flex justify-around items-center pointer-events-auto shadow-[0_-4px_20px_rgba(0,0,0,0.04)]"
     >
       {/* 1. Mapa */}
       <button
         onClick={onMapaClick}
-        className={`flex flex-col items-center gap-0.5 py-1 px-3 transition ${
-          abaAtiva === "mapa" && !painelRotaAberto ? "text-gray-900 font-bold" : "text-gray-400 hover:text-gray-700"
+        className={`flex flex-col items-center gap-1 transition ${
+          abaAtiva === "mapa" && !painelRotaAberto ? "text-slate-900 font-semibold" : "text-slate-400 hover:text-slate-600"
         }`}
       >
-        <Home size={20} strokeWidth={abaAtiva === "mapa" && !painelRotaAberto ? 2.2 : 1.6} />
-        <span className="text-[10px]">Mapa</span>
+        <Compass size={21} strokeWidth={abaAtiva === "mapa" && !painelRotaAberto ? 2.2 : 1.7} />
+        <span className="text-[11px] tracking-tight">Mapa</span>
       </button>
 
       {/* 2. Rotas */}
       <button
         onClick={onRotasClick}
-        className={`flex flex-col items-center gap-0.5 py-1 px-3 transition ${
-          painelRotaAberto ? "text-gray-900 font-bold" : "text-gray-400 hover:text-gray-700"
+        className={`flex flex-col items-center gap-1 transition ${
+          painelRotaAberto ? "text-slate-900 font-semibold" : "text-slate-400 hover:text-slate-600"
         }`}
       >
-        <Milestone size={20} strokeWidth={painelRotaAberto ? 2.2 : 1.6} />
-        <span className="text-[10px]">Rotas</span>
+        <Route size={21} strokeWidth={painelRotaAberto ? 2.2 : 1.7} />
+        <span className="text-[11px] tracking-tight">Rotas</span>
       </button>
 
-      {/* 3. Guia / Sobre (Conteúdo Editorial para AdSense e Utilidade Pública) */}
-      <button
-        onClick={onInfoClick}
-        className={`flex flex-col items-center gap-0.5 py-1 px-3 transition ${
-          abaAtiva === "info" ? "text-blue-600 font-bold" : "text-gray-400 hover:text-gray-700"
-        }`}
-      >
-        <BookOpen size={20} strokeWidth={abaAtiva === "info" ? 2.2 : 1.6} />
-        <span className="text-[10px]">Guia & Info</span>
-      </button>
-
-      {/* 4. Simular */}
+      {/* 3. Simular */}
       <button
         onClick={onSimularClick}
-        className={`flex flex-col items-center gap-0.5 py-1 px-3 transition ${
-          isSimulando ? "text-amber-600 font-bold" : "text-gray-400 hover:text-gray-700"
+        className={`flex flex-col items-center gap-1 transition ${
+          isSimulando ? "text-blue-600 font-semibold" : "text-slate-400 hover:text-slate-600"
         }`}
       >
-        <Sliders size={20} strokeWidth={isSimulando ? 2.2 : 1.6} />
-        <span className="text-[10px]">Simular</span>
+        <SlidersHorizontal size={21} strokeWidth={isSimulando ? 2.2 : 1.7} />
+        <span className="text-[11px] tracking-tight">Simular</span>
+      </button>
+
+      {/* 4. Guia / Sobre */}
+      <button
+        onClick={onInfoClick}
+        className={`flex flex-col items-center gap-1 transition ${
+          abaAtiva === "info" ? "text-slate-900 font-semibold" : "text-slate-400 hover:text-slate-600"
+        }`}
+      >
+        <BookOpen size={21} strokeWidth={abaAtiva === "info" ? 2.2 : 1.7} />
+        <span className="text-[11px] tracking-tight">Guia & Info</span>
       </button>
     </div>
   );

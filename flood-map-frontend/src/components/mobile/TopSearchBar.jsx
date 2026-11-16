@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Bell, User, X, Crosshair } from "lucide-react";
+import { Search, Bell, User, X, Navigation } from "lucide-react";
 
 const TopSearchBar = ({
   textoBusca = "",
@@ -15,16 +15,16 @@ const TopSearchBar = ({
   return (
     <header
       style={{ zIndex: 1200 }}
-      className="fixed top-3 left-3 right-3 max-w-md mx-auto flex items-center bg-white/95 backdrop-blur-md rounded-full shadow-[0_2px_12px_rgba(0,0,0,0.12)] border border-gray-200/80 px-3.5 py-1.5 pointer-events-auto transition-all"
+      className="fixed top-3 left-3 right-3 max-w-md mx-auto flex items-center bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_2px_14px_rgba(0,0,0,0.08)] border border-slate-200/80 px-3.5 py-2 pointer-events-auto transition-all"
     >
       <button
         type="button"
         onClick={onBuscarClick}
-        className="flex-1 flex items-center text-left text-gray-400 text-xs outline-none bg-transparent py-0.5"
+        className="flex-1 flex items-center text-left text-slate-400 text-xs outline-none bg-transparent py-0.5"
       >
-        <Search size={15} className="text-gray-400 mr-2 shrink-0" />
-        <span className="truncate text-gray-500 font-normal text-[11px] sm:text-xs">
-          {textoBusca || (temRotaAtiva ? "Rota Ativa no Mapa" : "Pesquisar rota, local, ponto...")}
+        <Search size={16} className="text-slate-400 mr-2.5 shrink-0" strokeWidth={1.8} />
+        <span className="truncate text-slate-600 font-medium text-xs">
+          {textoBusca || (temRotaAtiva ? "Rota Ativa no Mapa" : "Para onde deseja ir?")}
         </span>
       </button>
 
@@ -35,56 +35,54 @@ const TopSearchBar = ({
             e.stopPropagation();
             if (onLimparRota) onLimparRota();
           }}
-          className="flex items-center gap-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2.5 py-1 rounded-full text-[11px] font-bold active:scale-95 transition mr-1.5 shadow-sm"
-          title="Apagar e remover rota do mapa"
+          className="flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-xl text-xs font-semibold active:scale-95 transition mr-1.5 shadow-sm"
+          title="Encerrar navegação e limpar trajeto"
         >
-          <X size={13} strokeWidth={2.5} />
-          <span>Limpar Rota</span>
+          <X size={13} strokeWidth={2.2} />
+          <span>Encerrar</span>
         </button>
       )}
 
-      <div className="flex items-center gap-1.5 ml-2 shrink-0 border-l border-gray-100 pl-2">
+      <div className="flex items-center gap-1.5 ml-1.5 shrink-0 border-l border-slate-200 pl-2">
         {onGpsClick && (
           <button
             type="button"
             onClick={onGpsClick}
             disabled={obtendoGPS}
-            className={`p-1.5 rounded-full transition active:scale-90 ${
+            className={`w-8 h-8 rounded-xl flex items-center justify-center transition active:scale-95 ${
               obtendoGPS
-                ? "bg-blue-100 text-blue-600 animate-spin"
-                : "text-blue-600 hover:bg-blue-50 bg-blue-50/50"
+                ? "bg-blue-50 text-blue-600 animate-spin"
+                : "text-slate-600 hover:text-blue-600 hover:bg-slate-100 bg-slate-50"
             }`}
             title="Minha Localização GPS"
           >
-            <Crosshair size={16} strokeWidth={2.4} />
+            <Navigation size={16} strokeWidth={1.8} className={obtendoGPS ? "animate-spin" : "transform rotate-45"} />
           </button>
         )}
 
         <button
           type="button"
           onClick={onNotifClick}
-          className="text-gray-600 hover:text-blue-600 p-1 rounded-full hover:bg-gray-100 active:scale-95 transition"
-          title="Alertas e Rotas"
+          className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-slate-100 active:scale-95 transition"
+          title="Alertas e Notificações"
         >
-          <Bell size={17} strokeWidth={2} />
+          <Bell size={16} strokeWidth={1.8} />
         </button>
 
         <button
           type="button"
           onClick={onPerfilClick}
-          className={`p-1 rounded-full active:scale-95 transition flex items-center justify-center ${
+          className={`w-8 h-8 rounded-xl flex items-center justify-center active:scale-95 transition ${
             usuario
-              ? "bg-blue-50 text-blue-600 hover:bg-blue-100 ring-1 ring-blue-300"
-              : "text-gray-600 hover:text-blue-600 hover:bg-gray-100"
+              ? "bg-slate-900 text-white font-semibold text-xs shadow-sm"
+              : "text-slate-600 hover:text-blue-600 hover:bg-slate-100 bg-slate-50"
           }`}
           title={usuario ? usuario.nome || "Minha Conta" : "Entrar com Google ou E-mail"}
         >
           {usuario ? (
-            <span className="w-4 h-4 flex items-center justify-center font-bold text-[10px] leading-none">
-              {usuario.nome ? usuario.nome.charAt(0).toUpperCase() : "U"}
-            </span>
+            <span>{usuario.nome ? usuario.nome.charAt(0).toUpperCase() : "U"}</span>
           ) : (
-            <User size={17} strokeWidth={2} />
+            <User size={16} strokeWidth={1.8} />
           )}
         </button>
       </div>
