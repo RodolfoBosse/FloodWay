@@ -466,8 +466,18 @@ const MapaInterativo = ({
 		let coordsFinais = casaCoords;
 		const enderecoCompleto = `${casaEndereco}${casaNumero ? ", " + casaNumero : ""}`;
 
+		// Se o usuário informou o número da casa (ex: 145), refinamos as coordenadas
+		// ao longo da extensão métrica calibrada da rua
+		if (casaEndereco && (casaNumero || !coordsFinais)) {
+			try {
+				const busca = await buscarDestinosCalibrados(enderecoCompleto, listaRuas);
+				if (busca && busca.length > 0 && busca[0].coords) {
+					coordsFinais = busca[0].coords;
+				}
+			} catch (_) {}
+		}
+
 		if (!coordsFinais && casaEndereco) {
-			// Localização automática através da busca calibrada caso o usuário tenha digitado sem clicar na sugestão
 			try {
 				const busca = await buscarDestinosCalibrados(enderecoCompleto, listaRuas);
 				if (busca && busca.length > 0) {

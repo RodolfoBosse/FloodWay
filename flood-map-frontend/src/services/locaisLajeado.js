@@ -538,7 +538,7 @@ async function carregarRuasCalibradasLajeado() {
 }
 
 /**
- * Interpolação precisa de coordenadas e cota altimétrica com base no número predial na extensão da via
+ * Interpolação precisa de coordenadas e cota altimétrica com base no número predial na extensão métrica da via
  */
 function estimarCoordenadaECotaPorNumero(rua, numero) {
 	let segs = [];
@@ -564,21 +564,79 @@ function estimarCoordenadaECotaPorNumero(rua, numero) {
 		};
 	}
 
-	if (!numero) {
+	// Remove pontos adjacentes idênticos na junção dos trechos
+	const pontosUnicos = [];
+	coordsComCota.forEach((item) => {
+		if (
+			pontosUnicos.length === 0 ||
+			pontosUnicos[pontosUnicos.length - 1].coord[0] !== item.coord[0] ||
+			pontosUnicos[pontosUnicos.length - 1].coord[1] !== item.coord[1]
+		) {
+			pontosUnicos.push(item);
+		}
+	});
+
+	if (!numero || pontosUnicos.length === 1) {
 		return {
-			coords: coordsComCota[0].coord,
-			cota: coordsComCota[0].cota || rua.cota_bloqueio || 30.0,
+			coords: pontosUnicos[0].coord,
+			cota: pontosUnicos[0].cota || rua.cota_bloqueio || 30.0,
 		};
 	}
 
-	// Estima a posição relativa na extensão da via pelo número predial aproximado (base 2000 números)
-	const maxNum = 2000;
-	const fator = Math.min(Math.max(numero / maxNum, 0.05), 0.95);
-	const idx = Math.floor(fator * (coordsComCota.length - 1));
-	const item = coordsComCota[idx];
+	// Calcula as distâncias métricas reais de cada segmento da rua (aproximação Haversine plana)
+	const segDists = [];
+	let comprimentoTotalMetros = 0;
+	for (let i = 0; i < pontosUnicos.length - 1; i++) {
+		const p1 = pontosUnicos[i].coord;
+		const p2 = pontosUnicos[i + 1].coord;
+		const dLat = (p2[0] - p1[0]) * 111320;
+		const dLon = (p2[1] - p1[1]) * 96000;
+		const distMeters = Math.sqrt(dLat * dLat + dLon * dLon);
+		segDists.push(distMeters);
+		comprimentoTotalMetros += distMeters;
+	}
+
+	// No Brasil (padrão métrico urbano ABNT), a numeração predial é a distância em metros
+	// a partir do início oficial do logradouro.
+	// Se o número estiver dentro do comprimento ou até 15% acima, usa a distância direta.
+	// Caso a via seja menor que o número, normaliza proporcionalmente limitando a 95% da extensão.
+	let targetDist = numero;
+	if (comprimentoTotalMetros > 10) {
+		if (targetDist > comprimentoTotalMetros) {
+			targetDist = comprimentoTotalMetros * 0.92;
+		} else {
+			targetDist = Math.max(targetDist, comprimentoTotalMetros * 0.05);
+		}
+	} else {
+		targetDist = 5;
+	}
+
+	// Interpola a coordenada exata ao longo da polilinha
+	let acc = 0;
+	let resCoord = pontosUnicos[pontosUnicos.length - 1].coord;
+	let resCota = pontosUnicos[pontosUnicos.length - 1].cota || rua.cota_bloqueio || 30.0;
+
+	for (let i = 0; i < segDists.length; i++) {
+		const d = segDists[i];
+		if (acc + d >= targetDist) {
+			const frac = d > 0 ? (targetDist - acc) / d : 0;
+			const p1 = pontosUnicos[i].coord;
+			const p2 = pontosUnicos[i + 1].coord;
+			const c1 = pontosUnicos[i].cota || rua.cota_bloqueio || 30.0;
+			const c2 = pontosUnicos[i + 1].cota || c1;
+			resCoord = [
+				p1[0] + (p2[0] - p1[0]) * frac,
+				p1[1] + (p2[1] - p1[1]) * frac,
+			];
+			resCota = c1 + (c2 - c1) * frac;
+			break;
+		}
+		acc += d;
+	}
+
 	return {
-		coords: item.coord,
-		cota: item.cota || rua.cota_bloqueio || 30.0,
+		coords: resCoord,
+		cota: resCota,
 	};
 }
 
