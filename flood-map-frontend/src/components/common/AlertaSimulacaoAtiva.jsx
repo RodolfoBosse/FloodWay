@@ -12,27 +12,27 @@ export default function AlertaSimulacaoAtiva({
 
   return (
     <div className="fixed top-16 left-3 right-3 max-w-md mx-auto z-[2400] pointer-events-auto animate-in slide-in-from-top-3 duration-300">
-      <div className="bg-amber-500/95 text-white backdrop-blur-md rounded-2xl p-2.5 sm:p-3 shadow-xl border border-amber-400 flex items-center justify-between gap-2.5">
+      <div className="bg-slate-900/95 text-white backdrop-blur-md rounded-2xl p-2.5 sm:p-3 shadow-xl border border-slate-700/80 flex items-center justify-between gap-2.5">
         
         {/* Ícone e Texto */}
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
-            <AlertTriangle size={18} className="text-white" />
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/30">
+            <AlertTriangle size={16} strokeWidth={2} />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] font-bold uppercase tracking-wide bg-black/25 px-1.5 py-0.5 rounded text-amber-100">
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded border border-slate-700">
                 Simulação Ativa
               </span>
-              <span className="font-extrabold text-sm text-white">
-                {Number(cotaSimulada).toFixed(2)}m
+              <span className="font-bold text-sm text-white tabular-nums">
+                {Number(cotaSimulada).toFixed(2)} m
               </span>
-              <span className="text-[10px] text-amber-100 font-semibold">
-                ({isAcima ? `+${delta}m` : `${delta}m`} sobre o rio real)
+              <span className="text-[11px] text-amber-400 font-medium">
+                ({isAcima ? `+${delta}m` : `${delta}m`} sobre o rio)
               </span>
             </div>
-            <p className="text-[10px] sm:text-[11px] text-amber-50 leading-tight truncate">
-              Ruas e rotas calculando desvios sobre esta cota de teste.
+            <p className="text-[11px] text-slate-400 leading-tight truncate">
+              Mancha e rotas calculando desvios sobre este nível.
             </p>
           </div>
         </div>
@@ -41,11 +41,11 @@ export default function AlertaSimulacaoAtiva({
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={onResetarCota}
-            className="flex items-center gap-1 bg-white text-amber-900 hover:bg-amber-50 active:scale-95 text-[11px] font-bold px-2.5 py-1.5 rounded-xl shadow-sm transition cursor-pointer"
+            className="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-900 active:scale-95 text-xs font-semibold px-2.5 py-1.5 rounded-xl shadow-sm transition cursor-pointer"
             title="Voltar para a cota oficial do Rio Taquari"
           >
-            <Undo2 size={13} strokeWidth={2.5} />
-            <span>Voltar ao Vivo</span>
+            <Undo2 size={13} strokeWidth={2} />
+            <span>Ao Vivo</span>
           </button>
         </div>
 

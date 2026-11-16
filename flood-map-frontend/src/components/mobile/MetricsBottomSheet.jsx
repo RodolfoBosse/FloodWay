@@ -620,27 +620,30 @@ const MetricsBottomSheet = ({
 						{abaAtiva === "rotas" && (
 							!usuario ? (
 								<div className="flex flex-col items-center justify-center py-8 px-4 text-center animate-in fade-in duration-300">
-									<div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-inner">
-										🗺️
+									<div className="w-12 h-12 bg-slate-100 text-slate-700 rounded-2xl flex items-center justify-center mb-3">
+										<Bookmark size={22} className="text-slate-600" />
 									</div>
-									<h3 className="font-bold text-gray-900 text-base mb-1">
-										Faça login para traçar Rotas Seguras
+									<h3 className="font-semibold text-slate-900 text-base mb-1">
+										Acesse sua conta para traçar rotas
 									</h3>
-									<p className="text-xs text-gray-500 max-w-xs mb-5">
-										Acesse o traçado inteligente de rotas com <strong>desvio automático de ruas alagadas</strong> em tempo real.
+									<p className="text-xs text-slate-500 max-w-xs mb-5">
+										Navegação inteligente com desvio automático de vias alagadas em tempo real.
 									</p>
 									<button
 										onClick={onAbrirAuth}
-										className="w-full max-w-xs bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-3 px-6 rounded-xl text-xs shadow-lg shadow-blue-500/20 transition flex items-center justify-center gap-2"
+										className="w-full max-w-xs bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-semibold py-2.5 px-6 rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-2"
 									>
-										<span>👤 Entrar ou Criar Conta Grátis</span>
+										<span>Entrar ou Criar Conta</span>
 									</button>
 								</div>
 							) : (
 							<div className="flex flex-col gap-y-3 animate-in fade-in duration-300 pb-16">
-								<h3 className="font-bold text-gray-900 flex items-center gap-2 text-sm">
-									<span className="text-xl">🚗</span> Traçar Rota Segura
-								</h3>
+								<div className="flex items-center justify-between">
+									<h3 className="font-semibold text-slate-900 text-sm">
+										Planejamento de Rota Segura
+									</h3>
+									<span className="text-[11px] text-slate-400">Desvios automáticos</span>
+								</div>
 
 								{/* ATALHOS RÁPIDOS: MINHA CASA */}
 								{usuario?.residencia && (
@@ -653,8 +656,8 @@ const MetricsBottomSheet = ({
 												setTextoOrigem(`Minha Casa (${usuario.residencia.endereco || ''})`);
 												setSugestoesOrigem([]);
 											}}
-											className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition active:scale-95">
-											🏠 Partir de Casa
+											className="flex-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium py-1.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95">
+											<span>Partir de Casa</span>
 										</button>
 										<button
 											type="button"
@@ -664,8 +667,8 @@ const MetricsBottomSheet = ({
 												setTextoDestino(`Minha Casa (${usuario.residencia.endereco || ''})`);
 												setSugestoesDestino([]);
 											}}
-											className="flex-1 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 text-[11px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition active:scale-95">
-											🏁 Ir para Casa
+											className="flex-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium py-1.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95">
+											<span>Ir para Casa</span>
 										</button>
 									</div>
 								)}
@@ -674,7 +677,7 @@ const MetricsBottomSheet = ({
 								{rotasSalvas?.length > 0 && (
 									<div className="space-y-1">
 										<div className="flex items-center justify-between">
-											<span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider flex items-center gap-1">
+											<span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider flex items-center gap-1">
 												<Star size={11} className="text-amber-500 fill-amber-500" />
 												Rotas Frequentes
 											</span>
@@ -683,21 +686,20 @@ const MetricsBottomSheet = ({
 											{rotasSalvas.map((r) => (
 												<div
 													key={r.id}
-													className="flex items-center bg-amber-50/80 border border-amber-200/80 text-amber-950 rounded-lg px-2 py-1 text-[11px] whitespace-nowrap shadow-sm hover:bg-amber-100 transition shrink-0 gap-1.5"
+													className="flex items-center bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-2.5 py-1 text-xs whitespace-nowrap hover:bg-slate-100 transition shrink-0 gap-1.5"
 												>
 													<button
 														type="button"
 														onClick={() => handleCarregarRotaSalva(r)}
-														className="flex items-center gap-1 font-semibold text-left"
+														className="flex items-center gap-1 font-medium text-left"
 														title={`${r.origem_nome} ➔ ${r.destino_nome}`}
 													>
-														<span>🚗</span>
 														<span>{r.nome}</span>
 													</button>
 													<button
 														type="button"
 														onClick={(e) => handleExcluirRotaSalva(r.id, e)}
-														className="text-amber-700/60 hover:text-red-600 p-0.5 rounded transition"
+														className="text-slate-400 hover:text-rose-600 p-0.5 rounded transition"
 														title="Remover dos favoritos"
 													>
 														<Trash2 size={11} />
@@ -711,7 +713,7 @@ const MetricsBottomSheet = ({
 								{/* ATALHOS DE PONTOS DE INTERESSE SALVOS */}
 								{usuario?.pontosInteresse?.length > 0 && (
 									<div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-										<span className="text-[10px] text-gray-400 font-bold whitespace-nowrap">Meus Pontos:</span>
+										<span className="text-[10px] text-slate-400 font-semibold whitespace-nowrap">Meus Pontos:</span>
 										{usuario.pontosInteresse.map((pt) => (
 											<button
 												key={pt.id}
@@ -727,19 +729,19 @@ const MetricsBottomSheet = ({
 														setSugestoesDestino([]);
 													}
 												}}
-												className="bg-blue-50 border border-blue-200 text-blue-900 text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap hover:bg-blue-100 transition active:scale-95">
-												📍 {pt.nome}
+												className="bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-medium px-2.5 py-0.5 rounded-full whitespace-nowrap hover:bg-slate-100 transition active:scale-95">
+												{pt.nome}
 											</button>
 										))}
 									</div>
 								)}
 
-								<div className="space-y-3">
+								<div className="space-y-2.5">
 									{/* PARTIDA (A) */}
 									<div className="relative">
 										<div className="flex items-center justify-between mb-1">
-											<label className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">
-												<span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Partida (A)
+											<label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+												<span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Partida
 											</label>
 											<div className="flex items-center gap-1.5">
 												<button
@@ -754,12 +756,12 @@ const MetricsBottomSheet = ({
 														}
 													}}
 													disabled={obtendoGPS}
-													className="text-[10px] text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 font-bold px-2 py-0.5 rounded-full transition active:scale-95 flex items-center gap-1"
+													className="text-[11px] text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 font-medium px-2 py-0.5 rounded-lg transition active:scale-95 flex items-center gap-1"
 												>
-													<span>📍 Usar GPS</span>
+													<span>Usar GPS</span>
 												</button>
 												{pontoOrigem && (
-													<span className="text-[10px] text-emerald-600 font-bold">✓</span>
+													<span className="text-[11px] text-emerald-600 font-semibold">✓</span>
 												)}
 											</div>
 										</div>
@@ -770,13 +772,13 @@ const MetricsBottomSheet = ({
 												setTextoOrigem(e.target.value);
 												handleBuscar(e.target.value, setSugestoesOrigem);
 											}}
-											placeholder="Ex: Minha localização, Centro, Univates..."
-											className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+											placeholder="Ponto de partida ou sua localização..."
+											className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-slate-900 outline-none transition"
 										/>
 
 										{/* AUTOCOMPLETE PARTIDA */}
 										{sugestoesOrigem.length > 0 && (
-											<div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 divide-y divide-gray-100 max-h-52 overflow-y-auto">
+											<div className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 divide-y divide-slate-100 max-h-52 overflow-y-auto">
 												{sugestoesOrigem.map((s, idx) => (
 													<div
 														key={idx}
@@ -785,13 +787,10 @@ const MetricsBottomSheet = ({
 															setTextoOrigem(s.nome);
 															setSugestoesOrigem([]);
 														}}
-														className="text-xs p-2.5 hover:bg-emerald-50 cursor-pointer flex items-center gap-2">
-														<span>
-															{s.tipo === "hospital" ? "🏥" : s.tipo === "faculdade" || s.tipo === "escola" ? "🎓" : s.tipo === "rua" ? "📍" : "🏢"}
-														</span>
+														className="text-xs p-2.5 hover:bg-slate-50 cursor-pointer flex items-center gap-2">
 														<div className="min-w-0 flex-1">
-															<p className="font-bold text-gray-900 truncate">{s.nome}</p>
-															<p className="text-[10px] text-gray-500 truncate">{s.detalhe}</p>
+															<p className="font-semibold text-slate-900 truncate">{s.nome}</p>
+															<p className="text-[10px] text-slate-500 truncate">{s.detalhe}</p>
 														</div>
 													</div>
 												))}
@@ -802,8 +801,8 @@ const MetricsBottomSheet = ({
 									{/* DESTINO (B) */}
 									<div className="relative">
 										<div className="flex items-center justify-between mb-1">
-											<label className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">
-												<span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Destino (B)
+											<label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+												<span className="w-2 h-2 rounded-full bg-slate-900 inline-block"></span> Destino
 											</label>
 											<div className="flex items-center gap-1.5">
 												<button
@@ -818,12 +817,12 @@ const MetricsBottomSheet = ({
 														}
 													}}
 													disabled={obtendoGPS}
-													className="text-[10px] text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 font-bold px-2 py-0.5 rounded-full transition active:scale-95 flex items-center gap-1"
+													className="text-[11px] text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 font-medium px-2 py-0.5 rounded-lg transition active:scale-95 flex items-center gap-1"
 												>
-													<span>📍 Usar GPS</span>
+													<span>Usar GPS</span>
 												</button>
 												{pontoDestino && (
-													<span className="text-[10px] text-emerald-600 font-bold">✓</span>
+													<span className="text-[11px] text-emerald-600 font-semibold">✓</span>
 												)}
 											</div>
 										</div>
@@ -834,13 +833,13 @@ const MetricsBottomSheet = ({
 												setTextoDestino(e.target.value);
 												handleBuscar(e.target.value, setSugestoesDestino);
 											}}
-											placeholder="Ex: Minha localização, Univates, Castelinho..."
-											className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+											placeholder="Para onde você quer ir?"
+											className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-slate-900 outline-none transition"
 										/>
 
 										{/* AUTOCOMPLETE DESTINO */}
 										{sugestoesDestino.length > 0 && (
-											<div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 divide-y divide-gray-100 max-h-52 overflow-y-auto">
+											<div className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 divide-y divide-slate-100 max-h-52 overflow-y-auto">
 												{sugestoesDestino.map((s, idx) => (
 													<div
 														key={idx}
@@ -849,13 +848,10 @@ const MetricsBottomSheet = ({
 															setTextoDestino(s.nome);
 															setSugestoesDestino([]);
 														}}
-														className="text-xs p-2.5 hover:bg-red-50 cursor-pointer flex items-center gap-2">
-														<span>
-															{s.tipo === "hospital" ? "🏥" : s.tipo === "faculdade" || s.tipo === "escola" ? "🎓" : s.tipo === "rua" ? "📍" : "🏢"}
-														</span>
+														className="text-xs p-2.5 hover:bg-slate-50 cursor-pointer flex items-center gap-2">
 														<div className="min-w-0 flex-1">
-															<p className="font-bold text-gray-900 truncate">{s.nome}</p>
-															<p className="text-[10px] text-gray-500 truncate">{s.detalhe}</p>
+															<p className="font-semibold text-slate-900 truncate">{s.nome}</p>
+															<p className="text-[10px] text-slate-500 truncate">{s.detalhe}</p>
 														</div>
 													</div>
 												))}
@@ -865,29 +861,29 @@ const MetricsBottomSheet = ({
 
 									<button
 										disabled={calculandoRota || !pontoOrigem || !pontoDestino}
-										className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-md transition ${
+										className={`w-full py-2.5 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 transition ${
 											calculandoRota || !pontoOrigem || !pontoDestino
-												? "bg-gray-300 text-gray-500 cursor-not-allowed"
-												: "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white active:scale-95"
+												? "bg-slate-100 text-slate-400 cursor-not-allowed"
+												: "bg-slate-900 hover:bg-slate-800 text-white active:scale-98 shadow-sm"
 										}`}
 										onClick={() => {
 											window.dispatchEvent(new CustomEvent("trigger-gerar-rota"));
 										}}>
 										{calculandoRota
-											? "⏳ Calculando Desvio Seguro..."
-											: "🚀 Gerar Rota Anti-Enchente"}
+											? "Calculando rota segura..."
+											: "Calcular Rota com Desvios"}
 									</button>
 								</div>
 
 								{dadosRota && (
-									<div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-[11px] space-y-2.5 mt-2">
+									<div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-2.5 mt-2">
 										<div className="flex justify-between items-start">
-											<div>
-												<p>
-													<strong>Distância:</strong> {dadosRota.distancia} km
+											<div className="space-y-0.5">
+												<p className="text-slate-600 font-medium">
+													Distância: <span className="font-bold text-slate-900">{dadosRota.distancia} km</span>
 												</p>
-												<p>
-													<strong>Tempo:</strong> {dadosRota.tempo} min
+												<p className="text-slate-600 font-medium">
+													Tempo estimado: <span className="font-bold text-slate-900">{dadosRota.tempo} min</span>
 												</p>
 											</div>
 											<button
@@ -895,20 +891,20 @@ const MetricsBottomSheet = ({
 												onClick={() => {
 													if (onLimparRota) onLimparRota();
 												}}
-												className="flex items-center gap-1 text-[11px] text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2.5 py-1 rounded-lg font-bold transition active:scale-95 shadow-sm"
+												className="flex items-center gap-1 text-[11px] text-slate-500 hover:text-rose-600 px-2 py-1 rounded-lg transition"
 												title="Apagar rota do mapa"
 											>
 												<Trash2 size={12} />
-												<span>Limpar Rota</span>
+												<span>Limpar</span>
 											</button>
 										</div>
 										<div
-											className={`p-1.5 rounded-lg font-bold text-center text-[11px] ${
-												dadosRota.segura ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+											className={`p-2 rounded-xl font-semibold text-center text-xs border ${
+												dadosRota.segura ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-rose-50 border-rose-200 text-rose-800"
 											}`}>
 											{dadosRota.segura
-												? "🛡️ ROTA 100% SEGURA (Desvio pelas Colinas)"
-												: "⛔ ATENÇÃO: CIDADE ILHADA NO NÍVEL ATIVO"}
+												? "Trajeto Seguro (Desvio pelas Vias Altas)"
+												: "Atenção: Destino ou vias de acesso ilhadas"}
 										</div>
 
 										{/* BOTÕES NAVEGAÇÃO EXTERNA (GOOGLE MAPS & WAZE) & SALVAR FAVORITA */}
@@ -916,15 +912,13 @@ const MetricsBottomSheet = ({
 											<button
 												type="button"
 												onClick={abrirGoogleMaps}
-												className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
-												<span>🗺️</span>
+												className="flex-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
 												<span>Google Maps</span>
 											</button>
 											<button
 												type="button"
 												onClick={abrirWaze}
-												className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
-												<span>🚗</span>
+												className="flex-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
 												<span>Waze</span>
 											</button>
 										</div>
@@ -934,16 +928,16 @@ const MetricsBottomSheet = ({
 											type="button"
 											onClick={handleSalvarRotaFavorita}
 											disabled={salvandoRotaAtual || rotaJaSalva}
-											className={`w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-95 border ${
+											className={`w-full py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 border ${
 												rotaJaSalva
-													? "bg-amber-50 text-amber-800 border-amber-300"
-													: "bg-white hover:bg-amber-50 text-gray-800 border-gray-300 shadow-sm"
+													? "bg-slate-100 text-slate-700 border-slate-200"
+													: "bg-white hover:bg-slate-50 text-slate-800 border-slate-200 shadow-sm"
 											}`}
 										>
 											{rotaJaSalva ? (
 												<>
-													<Check size={14} className="text-emerald-600 stroke-[3]" />
-													<span className="text-amber-900">Salva nas Rotas Frequentes</span>
+													<Check size={14} className="text-emerald-600 stroke-[2.5]" />
+													<span>Salva nas Rotas Frequentes</span>
 												</>
 											) : (
 												<>

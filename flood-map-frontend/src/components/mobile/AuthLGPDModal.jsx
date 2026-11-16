@@ -188,23 +188,20 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
       <div className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl transition-all max-h-[92vh] overflow-y-auto">
         
         {/* Cabeçalho */}
-        <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🌊</span>
-            <div>
-              <h3 className="font-bold text-gray-900 text-base leading-tight">
-                FloodWay Lajeado
-              </h3>
-              <p className="text-[11px] text-gray-500">
-                Monitor de alagamentos e rotas seguras
-              </p>
-            </div>
+        <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+          <div>
+            <h3 className="font-semibold text-slate-900 text-base leading-tight">
+              {modo === 'login' ? 'Entrar no FloodWay' : modo === 'cadastro' ? 'Criar Conta' : 'Termos & Privacidade'}
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Alertas hidrológicos e rotas seguras em Lajeado
+            </p>
           </div>
           <button 
             onClick={onClose} 
-            className="text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -261,12 +258,12 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
             </div>
 
             {/* Seletor de Abas */}
-            <div className="flex bg-gray-100 p-1 rounded-xl mb-3">
+            <div className="flex bg-slate-100 p-1 rounded-xl mb-3 border border-slate-200/60">
               <button
                 type="button"
                 onClick={() => handleTrocaModo('login')}
-                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
-                  modo === 'login' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-800'
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition ${
+                  modo === 'login' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
                 Entrar
@@ -274,8 +271,8 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
               <button
                 type="button"
                 onClick={() => handleTrocaModo('cadastro')}
-                className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition ${
-                  modo === 'cadastro' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-800'
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition ${
+                  modo === 'cadastro' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
                 Criar Nova Conta
@@ -395,7 +392,7 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
               <button
                 type="submit"
                 disabled={carregando}
-                className="w-full mt-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-bold py-3 rounded-xl text-xs shadow-md transition active:scale-[0.98] flex items-center justify-center gap-2"
+                className="w-full mt-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white font-semibold py-2.5 rounded-xl text-xs shadow-sm transition active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 {carregando ? (
                   <span>Processando...</span>
@@ -407,7 +404,7 @@ export default function AuthLGPDModal({ isOpen, onClose, onLoginSucesso }) {
                 ) : (
                   <>
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Concluir Cadastro Seguro</span>
+                    <span>Concluir Cadastro</span>
                   </>
                 )}
               </button>

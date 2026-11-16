@@ -42,81 +42,72 @@ export default function PrevisaoClimaModal({ isOpen, onClose, dadosClima }) {
   };
 
   return (
-    <div style={{ zIndex: 3500 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
+    <div style={{ zIndex: 3500 }} className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
       <div className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl transition-all max-h-[92vh] overflow-y-auto">
         
         {/* Cabeçalho */}
-        <div className="flex justify-between items-center pb-3 border-b border-gray-100">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
-              <CloudRain className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-extrabold text-gray-900 text-base leading-tight">
-                Previsão do Tempo
-              </h3>
-              <p className="text-[11px] text-gray-500">Lajeado/RS • Vale do Taquari</p>
-            </div>
+        <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+          <div>
+            <h3 className="font-semibold text-slate-900 text-base leading-tight">
+              Previsão Meteorológica
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">Lajeado & Vale do Taquari</p>
           </div>
           <button 
             onClick={onClose} 
-            className="text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Card Atual em Destaque */}
-        <div className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg relative overflow-hidden">
-          <div className="absolute right-3 top-3 opacity-15 pointer-events-none">
-            <CloudRain size={120} />
-          </div>
-
+        <div className="mt-4 p-5 rounded-2xl bg-slate-900 text-white shadow-sm relative overflow-hidden">
           <div className="flex justify-between items-start relative z-10">
             <div>
-              <span className="text-[11px] font-semibold tracking-wider uppercase opacity-90 block mb-1">
-                Agora em Lajeado
+              <span className="text-xs font-medium text-slate-400 block mb-1">
+                Temperatura Atual
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-black tracking-tight">
+                <span className="text-5xl font-light tracking-tight tabular-nums">
                   {current.temperature_2m !== undefined ? Math.round(current.temperature_2m) : 20}°
                 </span>
-                <span className="text-sm font-medium opacity-80">
+                <span className="text-xs text-slate-400 font-normal">
                   Sensação {current.apparent_temperature !== undefined ? Math.round(current.apparent_temperature) : 20}°
                 </span>
               </div>
-              <p className="text-xs font-semibold mt-1">
+              <p className="text-xs text-slate-300 font-medium mt-1">
                 {getWeatherDescription(current.weather_code)}
               </p>
             </div>
 
-            <div className="p-3 bg-white/20 backdrop-blur-md rounded-2xl">
-              {getWeatherIcon(current.weather_code, 32)}
+            <div className="p-3 bg-slate-800 rounded-2xl border border-slate-700">
+              {getWeatherIcon(current.weather_code, 28)}
             </div>
           </div>
 
           {/* Indicadores complementares (Chuva, Vento, Umidade) */}
-          <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/15 text-center relative z-10 text-[11px]">
-            <div className="bg-white/10 rounded-xl py-1.5 px-1">
-              <div className="flex items-center justify-center gap-1 opacity-80 mb-0.5">
+          <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-800 text-center relative z-10 text-xs">
+            <div className="bg-slate-800/80 rounded-xl py-2 px-1">
+              <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
                 <Droplets size={12} />
                 <span>Chuva</span>
               </div>
-              <span className="font-bold text-xs">{current.precipitation || 0} mm</span>
+              <span className="font-semibold text-xs text-white">{current.precipitation || 0} mm</span>
             </div>
-            <div className="bg-white/10 rounded-xl py-1.5 px-1">
-              <div className="flex items-center justify-center gap-1 opacity-80 mb-0.5">
+            <div className="bg-slate-800/80 rounded-xl py-2 px-1">
+              <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
                 <Wind size={12} />
                 <span>Vento</span>
               </div>
-              <span className="font-bold text-xs">{current.wind_speed_10m || 0} km/h</span>
+              <span className="font-semibold text-xs text-white">{current.wind_speed_10m ? Math.round(current.wind_speed_10m) : 0} km/h</span>
             </div>
-            <div className="bg-white/10 rounded-xl py-1.5 px-1">
-              <div className="flex items-center justify-center gap-1 opacity-80 mb-0.5">
-                <Droplets size={12} />
+            <div className="bg-slate-800/80 rounded-xl py-2 px-1">
+              <div className="flex items-center justify-center gap-1 text-slate-400 mb-0.5">
+                <CloudRain size={12} />
                 <span>Umidade</span>
               </div>
-              <span className="font-bold text-xs">{current.relative_humidity_2m || 0}%</span>
+              <span className="font-semibold text-xs text-white">{current.relative_humidity_2m || 0}%</span>
             </div>
           </div>
         </div>

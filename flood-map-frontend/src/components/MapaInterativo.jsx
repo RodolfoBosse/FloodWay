@@ -1336,55 +1336,52 @@ const MapaInterativo = ({
 			{modalCasaAberto && (
 				<div
 					style={{ zIndex: 3000 }}
-					className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+					className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
 					<div className="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl transition-all">
-						<div className="flex justify-between items-center pb-3 border-b">
-							<div className="flex items-center gap-2">
-								<span className="text-2xl">🏠</span>
-								<div>
-									<h3 className="font-black text-gray-900 text-base leading-tight">
-										Configurar Minha Casa
-									</h3>
-									<p className="text-[11px] text-gray-500">{usuario?.email}</p>
-								</div>
+						<div className="flex justify-between items-center pb-3 border-b border-slate-100">
+							<div>
+								<h3 className="font-semibold text-slate-900 text-base leading-tight">
+									Residência Monitorada
+								</h3>
+								<p className="text-xs text-slate-500 mt-0.5">{usuario?.email}</p>
 							</div>
 							<button
 								onClick={() => setModalCasaAberto(false)}
-								className="text-gray-400 hover:text-gray-600 font-bold">
+								className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
 								✕
 							</button>
 						</div>
 
 						{/* BOTÃO TESTAR NOTIFICAÇÃO NO CELULAR */}
 						{usuario?.residencia && (
-							<div className="my-3 p-3 bg-indigo-50 border border-indigo-200 rounded-xl flex items-center justify-between gap-2">
+							<div className="my-3 p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-2">
 								<div>
-									<p className="font-bold text-indigo-950 text-xs">
-										🔔 Notificações Ativas
+									<p className="font-semibold text-slate-900 text-xs">
+										Alertas Hidrológicos Ativos
 									</p>
-									<p className="text-[10px] text-indigo-700">
-										Simule agora o aviso no seu aparelho
+									<p className="text-[11px] text-slate-500">
+										Teste o aviso sonoro e push no seu aparelho
 									</p>
 								</div>
 								<button
 									type="button"
 									onClick={testarNotificacaoEmergencia}
-									className="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow transition active:scale-95 whitespace-nowrap">
+									className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition active:scale-95 whitespace-nowrap">
 									Testar Alerta
 								</button>
 							</div>
 						)}
 
-						<form onSubmit={handleSalvarCasa} className="space-y-3.5 mt-2">
+						<form onSubmit={handleSalvarCasa} className="space-y-3.5 mt-3">
 							{/* CAMPO CEP COM AUTO-PREENCHIMENTO */}
 							<div>
 								<div className="flex items-center justify-between mb-1">
-									<label className="text-[11px] font-semibold text-gray-700 block">
+									<label className="text-xs font-medium text-slate-700 block">
 										CEP (Opcional)
 									</label>
 									{buscandoCep && (
-										<span className="text-[10px] text-blue-600 font-bold animate-pulse">
-											Buscando endereço...
+										<span className="text-[11px] text-slate-500 animate-pulse">
+											Buscando logradouro...
 										</span>
 									)}
 								</div>
@@ -1395,20 +1392,17 @@ const MapaInterativo = ({
 										placeholder="95900-000"
 										value={casaCep}
 										onChange={(e) => handleBuscarCep(e.target.value)}
-										className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition"
+										className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-slate-900 outline-none transition"
 									/>
-									<span className="absolute right-3 top-2.5 text-xs text-gray-400">
-										📮
-									</span>
 								</div>
 							</div>
 
 							{/* CAMPO RUA / ENDEREÇO */}
 							<div className="relative">
-								<label className="text-[11px] font-semibold text-gray-700 mb-1 block">
-									Rua ou Local
+								<label className="text-xs font-medium text-slate-700 mb-1 block">
+									Logradouro / Rua
 								</label>
-								<div className="flex gap-1.5">
+								<div className="flex gap-2">
 									<input
 										type="text"
 										placeholder="Ex: Bento Gonçalves, Alfonso Haas..."
@@ -1417,7 +1411,7 @@ const MapaInterativo = ({
 											setCasaEndereco(e.target.value);
 											buscarDestinos(e.target.value, setSugestoesCasa);
 										}}
-										className="flex-1 text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition"
+										className="flex-1 text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-slate-900 outline-none transition"
 										required
 									/>
 									<button
@@ -1426,20 +1420,20 @@ const MapaInterativo = ({
 											setModoSelecao("casa");
 											setModalCasaAberto(false);
 										}}
-										className="bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 text-[11px] px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1 active:scale-95 shadow-sm">
-										🎯 No Mapa
+										className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 text-xs px-3 py-2 rounded-xl font-medium transition active:scale-95 shadow-sm whitespace-nowrap">
+										No Mapa
 									</button>
 								</div>
 
 								{sugestoesCasa.length > 0 && (
-									<div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden divide-y divide-gray-100 max-h-52 overflow-y-auto">
-										<div className="p-1.5 bg-gray-50 flex items-center justify-between text-[10px] text-gray-500 font-bold border-b border-gray-100">
-											<span>Sugestões Encontradas</span>
+									<div className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden divide-y divide-slate-100 max-h-52 overflow-y-auto">
+										<div className="p-2 bg-slate-50 flex items-center justify-between text-xs text-slate-500 font-medium border-b border-slate-100">
+											<span>Endereços sugeridos</span>
 											<button
 												type="button"
 												onClick={() => setSugestoesCasa([])}
-												className="text-gray-400 hover:text-gray-700 px-1">
-												✕ Fechar
+												className="text-slate-400 hover:text-slate-700 px-1">
+												✕
 											</button>
 										</div>
 										{sugestoesCasa.map((s, idx) => (
@@ -1450,27 +1444,18 @@ const MapaInterativo = ({
 													setCasaCoords(s.coords);
 													setSugestoesCasa([]);
 												}}
-												className="text-xs p-2.5 hover:bg-amber-50 cursor-pointer flex items-center gap-2">
-												<span>
-													{s.tipo === "hospital"
-														? "🏥"
-														: s.tipo === "escola"
-															? "🎓"
-															: s.tipo === "rua"
-																? "📍"
-																: "🏢"}
-												</span>
+												className="text-xs p-2.5 hover:bg-slate-50 cursor-pointer flex items-center justify-between gap-2">
 												<div className="min-w-0 flex-1">
-													<p className="font-bold text-gray-900 truncate">
+													<p className="font-semibold text-slate-900 truncate">
 														{s.nome}
 													</p>
-													<p className="text-[10px] text-gray-500 truncate">
+													<p className="text-[10px] text-slate-500 truncate">
 														{s.detalhe}
 													</p>
 												</div>
 												{s.cota && (
-													<span className="text-[10px] bg-amber-100 text-amber-800 font-black px-1.5 py-0.5 rounded">
-														{s.cota.toFixed(1)}m
+													<span className="text-[11px] bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded-lg border border-slate-200">
+														{s.cota.toFixed(1)} m
 													</span>
 												)}
 											</div>
@@ -1481,7 +1466,7 @@ const MapaInterativo = ({
 
 							<div className="flex gap-2">
 								<div className="w-1/3">
-									<label className="text-[11px] font-semibold text-gray-700 mb-1 block">
+									<label className="text-xs font-medium text-slate-700 mb-1 block">
 										Número
 									</label>
 									<input
@@ -1489,11 +1474,11 @@ const MapaInterativo = ({
 										placeholder="Ex: 145"
 										value={casaNumero}
 										onChange={(e) => setCasaNumero(e.target.value)}
-										className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none font-bold transition"
+										className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-slate-900 outline-none transition"
 									/>
 								</div>
 								<div className="flex-1">
-									<label className="text-[11px] font-semibold text-gray-700 mb-1 block">
+									<label className="text-xs font-medium text-slate-700 mb-1 block">
 										Bairro
 									</label>
 									<input
@@ -1501,7 +1486,7 @@ const MapaInterativo = ({
 										placeholder="Ex: Carneiros, Centro..."
 										value={casaBairro}
 										onChange={(e) => setCasaBairro(e.target.value)}
-										className="w-full text-xs p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition"
+										className="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-slate-900 outline-none transition"
 									/>
 								</div>
 							</div>
@@ -1509,10 +1494,10 @@ const MapaInterativo = ({
 							<button
 								type="submit"
 								disabled={salvandoCasa}
-								className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold py-3 rounded-xl text-xs shadow-md transition active:scale-98">
+								className="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-xl text-xs shadow-sm transition active:scale-98">
 								{salvandoCasa
-									? "⏳ Calculando altitude segura..."
-									: "Salvar Minha Residência"}
+									? "Calculando altitude do terreno..."
+									: "Salvar Residência"}
 							</button>
 						</form>
 					</div>
