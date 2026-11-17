@@ -56,11 +56,15 @@ export async function dispararAlertaLocal(titulo, mensagem, tag = "alerta-floodw
     }
 
     // 2. Fallback direto via new Notification
-    new Notification(titulo, {
-      body: mensagem,
-      icon: "/icon-192.png",
-      tag: tag,
-    });
+    try {
+      new Notification(titulo, {
+        body: mensagem,
+        icon: "/icon-192.png",
+        tag: tag,
+      });
+    } catch (winErr) {
+      console.warn("new Notification falhou:", winErr);
+    }
     return true;
   } catch (err) {
     console.warn("Erro ao disparar notificacao local:", err);

@@ -57,7 +57,7 @@ const MetricsBottomSheet = ({
 	const startHeightRef = useRef(295);
 
 	// Rastreamento para disparo automático de notificação push no celular quando a simulação atinge locais
-	const ultimoAlertaSimulacaoRef = useRef({ id: null, timestamp: 0 });
+	const ultimoAlertaSimulacaoRef = useRef({ chave: null, timestamp: 0 });
 
 	useEffect(() => {
 		if (abaAtiva !== "simular" || !cotaSimulada) return;
@@ -81,32 +81,35 @@ const MetricsBottomSheet = ({
 			});
 		}
 
-		// Encontra o local mais crítico atingido ou em alerta iminente (margem <= 0.5m)
+		if (locaisParaVerificar.length === 0) return;
+
+		// Encontra o local mais crítico atingido ou em alerta iminente
+		// Margem de alerta: faltam até 1.5 metros para a água entrar no local
 		for (const loc of locaisParaVerificar) {
-			const margem = loc.cota - cotaSimulada;
+			const margem = Number((loc.cota - cotaSimulada).toFixed(1));
 			const isSubmerso = margem <= 0;
-			const isAlertaIminente = margem > 0 && margem <= 0.8;
+			const isAlertaIminente = margem > 0 && margem <= 1.5;
 
 			if (isSubmerso || isAlertaIminente) {
 				const agora = Date.now();
 				const chave = `${loc.id}-${isSubmerso ? 'submerso' : 'alerta'}`;
 
-				// Evita disparar em loop enquanto o slider está sendo arrastado continuamente
+				// Se mudou de estado ou passaram mais de 5s, dispara notificação
 				if (
-					ultimoAlertaSimulacaoRef.current.id !== chave ||
-					agora - ultimoAlertaSimulacaoRef.current.timestamp > 7000
+					ultimoAlertaSimulacaoRef.current.chave !== chave ||
+					agora - ultimoAlertaSimulacaoRef.current.timestamp > 5000
 				) {
-					ultimoAlertaSimulacaoRef.current = { id: chave, timestamp: agora };
+					ultimoAlertaSimulacaoRef.current = { chave, timestamp: agora };
 
 					const titulo = isSubmerso
-						? `🚨 Alerta FloodWay: Água Atingindo ${loc.nome}!`
-						: `⚠️ Alerta: Água se Aproximando de ${loc.nome}!`;
+						? `🚨 ALERTA MÁXIMO: ${loc.nome} Atingido!`
+						: `⚠️ ALERTA DE CHEIA: Rio se aproximando de ${loc.nome}!`;
 
 					const corpo = isSubmerso
-						? `A cota do rio (${cotaSimulada.toFixed(1)}m) atingiu a cota deste local (${loc.cota.toFixed(1)}m). Planeje rotas de fuga imediatamente.`
-						: `Nível do rio em ${cotaSimulada.toFixed(1)}m está a apenas ${margem.toFixed(1)}m da cota (${loc.cota.toFixed(1)}m).`;
+						? `A cota do Rio Taquari (${cotaSimulada.toFixed(1)}m) superou a altitude do imóvel (${loc.cota.toFixed(1)}m). Início de inundação!`
+						: `Rio em ${cotaSimulada.toFixed(1)}m está a apenas ${margem}m de atingir a cota (${loc.cota.toFixed(1)}m). Prepare desocupação preventiva.`;
 
-					dispararAlertaLocal(titulo, corpo, `simulacao-${loc.id}`);
+					dispararAlertaLocal(titulo, corpo, `simulacao-critica`);
 				}
 				break;
 			}
