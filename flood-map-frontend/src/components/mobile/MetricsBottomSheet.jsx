@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CloudRain, MoreHorizontal, Trash2, Bookmark, Star, Check, Navigation, X } from "lucide-react";
+import { CloudRain, MoreHorizontal, Trash2, Bookmark, Star, Check, Navigation, X, Plus, Minus, Bell, BellRing } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
 import GoogleAdBlock from "./GoogleAdBlock";
 import { buscarDestinosCalibrados } from "../../services/locaisLajeado";
 import { API_BASE } from "../../services/config";
+import { dispararAlertaLocal, solicitarPermissaoNotificacao } from "../../services/notificationService";
 
 const MetricsBottomSheet = ({
 	cotaReal = 13.84,
@@ -54,6 +55,63 @@ const MetricsBottomSheet = ({
 	const [rotaParaExcluir, setRotaParaExcluir] = useState(null);
 	const startYRef = useRef(0);
 	const startHeightRef = useRef(295);
+
+	// Rastreamento para disparo automático de notificação push no celular quando a simulação atinge locais
+	const ultimoAlertaSimulacaoRef = useRef({ id: null, timestamp: 0 });
+
+	useEffect(() => {
+		if (abaAtiva !== "simular" || !cotaSimulada) return;
+
+		// Identifica se a cota simulada atingiu a casa ou algum local monitorado
+		const locaisParaVerificar = [];
+		if (usuario?.residencia) {
+			locaisParaVerificar.push({
+				id: 'residencia',
+				nome: 'Sua Residência',
+				cota: Number(usuario.residencia.cota || 24.0),
+			});
+		}
+		if (Array.isArray(usuario?.pontosInteresse)) {
+			usuario.pontosInteresse.forEach((p) => {
+				locaisParaVerificar.push({
+					id: `ponto-${p.id}`,
+					nome: p.nome,
+					cota: Number(p.cota || 24.0),
+				});
+			});
+		}
+
+		// Encontra o local mais crítico atingido ou em alerta iminente (margem <= 0.5m)
+		for (const loc of locaisParaVerificar) {
+			const margem = loc.cota - cotaSimulada;
+			const isSubmerso = margem <= 0;
+			const isAlertaIminente = margem > 0 && margem <= 0.8;
+
+			if (isSubmerso || isAlertaIminente) {
+				const agora = Date.now();
+				const chave = `${loc.id}-${isSubmerso ? 'submerso' : 'alerta'}`;
+
+				// Evita disparar em loop enquanto o slider está sendo arrastado continuamente
+				if (
+					ultimoAlertaSimulacaoRef.current.id !== chave ||
+					agora - ultimoAlertaSimulacaoRef.current.timestamp > 7000
+				) {
+					ultimoAlertaSimulacaoRef.current = { id: chave, timestamp: agora };
+
+					const titulo = isSubmerso
+						? `🚨 Alerta FloodWay: Água Atingindo ${loc.nome}!`
+						: `⚠️ Alerta: Água se Aproximando de ${loc.nome}!`;
+
+					const corpo = isSubmerso
+						? `A cota do rio (${cotaSimulada.toFixed(1)}m) atingiu a cota deste local (${loc.cota.toFixed(1)}m). Planeje rotas de fuga imediatamente.`
+						: `Nível do rio em ${cotaSimulada.toFixed(1)}m está a apenas ${margem.toFixed(1)}m da cota (${loc.cota.toFixed(1)}m).`;
+
+					dispararAlertaLocal(titulo, corpo, `simulacao-${loc.id}`);
+				}
+				break;
+			}
+		}
+	}, [cotaSimulada, abaAtiva, usuario]);
 
 	// Carrega rotas salvas do LocalStorage e Backend
 	useEffect(() => {
@@ -552,24 +610,54 @@ const MetricsBottomSheet = ({
 									</span>
 								</div>
 
-								<div className="flex items-center gap-3 px-1">
-									<span className="text-xs font-semibold text-slate-400">
+								<div className="flex items-center gap-2 px-1">
+									<button
+										type="button"
+										onClick={() => {
+											setCotaSimulada((prev) => {
+												const novo = Math.max(13.0, Math.round((prev - 0.2) * 10) / 10);
+												return novo;
+											});
+										}}
+										className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-90 text-slate-800 font-bold flex items-center justify-center border border-slate-200 transition shrink-0 shadow-xs"
+										title="Diminuir 0,2 metros"
+									>
+										<Minus size={14} strokeWidth={2.5} />
+									</button>
+
+									<span className="text-[11px] font-semibold text-slate-400">
 										13m
 									</span>
+
 									<input
 										type="range"
 										min="13.0"
 										max="36.0"
-										step="0.1"
+										step="0.2"
 										value={cotaSimulada}
 										onChange={(e) =>
 											setCotaSimulada(parseFloat(e.target.value))
 										}
-										className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+										className="flex-1 h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900"
 									/>
-									<span className="text-xs font-semibold text-slate-400">
+
+									<span className="text-[11px] font-semibold text-slate-400">
 										36m
 									</span>
+
+									<button
+										type="button"
+										onClick={() => {
+											setCotaSimulada((prev) => {
+												const novo = Math.min(36.0, Math.round((prev + 0.2) * 10) / 10);
+												return novo;
+											});
+										}}
+										className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-90 text-slate-800 font-bold flex items-center justify-center border border-slate-200 transition shrink-0 shadow-xs"
+										title="Aumentar 0,2 metros"
+									>
+										<Plus size={14} strokeWidth={2.5} />
+									</button>
 								</div>
 
 								{/* Segmented Preset Buttons */}
@@ -685,40 +773,30 @@ const MetricsBottomSheet = ({
 									);
 								})()}
 
-								{/* Disparador de Alerta Push de Teste para o Celular */}
-								<div className="pt-2 border-t border-slate-100">
+								{/* Disparador de Alerta Push e Ativação de Notificações */}
+								<div className="pt-1 border-t border-slate-100 flex items-center gap-2">
 									<button
 										type="button"
-										onClick={() => {
-											if (!("Notification" in window)) {
-												alert("Seu navegador não suporta notificações Push.");
-												return;
+										onClick={async () => {
+											const perm = await solicitarPermissaoNotificacao();
+											if (perm === "granted") {
+												const primeiroLocal = usuario?.residencia?.endereco
+													? `sua casa (${usuario.residencia.endereco})`
+													: "seus locais cadastrados";
+
+												await dispararAlertaLocal(
+													`🚨 Alerta: Rio Taquari em ${Number(cotaSimulada).toFixed(1)}m!`,
+													`Simulação ativa: Água se aproximando de ${primeiroLocal}. Alertas automáticos no celular ativos.`,
+													"teste-usuario"
+												);
+											} else {
+												alert("Para receber alertas na tela do celular, permita as notificações nas configurações do seu navegador.");
 											}
-											Notification.requestPermission().then((perm) => {
-												if (perm === "granted") {
-													const titulo = `Alerta Hidrológico: Rio Taquari em ${Number(cotaSimulada).toFixed(1)}m`;
-													const corpo = `Simulação de inundação: Água atingindo cotas de bloqueio no Centro e vias baixas de Lajeado.`;
-													if ("serviceWorker" in navigator) {
-														navigator.serviceWorker.ready.then((reg) => {
-															reg.showNotification(titulo, {
-																body: corpo,
-																icon: "/icon-192.png",
-																badge: "/icon-192.png",
-																vibrate: [300, 100, 300, 100, 300],
-																tag: "teste-floodway",
-															});
-														}).catch(() => new Notification(titulo, { body: corpo, icon: "/icon-192.png" }));
-													} else {
-														new Notification(titulo, { body: corpo, icon: "/icon-192.png" });
-													}
-												} else {
-													alert("Permissão de notificação não autorizada no navegador.");
-												}
-											});
 										}}
-										className="w-full py-2 px-3 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-98 shadow-xs"
+										className="w-full py-2.5 px-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 active:scale-98 shadow-sm"
 									>
-										<span>🔔 Testar Notificação de Cheia no Celular</span>
+										<BellRing size={14} className="text-amber-400 animate-pulse" />
+										<span>Ativar / Testar Alerta no Celular</span>
 									</button>
 								</div>
 							</div>
