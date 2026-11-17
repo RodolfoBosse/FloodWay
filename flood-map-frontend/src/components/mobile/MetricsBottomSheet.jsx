@@ -53,6 +53,29 @@ const MetricsBottomSheet = ({
 	const [modalSalvarRotaAberto, setModalSalvarRotaAberto] = useState(false);
 	const [nomeNovaRota, setNomeNovaRota] = useState("");
 	const [rotaParaExcluir, setRotaParaExcluir] = useState(null);
+
+	// Estado local do slider para resposta 60fps instantânea ao arrastar o dedo
+	const [cotaLocalSlider, setCotaLocalSlider] = useState(cotaSimulada || 13.0);
+	const debounceSimulacaoRef = useRef(null);
+
+	// Sincroniza quando a cota externa muda por presets ou botões
+	useEffect(() => {
+		setCotaLocalSlider(cotaSimulada);
+	}, [cotaSimulada]);
+
+	// Atualiza imediatamente o display visual e debounced (40ms) o mapa pesado
+	const handleSliderChange = (novoValor) => {
+		const valNum = parseFloat(novoValor);
+		setCotaLocalSlider(valNum);
+
+		if (debounceSimulacaoRef.current) {
+			clearTimeout(debounceSimulacaoRef.current);
+		}
+		debounceSimulacaoRef.current = setTimeout(() => {
+			setCotaSimulada(valNum);
+		}, 40);
+	};
+
 	const startYRef = useRef(0);
 	const startHeightRef = useRef(295);
 
@@ -628,7 +651,7 @@ const MetricsBottomSheet = ({
 										</p>
 									</div>
 									<span className="text-base font-bold text-slate-900 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm tabular-nums">
-										{Number(cotaSimulada).toFixed(2)} m
+										{Number(cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada).toFixed(2)} m
 									</span>
 								</div>
 
@@ -636,10 +659,8 @@ const MetricsBottomSheet = ({
 									<button
 										type="button"
 										onClick={() => {
-											setCotaSimulada((prev) => {
-												const novo = Math.max(13.0, Math.round((prev - 0.2) * 10) / 10);
-												return novo;
-											});
+											const novo = Math.max(13.0, Math.round(((cotaLocalSlider || cotaSimulada) - 0.2) * 10) / 10);
+											handleSliderChange(novo);
 										}}
 										className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-90 text-slate-800 font-bold flex items-center justify-center border border-slate-200 transition shrink-0 shadow-xs"
 										title="Diminuir 0,2 metros"
@@ -656,11 +677,9 @@ const MetricsBottomSheet = ({
 										min="13.0"
 										max="36.0"
 										step="0.2"
-										value={cotaSimulada}
-										onChange={(e) =>
-											setCotaSimulada(parseFloat(e.target.value))
-										}
-										className="flex-1 h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900"
+										value={cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada}
+										onChange={(e) => handleSliderChange(e.target.value)}
+										className="flex-1 h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900 touch-none"
 									/>
 
 									<span className="text-[11px] font-semibold text-slate-400">
@@ -670,10 +689,8 @@ const MetricsBottomSheet = ({
 									<button
 										type="button"
 										onClick={() => {
-											setCotaSimulada((prev) => {
-												const novo = Math.min(36.0, Math.round((prev + 0.2) * 10) / 10);
-												return novo;
-											});
+											const novo = Math.min(36.0, Math.round(((cotaLocalSlider || cotaSimulada) + 0.2) * 10) / 10);
+											handleSliderChange(novo);
 										}}
 										className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-90 text-slate-800 font-bold flex items-center justify-center border border-slate-200 transition shrink-0 shadow-xs"
 										title="Aumentar 0,2 metros"
