@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CloudRain, MoreHorizontal, Trash2, Bookmark, Star, Check } from "lucide-react";
+import { CloudRain, MoreHorizontal, Trash2, Bookmark, Star, Check, Navigation, X } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
 import GoogleAdBlock from "./GoogleAdBlock";
 import { buscarDestinosCalibrados } from "../../services/locaisLajeado";
@@ -49,6 +49,9 @@ const MetricsBottomSheet = ({
 	const [rotasSalvas, setRotasSalvas] = useState([]);
 	const [salvandoRotaAtual, setSalvandoRotaAtual] = useState(false);
 	const [rotaJaSalva, setRotaJaSalva] = useState(false);
+	const [modalSalvarRotaAberto, setModalSalvarRotaAberto] = useState(false);
+	const [nomeNovaRota, setNomeNovaRota] = useState("");
+	const [rotaParaExcluir, setRotaParaExcluir] = useState(null);
 	const startYRef = useRef(0);
 	const startHeightRef = useRef(295);
 
@@ -86,10 +89,16 @@ const MetricsBottomSheet = ({
 		setRotaJaSalva(existe);
 	}, [dadosRota, textoOrigem, textoDestino, rotasSalvas]);
 
-	const handleSalvarRotaFavorita = async () => {
+	const handleSalvarRotaFavorita = () => {
 		if (!usuario || !pontoOrigem || !pontoDestino || !dadosRota) return;
-		const nomeSugerido = `${textoOrigem.split(',')[0]} ➔ ${textoDestino.split(',')[0]}`;
-		const apelido = window.prompt("Nome para esta rota frequente:", nomeSugerido);
+		const nomeSugerido = `${textoOrigem.split(',')[0].trim()} ➔ ${textoDestino.split(',')[0].trim()}`;
+		setNomeNovaRota(nomeSugerido);
+		setModalSalvarRotaAberto(true);
+	};
+
+	const handleConfirmarSalvarRota = async (e) => {
+		if (e) e.preventDefault();
+		const apelido = (nomeNovaRota || "").trim();
 		if (!apelido) return;
 
 		setSalvandoRotaAtual(true);
@@ -109,6 +118,7 @@ const MetricsBottomSheet = ({
 		setRotasSalvas(atualizadas);
 		localStorage.setItem(`rotas_${usuario.email}`, JSON.stringify(atualizadas));
 		setRotaJaSalva(true);
+		setModalSalvarRotaAberto(false);
 
 		try {
 			await fetch(`${API_BASE}/api/v1/rotas/salvar/`, {
@@ -133,17 +143,21 @@ const MetricsBottomSheet = ({
 		}, 100);
 	};
 
-	const handleExcluirRotaSalva = async (id, e) => {
-		e.stopPropagation();
-		if (!window.confirm("Remover esta rota dos seus favoritos?")) return;
-		const filtradas = rotasSalvas.filter((r) => r.id !== id);
+	const handleConfirmarExcluirRota = async () => {
+		if (!rotaParaExcluir) return;
+		const filtradas = rotasSalvas.filter((r) => r.id !== rotaParaExcluir.id);
 		setRotasSalvas(filtradas);
 		if (usuario?.email) {
 			localStorage.setItem(`rotas_${usuario.email}`, JSON.stringify(filtradas));
 		}
 		try {
-			await fetch(`${API_BASE}/api/v1/rotas/${id}/excluir/`, { method: "POST" });
+			await fetch(`${API_BASE}/api/v1/rotas/excluir/`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ id: rotaParaExcluir.id, email: usuario.email }),
+			});
 		} catch (_) {}
+		setRotaParaExcluir(null);
 	};
 
 	const handleBuscar = async (termo, setter) => {
@@ -160,9 +174,9 @@ const MetricsBottomSheet = ({
 	const qtdBloqueios =
 		dadosRota?.pontosBloqueio?.length || (isInundacao ? 22 : 0);
 
-	const getMaxHeight = () => Math.round(window.innerHeight * 0.88);
+	const getMaxHeight = () => Math.round(window.innerHeight * 0.90);
 	const getMidHeight = () => {
-		if (abaAtiva === "rotas") return dadosRota ? 520 : 450;
+		if (abaAtiva === "rotas") return dadosRota ? 620 : 460;
 		if (abaAtiva === "simular") return 320;
 		return 335;
 	};
@@ -171,7 +185,7 @@ const MetricsBottomSheet = ({
 	// Ajusta a altura da barra suavemente ao trocar entre as abas ou gerar rota
 	useEffect(() => {
 		if (abaAtiva === "rotas") {
-			setCurrentHeight(dadosRota ? 520 : 450);
+			setCurrentHeight(dadosRota ? 620 : 460);
 		} else if (abaAtiva === "simular") {
 			setCurrentHeight(320);
 		} else {
@@ -369,7 +383,7 @@ const MetricsBottomSheet = ({
 
 				{/* MÉTRICAS PRINCIPAIS (ESTILO NOVO LAYOUT) */}
 				{!isMinimized && (
-					<div className="flex flex-col gap-y-3.5 pt-0.5">
+					<div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-y-3.5 pt-0.5">
 						{/* VISTA 1: MÉTRICAS (Aba Mapa) */}
 						{abaAtiva === "mapa" && (
 							<div className="flex flex-col gap-y-3.5 animate-in fade-in duration-300">
@@ -698,7 +712,10 @@ const MetricsBottomSheet = ({
 													</button>
 													<button
 														type="button"
-														onClick={(e) => handleExcluirRotaSalva(r.id, e)}
+														onClick={(e) => {
+															e.stopPropagation();
+															setRotaParaExcluir(r);
+														}}
 														className="text-slate-400 hover:text-rose-600 p-0.5 rounded transition"
 														title="Remover dos favoritos"
 													>
@@ -907,19 +924,14 @@ const MetricsBottomSheet = ({
 												: "Atenção: Destino ou vias de acesso ilhadas"}
 										</div>
 
-										{/* BOTÕES NAVEGAÇÃO EXTERNA (GOOGLE MAPS & WAZE) & SALVAR FAVORITA */}
+										{/* BOTÕES NAVEGAÇÃO EXTERNA (GOOGLE MAPS) & SALVAR FAVORITA */}
 										<div className="flex gap-2 pt-1">
 											<button
 												type="button"
 												onClick={abrirGoogleMaps}
-												className="flex-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
-												<span>Google Maps</span>
-											</button>
-											<button
-												type="button"
-												onClick={abrirWaze}
-												className="flex-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 font-semibold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
-												<span>Waze</span>
+												className="w-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
+												<Navigation size={13} className="text-slate-600" />
+												<span>Navegar no Google Maps</span>
 											</button>
 										</div>
 
@@ -976,6 +988,104 @@ const MetricsBottomSheet = ({
 				)}
 				*/}
 			</div>
+
+			{/* MODAL PERSONALIZADO (SEM CARA DE IA / BROWSER PROMPT) PARA SALVAR ROTA FREQUENTE */}
+			{modalSalvarRotaAberto && (
+				<div
+					style={{ zIndex: 4000 }}
+					className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200 pointer-events-auto"
+				>
+					<div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-150">
+						<div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+							<div className="flex items-center gap-2 text-slate-900 font-semibold text-sm">
+								<Star size={16} className="text-amber-500 fill-amber-500" />
+								<span>Salvar Rota Frequente</span>
+							</div>
+							<button
+								type="button"
+								onClick={() => setModalSalvarRotaAberto(false)}
+								className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition"
+							>
+								<X size={16} />
+							</button>
+						</div>
+
+						<form onSubmit={handleConfirmarSalvarRota} className="space-y-3">
+							<div>
+								<label className="text-[11px] font-medium text-slate-600 block mb-1">
+									Nome ou identificador da rota
+								</label>
+								<input
+									type="text"
+									autoFocus
+									value={nomeNovaRota}
+									onChange={(e) => setNomeNovaRota(e.target.value)}
+									placeholder="Ex: Minha Casa ➔ Trabalho"
+									className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-900 outline-none focus:border-slate-400 focus:bg-white transition"
+								/>
+							</div>
+
+							<div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-[11px] text-slate-500 space-y-1">
+								<p className="truncate"><span className="font-semibold text-slate-700">Partida:</span> {textoOrigem}</p>
+								<p className="truncate"><span className="font-semibold text-slate-700">Destino:</span> {textoDestino}</p>
+							</div>
+
+							<div className="flex gap-2 pt-1">
+								<button
+									type="button"
+									onClick={() => setModalSalvarRotaAberto(false)}
+									className="flex-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium py-2 rounded-xl text-xs transition"
+								>
+									Cancelar
+								</button>
+								<button
+									type="submit"
+									disabled={salvandoRotaAtual || !nomeNovaRota.trim()}
+									className="flex-1 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 text-white font-semibold py-2 rounded-xl text-xs active:scale-95 transition shadow-sm"
+								>
+									{salvandoRotaAtual ? "Salvando..." : "Salvar Rota"}
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			)}
+
+			{/* MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DE ROTA SALVA */}
+			{rotaParaExcluir && (
+				<div
+					style={{ zIndex: 4000 }}
+					className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200 pointer-events-auto"
+				>
+					<div className="bg-white w-full max-w-sm rounded-2xl p-5 shadow-2xl border border-slate-100 text-center space-y-3">
+						<div className="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
+							<Trash2 size={18} />
+						</div>
+						<div>
+							<h4 className="font-semibold text-slate-900 text-sm">Remover Rota Frequente?</h4>
+							<p className="text-xs text-slate-500 mt-1">
+								Deseja remover <strong>"{rotaParaExcluir.nome}"</strong> da sua lista de favoritos?
+							</p>
+						</div>
+						<div className="flex gap-2 pt-1">
+							<button
+								type="button"
+								onClick={() => setRotaParaExcluir(null)}
+								className="flex-1 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-medium py-2 rounded-xl text-xs transition"
+							>
+								Cancelar
+							</button>
+							<button
+								type="button"
+								onClick={handleConfirmarExcluirRota}
+								className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2 rounded-xl text-xs active:scale-95 transition shadow-sm"
+							>
+								Remover
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };
