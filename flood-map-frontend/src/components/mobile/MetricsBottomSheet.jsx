@@ -591,6 +591,100 @@ const MetricsBottomSheet = ({
 									</button>
 								</div>
 
+								{/* MONITORAMENTO DE IMPACTO EM TEMPO REAL NOS LOCAIS DO USUÁRIO */}
+								{(() => {
+									const locaisParaVerificar = [];
+									if (usuario?.residencia) {
+										locaisParaVerificar.push({
+											id: 'residencia-principal',
+											tipo: 'residencia',
+											nome: 'Residência Principal',
+											endereco: usuario.residencia.endereco || 'Minha Casa',
+											cota: Number(usuario.residencia.cota || 24.0),
+										});
+									}
+									if (Array.isArray(usuario?.pontosInteresse)) {
+										usuario.pontosInteresse.forEach((pt) => {
+											locaisParaVerificar.push({
+												id: `pt-${pt.id}`,
+												tipo: 'ponto',
+												nome: pt.nome,
+												endereco: pt.endereco,
+												cota: Number(pt.cota || 24.0),
+											});
+										});
+									}
+
+									if (locaisParaVerificar.length === 0) {
+										return (
+											<div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-500 text-center">
+												Cadastre sua casa ou pontos de interesse para monitorar alertas de cheia ao vivo no slider.
+											</div>
+										);
+									}
+
+									return (
+										<div className="space-y-2">
+											<div className="flex items-center justify-between">
+												<span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+													Impacto nos Meus Locais ({locaisParaVerificar.length})
+												</span>
+											</div>
+											<div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+												{locaisParaVerificar.map((loc) => {
+													const margem = Number((loc.cota - cotaSimulada).toFixed(1));
+													const isInundado = margem <= 0;
+													const isAlerta = margem > 0 && margem <= 1.5;
+
+													return (
+														<div
+															key={loc.id}
+															className={`p-2.5 rounded-xl border text-xs flex items-center justify-between gap-2 transition ${
+																isInundado
+																	? "bg-rose-50 border-rose-200 text-rose-900"
+																	: isAlerta
+																	? "bg-amber-50 border-amber-200 text-amber-900"
+																	: "bg-emerald-50/70 border-emerald-200/80 text-emerald-900"
+															}`}
+														>
+															<div className="min-w-0 flex-1">
+																<div className="flex items-center gap-1.5 font-semibold text-xs">
+																	<span>{loc.tipo === 'residencia' ? '🏠' : '📍'}</span>
+																	<span className="truncate">{loc.nome}</span>
+																	<span className="text-[10px] text-slate-500 font-normal">
+																		({loc.cota.toFixed(1)}m)
+																	</span>
+																</div>
+																<p className="text-[10px] text-slate-500 truncate mt-0.5">
+																	{loc.endereco}
+																</p>
+															</div>
+
+															<div className="text-right shrink-0">
+																<span
+																	className={`inline-block px-2 py-0.5 rounded-md font-bold text-[10px] ${
+																		isInundado
+																			? "bg-rose-600 text-white"
+																			: isAlerta
+																			? "bg-amber-500 text-white"
+																			: "bg-emerald-600 text-white"
+																	}`}
+																>
+																	{isInundado
+																		? `Submerso por ${Math.abs(margem)}m`
+																		: isAlerta
+																		? `Atenção: +${margem}m`
+																		: `Seguro (+${margem}m)`}
+																</span>
+															</div>
+														</div>
+													);
+												})}
+											</div>
+										</div>
+									);
+								})()}
+
 								{/* Disparador de Alerta Push de Teste para o Celular */}
 								<div className="pt-2 border-t border-slate-100">
 									<button

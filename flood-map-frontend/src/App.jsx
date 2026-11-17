@@ -483,13 +483,14 @@ function App() {
 				<AlertaSimulacaoAtiva
 					cotaSimulada={cotaSimulada}
 					cotaReal={cotaReal}
+					usuario={usuario}
 					onResetarCota={() => {
 						setCotaSimulada(cotaReal);
 						setIsSimulando(false);
 					}}
 					onAbrirRotas={() => {
+						setAbaAtiva("rotas");
 						setPainelRotaAberto(true);
-						setIsSimulando(false);
 					}}
 				/>
 			)}
