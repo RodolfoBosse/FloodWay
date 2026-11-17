@@ -1,7 +1,84 @@
 /**
- * SERVIÇO CENTRALIZADO DE NOTIFICAÇÕES NATIVAS (PUSH / LOCAL)
- * Suporta ServiceWorker (background/PWA) e fallback direto via Window Notification API.
+ * Converte chave base64 URL-safe para Uint8Array para uso na Web Push API
  */
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+/**
+ * Registra o aparelho no servidor para receber notificações Web Push
+ * mesmo com o aplicativo fechado ou telefone travado.
+ */
+export async function registrarWebPushServerSide(usuario) {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+    console.warn("Navegador não suporta PushManager para segundo plano.");
+    return false;
+  }
+
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    if (!reg.pushManager) return false;
+
+    // Obtém a chave pública VAPID oficial do servidor
+    const respChave = await fetch("/api/notificacoes/inscrever");
+    if (!respChave.ok) return false;
+    const { publicKey } = await respChave.json();
+    if (!publicKey) return false;
+
+    // Assina com o gateway oficial Google/Apple
+    let subscription = await reg.pushManager.getSubscription();
+    if (!subscription) {
+      subscription = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey)
+      });
+    }
+
+    // Coleta as cotas e locais monitorados do usuário
+    const locais = [];
+    if (usuario?.residencia) {
+      locais.push({
+        nome: "Residência Principal",
+        endereco: usuario.residencia.endereco || "Minha Casa",
+        cota: Number(usuario.residencia.cota || 24.0),
+        tipo: "residencia"
+      });
+    }
+    if (Array.isArray(usuario?.pontosInteresse)) {
+      usuario.pontosInteresse.forEach((p) => {
+        locais.push({
+          nome: p.nome,
+          endereco: p.endereco,
+          cota: Number(p.cota || 24.0),
+          tipo: "ponto"
+        });
+      });
+    }
+
+    // Envia assinatura para o servidor
+    const respSalvar = await fetch("/api/notificacoes/inscrever", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subscription,
+        usuario: { email: usuario?.email || "anonimo@floodway.app", nome: usuario?.nome || "Morador" },
+        locais
+      })
+    });
+
+    return respSalvar.ok;
+  } catch (err) {
+    console.warn("Falha ao registrar Web Push Server-Side:", err);
+    return false;
+  }
+}
 
 export async function solicitarPermissaoNotificacao() {
   if (typeof window === "undefined" || !("Notification" in window)) {

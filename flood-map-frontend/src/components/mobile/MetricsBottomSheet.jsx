@@ -4,7 +4,7 @@ import BannerPatrocinador from "./BannerPatrocinador";
 import GoogleAdBlock from "./GoogleAdBlock";
 import { buscarDestinosCalibrados } from "../../services/locaisLajeado";
 import { API_BASE } from "../../services/config";
-import { dispararAlertaLocal, solicitarPermissaoNotificacao } from "../../services/notificationService";
+import { dispararAlertaLocal, solicitarPermissaoNotificacao, registrarWebPushServerSide } from "../../services/notificationService";
 
 const MetricsBottomSheet = ({
 	cotaReal = 13.84,
@@ -83,33 +83,47 @@ const MetricsBottomSheet = ({
 
 		if (locaisParaVerificar.length === 0) return;
 
-		// Encontra o local mais crítico atingido ou em alerta iminente
-		// Margem de alerta: faltam até 1.5 metros para a água entrar no local
+		// Encontra o local mais crítico atingido ou em alerta nos 4 patamares:
+		// 1) ATINGIU: margem <= 0
+		// 2) 0,5m: 0 < margem <= 0.5m
+		// 3) 1,0m: 0.5 < margem <= 1.0m
+		// 4) 2,0m: 1.0 < margem <= 2.0m
 		for (const loc of locaisParaVerificar) {
 			const margem = Number((loc.cota - cotaSimulada).toFixed(1));
-			const isSubmerso = margem <= 0;
-			const isAlertaIminente = margem > 0 && margem <= 1.5;
 
-			if (isSubmerso || isAlertaIminente) {
+			let patamar = null;
+			let titulo = '';
+			let corpo = '';
+
+			if (margem <= 0) {
+				patamar = 'atingiu';
+				titulo = `🚨 ALERTA MÁXIMO: ${loc.nome} Atingido!`;
+				corpo = `A cota do Rio Taquari (${cotaSimulada.toFixed(1)}m) superou a altitude do imóvel (${loc.cota.toFixed(1)}m). Início de inundação!`;
+			} else if (margem <= 0.5) {
+				patamar = '0.5m';
+				titulo = `🚨 PERIGO IMINENTE: Rio a apenas ${margem}m de ${loc.nome}!`;
+				corpo = `Faltam apenas ${margem}m (50cm) para atingir a cota (${loc.cota.toFixed(1)}m). Prepare desocupação preventiva.`;
+			} else if (margem <= 1.0) {
+				patamar = '1.0m';
+				titulo = `⚠️ ALERTA GRAVE: Rio a ${margem}m de ${loc.nome}!`;
+				corpo = `Nível do rio em ${cotaSimulada.toFixed(1)}m está a 1 metro da cota (${loc.cota.toFixed(1)}m). Mantenha rotas de fuga preparadas.`;
+			} else if (margem <= 2.0) {
+				patamar = '2.0m';
+				titulo = `⚠️ AVISO DE ATENÇÃO: Rio a ${margem}m de ${loc.nome}`;
+				corpo = `O Rio Taquari atingiu ${cotaSimulada.toFixed(1)}m e está a cerca de 2 metros da altitude do imóvel (${loc.cota.toFixed(1)}m).`;
+			}
+
+			if (patamar) {
 				const agora = Date.now();
-				const chave = `${loc.id}-${isSubmerso ? 'submerso' : 'alerta'}`;
+				const chave = `${loc.id}-${patamar}`;
 
-				// Se mudou de estado ou passaram mais de 5s, dispara notificação
+				// Se mudou de patamar ou passaram mais de 5s, emite notificação
 				if (
 					ultimoAlertaSimulacaoRef.current.chave !== chave ||
 					agora - ultimoAlertaSimulacaoRef.current.timestamp > 5000
 				) {
 					ultimoAlertaSimulacaoRef.current = { chave, timestamp: agora };
-
-					const titulo = isSubmerso
-						? `🚨 ALERTA MÁXIMO: ${loc.nome} Atingido!`
-						: `⚠️ ALERTA DE CHEIA: Rio se aproximando de ${loc.nome}!`;
-
-					const corpo = isSubmerso
-						? `A cota do Rio Taquari (${cotaSimulada.toFixed(1)}m) superou a altitude do imóvel (${loc.cota.toFixed(1)}m). Início de inundação!`
-						: `Rio em ${cotaSimulada.toFixed(1)}m está a apenas ${margem}m de atingir a cota (${loc.cota.toFixed(1)}m). Prepare desocupação preventiva.`;
-
-					dispararAlertaLocal(titulo, corpo, `simulacao-critica`);
+					dispararAlertaLocal(titulo, corpo, `simulacao-${patamar}`);
 				}
 				break;
 			}
@@ -783,13 +797,18 @@ const MetricsBottomSheet = ({
 										onClick={async () => {
 											const perm = await solicitarPermissaoNotificacao();
 											if (perm === "granted") {
+												// Registra a assinatura no servidor para o celular receber alertas com app fechado
+												const servidorRegistrado = await registrarWebPushServerSide(usuario);
+
 												const primeiroLocal = usuario?.residencia?.endereco
 													? `sua casa (${usuario.residencia.endereco})`
 													: "seus locais cadastrados";
 
 												await dispararAlertaLocal(
-													`🚨 Alerta: Rio Taquari em ${Number(cotaSimulada).toFixed(1)}m!`,
-													`Simulação ativa: Água se aproximando de ${primeiroLocal}. Alertas automáticos no celular ativos.`,
+													`🚨 Alertas Ativos: Rio Taquari em ${Number(cotaSimulada).toFixed(1)}m!`,
+													servidorRegistrado
+														? `Alertas em segundo plano confirmados para ${primeiroLocal} (2m, 1m, 0.5m e cota de corte).`
+														: `Alertas ativos no navegador para ${primeiroLocal}.`,
 													"teste-usuario"
 												);
 											} else {
