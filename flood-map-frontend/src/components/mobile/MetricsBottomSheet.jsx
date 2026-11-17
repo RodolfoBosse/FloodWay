@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { CloudRain, MoreHorizontal, Trash2, Bookmark, Star, Check, Navigation, X, Plus, Minus, Bell, BellRing } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
 import GoogleAdBlock from "./GoogleAdBlock";
-import { buscarDestinosCalibrados } from "../../services/locaisLajeado";
+import { buscarDestinosCalibrados, estimarCotaTerreno } from "../../services/locaisLajeado";
 import { API_BASE } from "../../services/config";
 import { dispararAlertaLocal, solicitarPermissaoNotificacao, registrarWebPushServerSide } from "../../services/notificationService";
 
@@ -73,10 +73,15 @@ const MetricsBottomSheet = ({
 		}
 		if (Array.isArray(usuario?.pontosInteresse)) {
 			usuario.pontosInteresse.forEach((p) => {
+				let cotaRealista = Number(p.cota);
+				if (p.coords && Array.isArray(p.coords)) {
+					const cotaGPS = estimarCotaTerreno(p.coords[0], p.coords[1], p.endereco || p.nome);
+					if (cotaGPS) cotaRealista = cotaGPS;
+				}
 				locaisParaVerificar.push({
 					id: `ponto-${p.id}`,
 					nome: p.nome,
-					cota: Number(p.cota || 24.0),
+					cota: cotaRealista || 19.5,
 				});
 			});
 		}
@@ -710,12 +715,17 @@ const MetricsBottomSheet = ({
 									}
 									if (Array.isArray(usuario?.pontosInteresse)) {
 										usuario.pontosInteresse.forEach((pt) => {
+											let cotaRealista = Number(pt.cota);
+											if (pt.coords && Array.isArray(pt.coords)) {
+												const cotaGPS = estimarCotaTerreno(pt.coords[0], pt.coords[1], pt.endereco || pt.nome);
+												if (cotaGPS) cotaRealista = cotaGPS;
+											}
 											locaisParaVerificar.push({
 												id: `pt-${pt.id}`,
 												tipo: 'ponto',
 												nome: pt.nome,
 												endereco: pt.endereco,
-												cota: Number(pt.cota || 24.0),
+												cota: cotaRealista || 19.5,
 											});
 										});
 									}

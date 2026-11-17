@@ -576,10 +576,14 @@ function estimarCoordenadaECotaPorNumero(rua, numero) {
 		}
 	});
 
+	// Se a busca na rua não encontrou ou a rua não tem número informado:
+	// Para pontos de interesse ou residências, a cota mais segura e realista
+	// contra inundações é a menor cota (cota_bloqueio / altitude_min) do logradouro.
 	if (!numero || pontosUnicos.length === 1) {
+		const cotaMaisCritica = rua.cota_bloqueio || rua.altitude_min || pontosUnicos[0].cota || 24.0;
 		return {
 			coords: pontosUnicos[0].coord,
-			cota: pontosUnicos[0].cota || rua.cota_bloqueio || 30.0,
+			cota: Number(cotaMaisCritica),
 		};
 	}
 

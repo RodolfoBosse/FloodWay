@@ -2043,7 +2043,9 @@ const MapaInterativo = ({
 					{/* TODOS OS DEMAIS PONTOS DE INTERESSE SALVOS DO USUÁRIO */}
 					{usuario?.pontosInteresse?.map((pt) => {
 						if (!pt.coords || !Array.isArray(pt.coords)) return null;
-						const cotaPt = Number(pt.cota || 24.0);
+						// Calcula a cota precisa com base na localização exata das coordenadas do pino no terreno
+						const cotaPrecisaGPS = estimarCotaTerreno(pt.coords[0], pt.coords[1], pt.endereco || pt.nome, listaRuas);
+						const cotaPt = Number(cotaPrecisaGPS || pt.cota || 19.5);
 						const margemPt = Number((cotaPt - nivelAtivo).toFixed(1));
 
 						return (

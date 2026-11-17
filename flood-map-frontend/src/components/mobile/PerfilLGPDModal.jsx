@@ -57,7 +57,7 @@ export default function PerfilLGPDModal({
   const [buscandoCepPonto, setBuscandoCepPonto] = useState(false);
   const [novoNome, setNovoNome] = useState('');
   const [novoEndereco, setNovoEndereco] = useState('');
-  const [novaCota, setNovaCota] = useState('24.0');
+  const [novaCota, setNovaCota] = useState('');
   const [novasCoords, setNovasCoords] = useState(null);
   const [sugestoesPonto, setSugestoesPonto] = useState([]);
 
@@ -112,7 +112,7 @@ export default function PerfilLGPDModal({
     if (s.cota) {
       setNovaCota(s.cota.toFixed(1));
     } else {
-      setNovaCota('24.0');
+      setNovaCota('');
     }
     if (s.coords) {
       setNovasCoords(s.coords);
@@ -129,20 +129,21 @@ export default function PerfilLGPDModal({
     if (!enderecoFormatado) return;
 
     let coordsFinais = novasCoords;
-    let cotaFinal = parseFloat(novaCota) || 24.0;
+    let cotaCalculada = parseFloat(novaCota);
 
-    // Se o usuário digitou livremente (ex: "Rua Bento Gonçalves, 529") sem clicar na lista suspensa
-    if (!coordsFinais && enderecoFormatado) {
+    // Se o usuário digitou livremente sem clicar na lista suspensa
+    if ((!coordsFinais || isNaN(cotaCalculada)) && enderecoFormatado) {
       try {
         const busca = await buscarDestinosCalibrados(enderecoFormatado);
         if (busca && busca.length > 0) {
           const primeiro = busca[0];
-          coordsFinais = primeiro.coords;
-          if (primeiro.cota) cotaFinal = primeiro.cota;
+          if (!coordsFinais) coordsFinais = primeiro.coords;
+          if (isNaN(cotaCalculada) && primeiro.cota) cotaCalculada = primeiro.cota;
         }
       } catch (_) {}
     }
 
+    const cotaFinal = !isNaN(cotaCalculada) && cotaCalculada > 0 ? cotaCalculada : 19.5;
     const nomeFinal = novoNome.trim() || enderecoFormatado.split(',')[0].trim();
 
     const pontoObj = {
