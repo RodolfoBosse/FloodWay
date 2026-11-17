@@ -63,7 +63,7 @@ const MetricsBottomSheet = ({
 		setCotaLocalSlider(cotaSimulada);
 	}, [cotaSimulada]);
 
-	// Atualiza imediatamente o display visual e debounced (40ms) o mapa pesado
+	// Atualiza imediatamente o display visual e debounced (80ms) o mapa pesado
 	const handleSliderChange = (novoValor) => {
 		const valNum = parseFloat(novoValor);
 		setCotaLocalSlider(valNum);
@@ -73,7 +73,7 @@ const MetricsBottomSheet = ({
 		}
 		debounceSimulacaoRef.current = setTimeout(() => {
 			setCotaSimulada(valNum);
-		}, 40);
+		}, 80);
 	};
 
 	const startYRef = useRef(0);
@@ -655,11 +655,16 @@ const MetricsBottomSheet = ({
 									</span>
 								</div>
 
-								<div className="flex items-center gap-2 px-1">
+								<div 
+									className="flex items-center gap-2 px-1"
+									onTouchStart={(e) => e.stopPropagation()}
+									onTouchMove={(e) => e.stopPropagation()}
+									onMouseDown={(e) => e.stopPropagation()}
+								>
 									<button
 										type="button"
 										onClick={() => {
-											const novo = Math.max(13.0, Math.round(((cotaLocalSlider || cotaSimulada) - 0.2) * 10) / 10);
+											const novo = Math.max(13.0, Math.round(((cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada) - 0.2) * 10) / 10);
 											handleSliderChange(novo);
 										}}
 										className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-90 text-slate-800 font-bold flex items-center justify-center border border-slate-200 transition shrink-0 shadow-xs"
@@ -678,8 +683,11 @@ const MetricsBottomSheet = ({
 										max="36.0"
 										step="0.2"
 										value={cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada}
+										onInput={(e) => handleSliderChange(e.target.value)}
 										onChange={(e) => handleSliderChange(e.target.value)}
-										className="flex-1 h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900 touch-none"
+										onTouchStart={(e) => e.stopPropagation()}
+										onTouchMove={(e) => e.stopPropagation()}
+										className="flex-1 h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900 touch-pan-x"
 									/>
 
 									<span className="text-[11px] font-semibold text-slate-400">
@@ -689,7 +697,7 @@ const MetricsBottomSheet = ({
 									<button
 										type="button"
 										onClick={() => {
-											const novo = Math.min(36.0, Math.round(((cotaLocalSlider || cotaSimulada) + 0.2) * 10) / 10);
+											const novo = Math.min(36.0, Math.round(((cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada) + 0.2) * 10) / 10);
 											handleSliderChange(novo);
 										}}
 										className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-90 text-slate-800 font-bold flex items-center justify-center border border-slate-200 transition shrink-0 shadow-xs"
