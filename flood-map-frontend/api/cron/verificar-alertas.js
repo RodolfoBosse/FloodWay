@@ -5,10 +5,16 @@
  * nos 4 patamares solicitados: 2m, 1m, 0.5m e ATINGIU.
  */
 import webpush from 'web-push';
-import { VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT } from '../_vapid.js';
+import { VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT, getVapidDetails } from '../_vapid.js';
 
-// Configura Web Push com as credenciais VAPID
-webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+// Configura Web Push se as credenciais estiverem disponíveis nas variáveis de ambiente
+if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
+  try {
+    webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+  } catch (err) {
+    console.error("[VAPID] Erro ao inicializar webpush:", err.message);
+  }
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
