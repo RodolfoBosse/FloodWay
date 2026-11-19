@@ -1,12 +1,14 @@
 import React from 'react';
 import { AlertTriangle, X, Undo2, Navigation } from 'lucide-react';
+import { estimarCotaTerreno } from '../../services/locaisLajeado';
 
 export default function AlertaSimulacaoAtiva({
   cotaSimulada,
   cotaReal,
   onResetarCota,
   onAbrirRotas,
-  usuario = null
+  usuario = null,
+  ruas = []
 }) {
   const delta = Math.round((cotaSimulada - cotaReal) * 10) / 10;
   const isAcima = delta > 0;
@@ -21,9 +23,26 @@ export default function AlertaSimulacaoAtiva({
       tipo: 'residencia'
     };
   } else if (Array.isArray(usuario?.pontosInteresse)) {
-    const ptInundado = usuario.pontosInteresse.find((p) => p.cota && cotaSimulada >= Number(p.cota));
+    const ptInundado = usuario.pontosInteresse.find((p) => {
+      let cotaRealista = Number(p.cota);
+      if (p.coords && Array.isArray(p.coords)) {
+        const cotaGPS = estimarCotaTerreno(p.coords[0], p.coords[1], p.endereco || p.nome, ruas);
+        if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
+          cotaRealista = cotaGPS;
+        }
+      }
+      return cotaRealista && cotaSimulada >= cotaRealista;
+    });
+
     if (ptInundado) {
-      const diff = Number((cotaSimulada - ptInundado.cota).toFixed(1));
+      let cotaRealista = Number(ptInundado.cota);
+      if (ptInundado.coords && Array.isArray(ptInundado.coords)) {
+        const cotaGPS = estimarCotaTerreno(ptInundado.coords[0], ptInundado.coords[1], ptInundado.endereco || ptInundado.nome, ruas);
+        if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
+          cotaRealista = cotaGPS;
+        }
+      }
+      const diff = Number((cotaSimulada - cotaRealista).toFixed(1));
       localAtingido = {
         nome: ptInundado.nome,
         detalhe: `Água atingindo o local por +${diff}m`,

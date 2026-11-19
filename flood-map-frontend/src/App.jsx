@@ -145,30 +145,59 @@ function App() {
 				if (Array.isArray(localData) && localData.length > 0) {
 					setRuas(localData);
 
-					// Auto-correção da cota da casa salva se tiver cota padrão incorreta (ex: 20 ou 22)
+					// Auto-correção e recalibração precisa de residência e pontos monitorados no LocalStorage
 					setUsuario((prevUser) => {
-						if (!prevUser?.residencia) return prevUser;
-						const res = prevUser.residencia;
-						const coords = res.coords || (res.lat && res.lon ? [res.lat, res.lon] : null);
-						if (!coords) return prevUser;
+						if (!prevUser) return prevUser;
+						let houveMudanca = false;
+						let userCorrigido = { ...prevUser };
 
-						// Se cota for a antiga de fallback (ex: 20 ou 22) ou faltante
-						if (!res.cota || res.cota === 20.0 || res.cota === 22.0 || res.cota === 29.2) {
-							const cotaRealCalculada = estimarCotaTerreno(coords[0], coords[1], res.endereco || "", localData);
-							if (cotaRealCalculada && cotaRealCalculada !== res.cota) {
-								const userCorrigido = {
-									...prevUser,
-									residencia: {
-										...res,
-										cota: cotaRealCalculada,
-									},
-								};
-								localStorage.setItem("usuario_sentinela", JSON.stringify(userCorrigido));
-								if (prevUser.email) {
-									localStorage.setItem(`dados_perfil_${prevUser.email}`, JSON.stringify(userCorrigido));
+						// 1. Corrige cota da residência se for fallback ou diferente da malha real calibrada
+						if (userCorrigido.residencia) {
+							const res = userCorrigido.residencia;
+							const coords = res.coords || (res.lat && res.lon ? [res.lat, res.lon] : null);
+							if (coords) {
+								if (!res.cota || res.cota === 20.0 || res.cota === 22.0 || res.cota === 24.0 || res.cota === 29.2) {
+									const cotaRealCalculada = estimarCotaTerreno(coords[0], coords[1], res.endereco || "", localData);
+									if (cotaRealCalculada && cotaRealCalculada !== res.cota) {
+										userCorrigido.residencia = {
+											...res,
+											cota: cotaRealCalculada,
+										};
+										houveMudanca = true;
+									}
 								}
-								return userCorrigido;
 							}
+						}
+
+						// 2. Corrige e recalibra pontos de interesse monitorados pelo usuário
+						if (Array.isArray(userCorrigido.pontosInteresse)) {
+							const pontosAtualizados = userCorrigido.pontosInteresse.map((pt) => {
+								if (pt.coords && Array.isArray(pt.coords)) {
+									const cotaAtual = Number(pt.cota);
+									if (!cotaAtual || cotaAtual === 20.0 || cotaAtual === 24.0 || cotaAtual === 29.2) {
+										const cotaCalculada = estimarCotaTerreno(pt.coords[0], pt.coords[1], pt.endereco || pt.nome, localData);
+										if (cotaCalculada && cotaCalculada !== cotaAtual) {
+											houveMudanca = true;
+											return {
+												...pt,
+												cota: cotaCalculada,
+											};
+										}
+									}
+								}
+								return pt;
+							});
+							if (houveMudanca) {
+								userCorrigido.pontosInteresse = pontosAtualizados;
+							}
+						}
+
+						if (houveMudanca) {
+							localStorage.setItem("usuario_sentinela", JSON.stringify(userCorrigido));
+							if (prevUser.email) {
+								localStorage.setItem(`dados_perfil_${prevUser.email}`, JSON.stringify(userCorrigido));
+							}
+							return userCorrigido;
 						}
 						return prevUser;
 					});
@@ -394,6 +423,7 @@ function App() {
 				onLimparRota={limparRota}
 				localizacaoGPS={localizacaoGPS}
 				obtendoGPS={obtendoGPS}
+				ruas={ruas}
 				onCapturarGPS={(callback) => {
 					if (!("geolocation" in navigator)) {
 						alert("Geolocalização não suportada.");
@@ -484,6 +514,7 @@ function App() {
 					cotaSimulada={cotaSimulada}
 					cotaReal={cotaReal}
 					usuario={usuario}
+					ruas={ruas}
 					onResetarCota={() => {
 						setCotaSimulada(cotaReal);
 						setIsSimulando(false);

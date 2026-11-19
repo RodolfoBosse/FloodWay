@@ -293,16 +293,21 @@ export function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
  * @returns {number} Cota estimada em metros
  */
 export function estimarCotaTerreno(lat, lon, nomeRua = "", listaRuas = []) {
-	if (!lat || !lon) return 29.2;
+	if (!lat || !lon) return 24.0;
+
+	// Se não recebeu lista de ruas explicitamente, utiliza o cache em memória das 784 vias
+	const ruasEfetivas = Array.isArray(listaRuas) && listaRuas.length > 0 
+		? listaRuas 
+		: (_cacheRuasCalibradas || []);
 
 	const termoNorm = normalizarTexto(nomeRua);
 
 	// 1. Se informou nome da rua/local, tenta encontrar primeiro os segmentos exatos dessa rua
-	if (termoNorm && listaRuas.length > 0) {
+	if (termoNorm && ruasEfetivas.length > 0) {
 		let melhorDistRua = Infinity;
 		let melhorCotaRua = null;
 
-		for (const rua of listaRuas) {
+		for (const rua of ruasEfetivas) {
 			const rNorm = normalizarTexto(rua.nome || "");
 			if (rNorm && (termoNorm.includes(rNorm) || rNorm.includes(termoNorm))) {
 				try {
@@ -330,16 +335,16 @@ export function estimarCotaTerreno(lat, lon, nomeRua = "", listaRuas = []) {
 		}
 
 		if (melhorCotaRua !== null && melhorDistRua < 300) {
-			return Number(melhorCotaRua.toFixed(1));
+			return Number(Number(melhorCotaRua).toFixed(1));
 		}
 	}
 
-	// 2. Se não encontrou pela rua ou não informou rua, busca o segmento de rua mais próximo no mapa
-	if (listaRuas.length > 0) {
+	// 2. Se não encontrou pelo nome da rua, busca o segmento de rua mais próximo por proximidade geográfica pura (GPS)
+	if (ruasEfetivas.length > 0) {
 		let melhorDist = Infinity;
 		let melhorCota = null;
 
-		for (const rua of listaRuas) {
+		for (const rua of ruasEfetivas) {
 			try {
 				const cj = typeof rua.coordenadas_json === "string" ? JSON.parse(rua.coordenadas_json) : rua.coordenadas_json;
 				if (Array.isArray(cj)) {
@@ -360,11 +365,27 @@ export function estimarCotaTerreno(lat, lon, nomeRua = "", listaRuas = []) {
 		}
 
 		if (melhorCota !== null && melhorDist < 1000) {
-			return Number(melhorCota.toFixed(1));
+			return Number(Number(melhorCota).toFixed(1));
 		}
 	}
 
-	return 29.2;
+	// 3. Fallback inteligente baseado em locais oficiais conhecidos mais próximos
+	let melhorDistOficial = Infinity;
+	let cotaOficial = null;
+	for (const loc of LOCAIS_OFICIAIS_LAJEADO) {
+		if (loc.coords && loc.cota) {
+			const d = calcularDistanciaMetros(lat, lon, loc.coords[0], loc.coords[1]);
+			if (d < melhorDistOficial) {
+				melhorDistOficial = d;
+				cotaOficial = loc.cota;
+			}
+		}
+	}
+	if (cotaOficial !== null && melhorDistOficial < 500) {
+		return Number(Number(cotaOficial).toFixed(1));
+	}
+
+	return 24.0;
 }
 
 /**
@@ -514,7 +535,7 @@ async function carregarEstabelecimentosLajeado() {
 	return _carregandoEstabelecimentos;
 }
 
-async function carregarRuasCalibradasLajeado() {
+export async function carregarRuasCalibradasLajeado() {
 	if (_cacheRuasCalibradas) return _cacheRuasCalibradas;
 	if (_carregandoRuasCalibradas) return _carregandoRuasCalibradas;
 
@@ -535,6 +556,13 @@ async function carregarRuasCalibradasLajeado() {
 	})();
 
 	return _carregandoRuasCalibradas;
+}
+
+// Inicia pré-carregamento imediato das ruas em background para estar pronto no primeiro cálculo
+if (typeof window !== "undefined") {
+	setTimeout(() => {
+		carregarRuasCalibradasLajeado();
+	}, 100);
 }
 
 /**

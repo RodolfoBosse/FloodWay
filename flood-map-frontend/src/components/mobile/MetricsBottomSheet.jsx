@@ -41,6 +41,7 @@ const MetricsBottomSheet = ({
 	localizacaoGPS = null,
 	onCapturarGPS = null,
 	obtendoGPS = false,
+	ruas = [],
 }) => {
 	// Alturas em pixels: min = 60px, mid = 295px (exibe cota, barra e tendência com folga), max = 85vh (calculado dinamicamente)
 	const [currentHeight, setCurrentHeight] = useState(295);
@@ -154,8 +155,10 @@ const MetricsBottomSheet = ({
 			usuario.pontosInteresse.forEach((p) => {
 				let cotaRealista = Number(p.cota);
 				if (p.coords && Array.isArray(p.coords)) {
-					const cotaGPS = estimarCotaTerreno(p.coords[0], p.coords[1], p.endereco || p.nome);
-					if (cotaGPS) cotaRealista = cotaGPS;
+					const cotaGPS = estimarCotaTerreno(p.coords[0], p.coords[1], p.endereco || p.nome, ruas);
+					if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
+						cotaRealista = cotaGPS;
+					}
 				}
 				locaisParaVerificar.push({
 					id: `ponto-${p.id}`,
@@ -589,12 +592,19 @@ const MetricsBottomSheet = ({
 									}
 									if (Array.isArray(usuario?.pontosInteresse)) {
 										usuario.pontosInteresse.forEach((p) => {
-											if (p.cota) {
+											let cotaM = Number(p.cota);
+											if (p.coords && Array.isArray(p.coords)) {
+												const cotaGPS = estimarCotaTerreno(p.coords[0], p.coords[1], p.endereco || p.nome, ruas);
+												if (cotaGPS && (isNaN(cotaM) || cotaM === 29.2 || cotaM === 24.0)) {
+													cotaM = cotaGPS;
+												}
+											}
+											if (cotaM) {
 												pontosMarcadores.push({
 													id: `pt-${p.id}`,
 													nome: p.nome,
 													icone: '📍',
-													cota: Number(p.cota),
+													cota: cotaM,
 													cor: 'text-blue-600',
 													bg: 'bg-blue-600',
 												});
@@ -943,8 +953,10 @@ const MetricsBottomSheet = ({
 										usuario.pontosInteresse.forEach((pt) => {
 											let cotaRealista = Number(pt.cota);
 											if (pt.coords && Array.isArray(pt.coords)) {
-												const cotaGPS = estimarCotaTerreno(pt.coords[0], pt.coords[1], pt.endereco || pt.nome);
-												if (cotaGPS) cotaRealista = cotaGPS;
+												const cotaGPS = estimarCotaTerreno(pt.coords[0], pt.coords[1], pt.endereco || pt.nome, ruas);
+												if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
+													cotaRealista = cotaGPS;
+												}
 											}
 											locaisParaVerificar.push({
 												id: `pt-${pt.id}`,
