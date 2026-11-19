@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { CloudRain, MoreHorizontal, Trash2, Bookmark, Star, Check, Navigation, X, Plus, Minus, Bell, BellRing } from "lucide-react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { CloudRain, MoreHorizontal, Trash2, Bookmark, Star, Check, Navigation, X, Plus, Minus, Bell, BellRing, Play, Pause, RotateCcw } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
 import GoogleAdBlock from "./GoogleAdBlock";
 import { buscarDestinosCalibrados, estimarCotaTerreno } from "../../services/locaisLajeado";
@@ -56,24 +56,80 @@ const MetricsBottomSheet = ({
 
 	// Estado local do slider para resposta 60fps instantânea ao arrastar o dedo
 	const [cotaLocalSlider, setCotaLocalSlider] = useState(cotaSimulada || 13.0);
+	const [isTocandoAnimacao, setIsTocandoAnimacao] = useState(false);
 	const debounceSimulacaoRef = useRef(null);
+	const animacaoIntervalRef = useRef(null);
+	const isDraggingSliderRef = useRef(false);
 
 	// Sincroniza quando a cota externa muda por presets ou botões
 	useEffect(() => {
-		setCotaLocalSlider(cotaSimulada);
+		if (!isDraggingSliderRef.current) {
+			setCotaLocalSlider(cotaSimulada);
+		}
 	}, [cotaSimulada]);
 
-	// Atualiza imediatamente o display visual e debounced (80ms) o mapa pesado
-	const handleSliderChange = (novoValor) => {
-		const valNum = parseFloat(novoValor);
+	// Atualiza imediatamente o display visual a 60 FPS e propaga debounced ao mapa
+	const handleSliderChange = useCallback((novoValor, imediato = false) => {
+		const valNum = Math.min(36.0, Math.max(13.0, parseFloat(novoValor)));
 		setCotaLocalSlider(valNum);
 
 		if (debounceSimulacaoRef.current) {
 			clearTimeout(debounceSimulacaoRef.current);
 		}
-		debounceSimulacaoRef.current = setTimeout(() => {
+
+		if (imediato) {
 			setCotaSimulada(valNum);
-		}, 80);
+		} else {
+			// Debounce otimizado de 120ms para liberar a main-thread do Leaflet durante o arrasto
+			debounceSimulacaoRef.current = setTimeout(() => {
+				requestAnimationFrame(() => {
+					setCotaSimulada(valNum);
+				});
+			}, 120);
+		}
+	}, [setCotaSimulada]);
+
+	// Ao soltar o slider, força a atualização imediata no mapa
+	const handleSliderRelease = useCallback(() => {
+		isDraggingSliderRef.current = false;
+		if (debounceSimulacaoRef.current) {
+			clearTimeout(debounceSimulacaoRef.current);
+		}
+		setCotaSimulada(cotaLocalSlider);
+	}, [cotaLocalSlider, setCotaSimulada]);
+
+	// Controle de reprodução contínua (Play / Pause automático)
+	useEffect(() => {
+		if (isTocandoAnimacao) {
+			animacaoIntervalRef.current = setInterval(() => {
+				setCotaLocalSlider((prev) => {
+					if (prev >= 32.0) {
+						setIsTocandoAnimacao(false);
+						setCotaSimulada(32.0);
+						return 32.0;
+					}
+					const proximo = Math.round((prev + 0.2) * 10) / 10;
+					setCotaSimulada(proximo);
+					return proximo;
+				});
+			}, 350);
+		} else {
+			if (animacaoIntervalRef.current) {
+				clearInterval(animacaoIntervalRef.current);
+			}
+		}
+		return () => {
+			if (animacaoIntervalRef.current) clearInterval(animacaoIntervalRef.current);
+		};
+	}, [isTocandoAnimacao, setCotaSimulada]);
+
+	// Haptic feedback leve em dispositivos móveis compatíveis
+	const triggerHaptic = () => {
+		try {
+			if (typeof window !== "undefined" && "vibrate" in navigator) {
+				navigator.vibrate(12);
+			}
+		} catch (_) {}
 	};
 
 	const startYRef = useRef(0);
@@ -640,90 +696,235 @@ const MetricsBottomSheet = ({
 
 						{/* VISTA 2: SIMULAÇÃO (Aba Simular) */}
 						{abaAtiva === "simular" && (
-							<div className="flex flex-col gap-y-4 animate-in fade-in duration-300">
-								<div className="flex justify-between items-center bg-slate-50 border border-slate-200/80 p-3 rounded-2xl">
-									<div>
-										<span className="text-[10px] font-semibold tracking-wider uppercase text-slate-500 block">
-											Nível Forçado para Teste
-										</span>
-										<p className="text-xs text-slate-600 mt-0.5">
-											Simula a mancha de cheia e recalcula rotas seguras
-										</p>
+							<div className="flex flex-col gap-y-3.5 animate-in fade-in duration-300">
+								{/* CARD DO NÍVEL COM STATUS DINÂMICO E BOTÃO PLAY/PAUSE */}
+								<div className="flex justify-between items-center bg-slate-50 border border-slate-200/90 p-3 rounded-2xl shadow-xs">
+									<div className="flex items-center gap-2.5">
+										<button
+											type="button"
+											onClick={() => {
+												triggerHaptic();
+												setIsTocandoAnimacao(!isTocandoAnimacao);
+											}}
+											className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold transition shadow-xs active:scale-90 ${
+												isTocandoAnimacao
+													? "bg-amber-500 text-white animate-pulse"
+													: "bg-blue-600 hover:bg-blue-700 text-white"
+											}`}
+											title={isTocandoAnimacao ? "Pausar simulação" : "Reproduzir simulação contínua do rio"}
+										>
+											{isTocandoAnimacao ? <Pause size={16} fill="white" /> : <Play size={16} fill="white" className="ml-0.5" />}
+										</button>
+										<div>
+											<div className="flex items-center gap-1.5">
+												<span className="text-[10px] font-bold tracking-wider uppercase text-slate-500">
+													Simulação de Nível
+												</span>
+												{isTocandoAnimacao && (
+													<span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 animate-pulse">
+														● Auto
+													</span>
+												)}
+											</div>
+											<p className="text-[11px] text-slate-500 font-medium">
+												{cotaLocalSlider >= 29.8 
+													? "🌊 Calamidade (Acima de Mai/24)"
+													: cotaLocalSlider >= 24.0
+													? "🚨 Cheia Severa (Bairros Atingidos)"
+													: cotaLocalSlider >= 19.0
+													? "⚠️ Cota de Inundação (Atenção)"
+													: "✅ Nível de Calha / Normal"}
+											</p>
+										</div>
 									</div>
-									<span className="text-base font-bold text-slate-900 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm tabular-nums">
-										{Number(cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada).toFixed(2)} m
-									</span>
+
+									<div className="text-right">
+										<span className={`text-lg font-black px-3 py-1 rounded-xl border shadow-xs tabular-nums transition-colors ${
+											cotaLocalSlider >= 29.8
+												? "bg-purple-50 text-purple-900 border-purple-200"
+												: cotaLocalSlider >= 24.0
+												? "bg-rose-50 text-rose-900 border-rose-200"
+												: cotaLocalSlider >= 19.0
+												? "bg-amber-50 text-amber-900 border-amber-200"
+												: "bg-white text-slate-900 border-slate-200"
+										}`}>
+											{Number(cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada).toFixed(2)} m
+										</span>
+									</div>
 								</div>
 
+								{/* BARRA DE SIMULAÇÃO ERGONÔMICA COM ÁREA DE TOQUE 48PX E GRADIENTE DE RISCO */}
 								<div 
-									className="flex items-center gap-2 px-1"
+									className="flex flex-col gap-1.5 px-0.5"
 									onTouchStart={(e) => e.stopPropagation()}
 									onTouchMove={(e) => e.stopPropagation()}
 									onMouseDown={(e) => e.stopPropagation()}
 								>
-									<button
-										type="button"
-										onClick={() => {
-											const novo = Math.max(13.0, Math.round(((cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada) - 0.2) * 10) / 10);
-											handleSliderChange(novo);
-										}}
-										className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-90 text-slate-800 font-bold flex items-center justify-center border border-slate-200 transition shrink-0 shadow-xs"
-										title="Diminuir 0,2 metros"
-									>
-										<Minus size={14} strokeWidth={2.5} />
-									</button>
+									{/* Trilho Interativo com Pontos Marcadores (Casa e Cheia Histórica) */}
+									<div className="relative w-full py-2">
+										{/* Marcadores sobre a barra */}
+										{(() => {
+											const minRange = 13.0;
+											const maxRange = 36.0;
+											const calcPct = (c) => Math.min(Math.max(((c - minRange) / (maxRange - minRange)) * 100, 0), 100);
 
-									<span className="text-[11px] font-semibold text-slate-400">
-										13m
-									</span>
+											const casaCota = usuario?.residencia?.cota ? Number(usuario.residencia.cota) : null;
+											const pctCasa = casaCota ? calcPct(casaCota) : null;
+											const pctInundacao = calcPct(19.0);
+											const pctHistorico = calcPct(29.8);
 
-									<input
-										type="range"
-										min="13.0"
-										max="36.0"
-										step="0.2"
-										value={cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada}
-										onInput={(e) => handleSliderChange(e.target.value)}
-										onChange={(e) => handleSliderChange(e.target.value)}
-										onTouchStart={(e) => e.stopPropagation()}
-										onTouchMove={(e) => e.stopPropagation()}
-										className="flex-1 h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900 touch-pan-x"
-									/>
+											return (
+												<>
+													{/* Pin da Cota de Inundação 19m */}
+													<div 
+														className="absolute -top-3.5 -translate-x-1/2 flex flex-col items-center pointer-events-none z-10"
+														style={{ left: `${pctInundacao}%` }}
+													>
+														<span className="text-[9px] font-black text-amber-600 bg-amber-50 px-1 py-0.2 rounded border border-amber-200 shadow-xs">
+															19m
+														</span>
+														<div className="w-0.5 h-2 bg-amber-400" />
+													</div>
 
-									<span className="text-[11px] font-semibold text-slate-400">
-										36m
-									</span>
+													{/* Pin de Maio/24 29.8m */}
+													<div 
+														className="absolute -top-3.5 -translate-x-1/2 flex flex-col items-center pointer-events-none z-10"
+														style={{ left: `${pctHistorico}%` }}
+													>
+														<span className="text-[9px] font-black text-rose-700 bg-rose-50 px-1 py-0.2 rounded border border-rose-200 shadow-xs">
+															29.8m
+														</span>
+														<div className="w-0.5 h-2 bg-rose-500" />
+													</div>
 
-									<button
-										type="button"
-										onClick={() => {
-											const novo = Math.min(36.0, Math.round(((cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada) + 0.2) * 10) / 10);
-											handleSliderChange(novo);
-										}}
-										className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-90 text-slate-800 font-bold flex items-center justify-center border border-slate-200 transition shrink-0 shadow-xs"
-										title="Aumentar 0,2 metros"
-									>
-										<Plus size={14} strokeWidth={2.5} />
-									</button>
-								</div>
+													{/* Pin da Casa do Usuário (se cadastrada) */}
+													{pctCasa !== null && (
+														<div 
+															className="absolute -top-4 -translate-x-1/2 flex flex-col items-center pointer-events-none z-20"
+															style={{ left: `${pctCasa}%` }}
+															title={`Sua Casa: ${casaCota.toFixed(1)}m`}
+														>
+															<span className="text-xs filter drop-shadow-sm animate-bounce">
+																🏠
+															</span>
+															<div className="w-0.5 h-1.5 bg-blue-600" />
+														</div>
+													)}
+												</>
+											);
+										})()}
 
-								{/* Segmented Preset Buttons */}
-								<div className="grid grid-cols-3 gap-2 bg-slate-100 p-1 rounded-2xl border border-slate-200/60">
-									<button
-										onClick={() => setCotaSimulada(cotaReal)}
-										className="py-2 px-2 bg-white text-slate-800 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95">
-										Ao Vivo ({Number(cotaReal).toFixed(1)}m)
-									</button>
-									<button
-										onClick={() => setCotaSimulada(19.0)}
-										className="py-2 px-2 hover:bg-white/80 text-slate-700 rounded-xl text-xs font-semibold transition active:scale-95">
-										Alerta (19.0m)
-									</button>
-									<button
-										onClick={() => setCotaSimulada(29.8)}
-										className="py-2 px-2 hover:bg-white/80 text-slate-700 rounded-xl text-xs font-semibold transition active:scale-95">
-										Maio/24 (29.8m)
-									</button>
+										{/* Controles de Toque e Input Range com Altura Ampliada */}
+										<div className="relative flex items-center h-10">
+											<input
+												type="range"
+												min="13.0"
+												max="36.0"
+												step="0.2"
+												value={cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada}
+												onPointerDown={() => {
+													isDraggingSliderRef.current = true;
+													if (isTocandoAnimacao) setIsTocandoAnimacao(false);
+												}}
+												onPointerUp={handleSliderRelease}
+												onTouchStart={(e) => {
+													e.stopPropagation();
+													isDraggingSliderRef.current = true;
+													if (isTocandoAnimacao) setIsTocandoAnimacao(false);
+												}}
+												onTouchEnd={(e) => {
+													e.stopPropagation();
+													handleSliderRelease();
+												}}
+												onTouchCancel={handleSliderRelease}
+												onInput={(e) => {
+													handleSliderChange(e.target.value, false);
+												}}
+												onChange={(e) => {
+													handleSliderChange(e.target.value, false);
+												}}
+												style={{
+													background: `linear-gradient(to right, #10b981 0%, #10b981 26%, #f59e0b 26.1%, #f59e0b 48%, #ef4444 48.1%, #ef4444 73%, #7c3aed 73.1%, #7c3aed 100%)`
+												}}
+												className="w-full h-3 rounded-full appearance-none cursor-pointer accent-slate-900 shadow-inner touch-pan-x"
+											/>
+										</div>
+									</div>
+
+									{/* Botões de Precisão +/- 0.2m e Presets Rápidos */}
+									<div className="flex items-center justify-between gap-1.5 pt-0.5">
+										<button
+											type="button"
+											onClick={() => {
+												triggerHaptic();
+												if (isTocandoAnimacao) setIsTocandoAnimacao(false);
+												const novo = Math.max(13.0, Math.round(((cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada) - 0.2) * 10) / 10);
+												handleSliderChange(novo, true);
+											}}
+											className="h-8 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-800 font-bold flex items-center gap-1 border border-slate-200 transition shrink-0 shadow-xs text-xs"
+											title="Diminuir 0,2 metros"
+										>
+											<Minus size={14} strokeWidth={2.5} />
+											<span className="text-[11px] font-semibold">0.2m</span>
+										</button>
+
+										<div className="flex items-center gap-1">
+											<button
+												onClick={() => {
+													triggerHaptic();
+													if (isTocandoAnimacao) setIsTocandoAnimacao(false);
+													handleSliderChange(cotaReal, true);
+												}}
+												className={`px-2 py-1.5 rounded-lg text-[11px] font-bold border transition active:scale-95 ${
+													Math.abs((cotaLocalSlider || cotaSimulada) - cotaReal) < 0.2
+														? "bg-slate-900 text-white border-slate-900 shadow-xs"
+														: "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+												}`}>
+												Ao Vivo ({Number(cotaReal).toFixed(1)}m)
+											</button>
+											<button
+												onClick={() => {
+													triggerHaptic();
+													if (isTocandoAnimacao) setIsTocandoAnimacao(false);
+													handleSliderChange(19.0, true);
+												}}
+												className={`px-2 py-1.5 rounded-lg text-[11px] font-bold border transition active:scale-95 ${
+													Math.abs((cotaLocalSlider || cotaSimulada) - 19.0) < 0.2
+														? "bg-amber-500 text-white border-amber-600 shadow-xs"
+														: "bg-white text-amber-700 border-amber-200 hover:bg-amber-50"
+												}`}>
+												Alerta (19m)
+											</button>
+											<button
+												onClick={() => {
+													triggerHaptic();
+													if (isTocandoAnimacao) setIsTocandoAnimacao(false);
+													handleSliderChange(29.8, true);
+												}}
+												className={`px-2 py-1.5 rounded-lg text-[11px] font-bold border transition active:scale-95 ${
+													Math.abs((cotaLocalSlider || cotaSimulada) - 29.8) < 0.2
+														? "bg-rose-600 text-white border-rose-700 shadow-xs"
+														: "bg-white text-rose-700 border-rose-200 hover:bg-rose-50"
+												}`}>
+												Mai/24 (29.8m)
+											</button>
+										</div>
+
+										<button
+											type="button"
+											onClick={() => {
+												triggerHaptic();
+												if (isTocandoAnimacao) setIsTocandoAnimacao(false);
+												const novo = Math.min(36.0, Math.round(((cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada) + 0.2) * 10) / 10);
+												handleSliderChange(novo, true);
+											}}
+											className="h-8 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-800 font-bold flex items-center gap-1 border border-slate-200 transition shrink-0 shadow-xs text-xs"
+											title="Aumentar 0,2 metros"
+										>
+											<Plus size={14} strokeWidth={2.5} />
+											<span className="text-[11px] font-semibold">0.2m</span>
+										</button>
+									</div>
 								</div>
 
 								{/* MONITORAMENTO DE IMPACTO EM TEMPO REAL NOS LOCAIS DO USUÁRIO */}
