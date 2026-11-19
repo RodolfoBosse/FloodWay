@@ -1777,6 +1777,7 @@ const MapaInterativo = ({
 					ref={mapRef}
 					center={config.centro}
 					zoom={config.zoom}
+					preferCanvas={true}
 					style={{ width: "100%", height: "100%" }}
 					minZoom={10}
 					maxZoom={19}>

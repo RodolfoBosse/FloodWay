@@ -69,7 +69,7 @@ const MetricsBottomSheet = ({
 		}
 	}, [cotaSimulada]);
 
-	// Atualiza imediatamente o display visual a 60 FPS e propaga debounced ao mapa
+	// Atualiza imediatamente o display visual a 60 FPS e propaga ao mapa apenas quando estável
 	const handleSliderChange = useCallback((novoValor, imediato = false) => {
 		const valNum = Math.min(36.0, Math.max(13.0, parseFloat(novoValor)));
 		setCotaLocalSlider(valNum);
@@ -81,12 +81,14 @@ const MetricsBottomSheet = ({
 		if (imediato) {
 			setCotaSimulada(valNum);
 		} else {
-			// Debounce otimizado de 120ms para liberar a main-thread do Leaflet durante o arrasto
+			// Durante o arrasto contínuo com o dedo, retém a sincronização pesada do Leaflet (200ms)
+			// para que o navegador mantenha a taxa de quadros (60fps) e o processador do celular não engasgue.
+			// Ao soltar o dedo (handleSliderRelease), a sincronização é imediata.
 			debounceSimulacaoRef.current = setTimeout(() => {
 				requestAnimationFrame(() => {
 					setCotaSimulada(valNum);
 				});
-			}, 120);
+			}, 200);
 		}
 	}, [setCotaSimulada]);
 
@@ -136,8 +138,10 @@ const MetricsBottomSheet = ({
 	const startYRef = useRef(0);
 	const startHeightRef = useRef(295);
 
-	// Rastreamento para disparo automático de notificação push no celular quando a simulação atinge locais
-	const ultimoAlertaSimulacaoRef = useRef({ chave: null, timestamp: 0 });
+	// Rastreamento para disparo de notificação push no celular:
+	// memoriza quais patamares de cada local já foram alertados nesta sessão
+	// para JAMAIS disparar notificações repetidas sobre o mesmo evento de inundação
+	const patamaresAlertadosRef = useRef(new Set());
 
 	useEffect(() => {
 		if (abaAtiva !== "simular" || !cotaSimulada) return;
@@ -185,7 +189,7 @@ const MetricsBottomSheet = ({
 			if (margem <= 0) {
 				patamar = 'atingiu';
 				titulo = `🚨 ALERTA MÁXIMO: ${loc.nome} Atingido!`;
-				corpo = `A cota do Rio Taquari (${cotaSimulada.toFixed(1)}m) superou a altitude do imóvel (${loc.cota.toFixed(1)}m). Início de inundação!`;
+				corpo = `A cota do Rio Taquari (${cotaSimulada.toFixed(1)}m) superou a altitude do local (${loc.cota.toFixed(1)}m). Início de inundação!`;
 			} else if (margem <= 0.5) {
 				patamar = '0.5m';
 				titulo = `🚨 PERIGO IMINENTE: Rio a apenas ${margem}m de ${loc.nome}!`;
@@ -197,19 +201,16 @@ const MetricsBottomSheet = ({
 			} else if (margem <= 2.0) {
 				patamar = '2.0m';
 				titulo = `⚠️ AVISO DE ATENÇÃO: Rio a ${margem}m de ${loc.nome}`;
-				corpo = `O Rio Taquari atingiu ${cotaSimulada.toFixed(1)}m e está a cerca de 2 metros da altitude do imóvel (${loc.cota.toFixed(1)}m).`;
+				corpo = `O Rio Taquari atingiu ${cotaSimulada.toFixed(1)}m e está a cerca de 2 metros da altitude do local (${loc.cota.toFixed(1)}m).`;
 			}
 
 			if (patamar) {
-				const agora = Date.now();
 				const chave = `${loc.id}-${patamar}`;
 
-				// Se mudou de patamar ou passaram mais de 5s, emite notificação
-				if (
-					ultimoAlertaSimulacaoRef.current.chave !== chave ||
-					agora - ultimoAlertaSimulacaoRef.current.timestamp > 5000
-				) {
-					ultimoAlertaSimulacaoRef.current = { chave, timestamp: agora };
+				// Dispara a notificação APENAS UMA VEZ por patamar atingido para este local
+				// Evita spam contínuo toda vez que a cota simulada varia 0.2m enquanto o local já está inundado
+				if (!patamaresAlertadosRef.current.has(chave)) {
+					patamaresAlertadosRef.current.add(chave);
 					dispararAlertaLocal(titulo, corpo, `simulacao-${patamar}`);
 				}
 				break;
@@ -882,6 +883,7 @@ const MetricsBottomSheet = ({
 											<button
 												onClick={() => {
 													triggerHaptic();
+													patamaresAlertadosRef.current.clear();
 													if (isTocandoAnimacao) setIsTocandoAnimacao(false);
 													handleSliderChange(cotaReal, true);
 												}}

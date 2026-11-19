@@ -77,7 +77,7 @@ export default function AlertaSimulacaoAtiva({
                   ? "bg-rose-900/80 text-rose-200 border-rose-700"
                   : "bg-slate-800 text-slate-300 border-slate-700"
               }`}>
-                {isEmergencia ? "🚨 Imóvel Atingido" : "Simulação Ativa"}
+                {isEmergencia ? "🚨 Local Atingido" : "Simulação Ativa"}
               </span>
               <span className="font-bold text-sm text-white tabular-nums">
                 {Number(cotaSimulada).toFixed(2)} m
