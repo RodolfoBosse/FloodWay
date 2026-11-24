@@ -670,43 +670,73 @@ const MetricsBottomSheet = ({
 								})()}
 
 								{(() => {
+									// Detecta explicitamente se a estação está offline ou se os dados estão defasados
+									const isOffline = cotaAtual?.estacao_offline || 
+										(cotaAtual?.minutos_atras && cotaAtual.minutos_atras > 120) ||
+										(cotaAtual?.velocidade_formatada && /sem leitura/i.test(cotaAtual.velocidade_formatada)) ||
+										(cotaAtual?.fonte && cotaAtual.fonte.includes("contingencia"));
+
 									const velNum = velocidade_cm_h !== null && velocidade_cm_h !== undefined
 										? Number(velocidade_cm_h)
 										: (cotaAtual?.velocidade_cm_h !== undefined ? Number(cotaAtual.velocidade_cm_h) : 0);
-									const velTxt = velocidade_formatada || cotaAtual?.velocidade_formatada || (
-										velNum > 0
-											? `▲ Subindo a ${velNum.toFixed(1).replace('.', ',')} cm/h`
-											: velNum < 0
-												? `▼ Descendo a ${Math.abs(velNum).toFixed(1).replace('.', ',')} cm/h`
-												: "⏸ Estável"
-									);
-									const isSubindo = velNum > 0;
-									const isDescendo = velNum < 0;
-									const badgeColor = isSubindo
-										? "bg-amber-100 text-amber-800 border border-amber-200"
-										: isDescendo
-											? "bg-blue-100 text-blue-800 border border-blue-200"
-											: "bg-emerald-100 text-emerald-700 border border-emerald-200";
+									
+									// Proteção de sanidade física: no Rio Taquari em Lajeado fora de pico de enchente (nível < 18m),
+									// taxas acima de 25 cm/h são anomalias de telemetria/divisor temporal incorreto.
+									const isVelocidadeAnomala = Math.abs(velNum) > 25.0 && cotaReal < 18.0;
+
+									let velTxt = "";
+									let badgeColor = "";
+
+									if (isOffline || isVelocidadeAnomala) {
+										const horasAtras = cotaAtual?.minutos_atras ? Math.round(cotaAtual.minutos_atras / 60) : null;
+										velTxt = horasAtras && horasAtras > 1 
+											? `⚠️ Sem sinal recente (${horasAtras}h)`
+											: "⚠️ Sinal da estação instável";
+										badgeColor = "bg-amber-50 text-amber-800 border border-amber-300";
+									} else {
+										velTxt = velocidade_formatada || cotaAtual?.velocidade_formatada || (
+											velNum > 0
+												? `▲ Subindo a ${velNum.toFixed(1).replace('.', ',')} cm/h`
+												: velNum < 0
+													? `▼ Descendo a ${Math.abs(velNum).toFixed(1).replace('.', ',')} cm/h`
+													: "⏸ Estável"
+										);
+										const isSubindo = velNum > 0;
+										const isDescendo = velNum < 0;
+										badgeColor = isSubindo
+											? "bg-amber-100 text-amber-800 border border-amber-200"
+											: isDescendo
+												? "bg-blue-100 text-blue-800 border border-blue-200"
+												: "bg-emerald-100 text-emerald-700 border border-emerald-200";
+									}
 
 									return (
-										<div className="grid grid-cols-2 gap-4 items-center pt-0.5">
-											<div className="flex items-center gap-1.5 flex-wrap">
-												<span className="text-xs text-gray-500 font-medium">
-													Tendência:
-												</span>
-												<span className={`px-2.5 py-1 text-[11px] font-bold rounded-full shadow-sm ${badgeColor}`}>
-													{velTxt}
-												</span>
+										<div className="flex flex-col gap-1.5 pt-0.5">
+											<div className="grid grid-cols-2 gap-4 items-center">
+												<div className="flex items-center gap-1.5 flex-wrap">
+													<span className="text-xs text-gray-500 font-medium">
+														Tendência:
+													</span>
+													<span className={`px-2.5 py-1 text-[11px] font-bold rounded-full shadow-sm transition-colors ${badgeColor}`}>
+														{velTxt}
+													</span>
+												</div>
+												<div className="flex items-center justify-end gap-2">
+													<span className="text-sm text-gray-500 font-medium">
+														Ruas bloqueadas
+													</span>
+													<span
+														className={`text-lg font-bold ${dadosRota?.bloqueada ? "text-red-600" : "text-gray-900"}`}>
+														{dadosRota?.pontosBloqueio?.length || 0}
+													</span>
+												</div>
 											</div>
-											<div className="flex items-center justify-end gap-2">
-												<span className="text-sm text-gray-500 font-medium">
-													Ruas bloqueadas
-												</span>
-												<span
-													className={`text-lg font-bold ${dadosRota?.bloqueada ? "text-red-600" : "text-gray-900"}`}>
-													{dadosRota?.pontosBloqueio?.length || 0}
-												</span>
-											</div>
+											{(isOffline || isVelocidadeAnomala) && (
+												<div className="text-[10px] text-amber-700 bg-amber-50/80 rounded-md px-2 py-0.5 border border-amber-200/60 flex items-center gap-1">
+													<span>ℹ️</span>
+													<span>Aguardando próxima transmissão da estação oficial de Estrela/Lajeado.</span>
+												</div>
+											)}
 										</div>
 									);
 								})()}
