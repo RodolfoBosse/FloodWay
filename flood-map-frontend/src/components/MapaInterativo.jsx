@@ -945,6 +945,8 @@ const MapaInterativo = ({
 
 			let rotaEscolhida = null;
 			let rota100Segura = false;
+			let pontoAncoraSegura = null;
+			let distanciaPeMetros = 0;
 
 			if (data.routes && data.routes.length > 0) {
 				for (const r of data.routes) {
@@ -1001,7 +1003,78 @@ const MapaInterativo = ({
 				}
 			}
 
-			// 3. SE MESMO ASSIM TODAS CRUZAREM ÁGUA (ILHADO REAL), SELECIONA A QUE CHEGA MAIS PERTO DO DESTINO
+			// 3. SE O DESTINO ESTIVER ILHADO OU ACESSOS BLOQUEADOS:
+			// ALGORITMO DE ÂNCORA SEGURA (SAFE LANDING POINT)
+			// Busca o ponto viável de asfalto seco mais próximo real das coordenadas de destino
+			if (!rota100Segura) {
+				// Candidatos secos da malha de ruas ordenados por distância direta ao destino
+				const candidatosSecos = [];
+				for (const pista of trechosPistas) {
+					if (pista.isBloqueado) continue;
+					if (pista.coords && pista.coords.length > 0) {
+						for (const pt of pista.coords) {
+							const dLat = (pt[0] - latB) * 110850;
+							const dLon = (pt[1] - lonB) * 96700;
+							const distDestinoMetros = Math.sqrt(dLat * dLat + dLon * dLon);
+							if (distDestinoMetros <= 1800) {
+								candidatosSecos.push({
+									coord: pt,
+									distDestino: distDestinoMetros,
+									nomeRua: pista.nome,
+									cota: pista.cota
+								});
+							}
+						}
+					}
+				}
+
+				candidatosSecos.sort((a, b) => a.distDestino - b.distDestino);
+
+				// Filtra candidatos para evitar pontos adjacentes redundantes
+				const melhoresCandidatos = [];
+				for (const cand of candidatosSecos) {
+					const jaTemPerto = melhoresCandidatos.some((mc) => {
+						const d1 = (mc.coord[0] - cand.coord[0]) * 110850;
+						const d2 = (mc.coord[1] - cand.coord[1]) * 96700;
+						return Math.sqrt(d1 * d1 + d2 * d2) < 40;
+					});
+					if (!jaTemPerto) {
+						melhoresCandidatos.push(cand);
+						if (melhoresCandidatos.length >= 6) break;
+					}
+				}
+
+				// Testa rotas seguras de carro até os melhores pontos secos de desembarque
+				for (const cand of melhoresCandidatos) {
+					const cLat = cand.coord[0];
+					const cLon = cand.coord[1];
+					const urlAncora = `https://router.project-osrm.org/route/v1/driving/${lonA},${latA};${cLon},${cLat}?overview=full&geometries=geojson&alternatives=true`;
+					try {
+						const respAncora = await fetch(urlAncora);
+						const dataAncora = await respAncora.json();
+						if (dataAncora.routes && dataAncora.routes.length > 0) {
+							for (const rAncora of dataAncora.routes) {
+								if (!rotaTemAlagamento(rAncora.geometry.coordinates)) {
+									rotaEscolhida = rAncora;
+									pontoAncoraSegura = {
+										coord: cand.coord,
+										distanciaPe: Math.round(cand.distDestino),
+										nomeRua: cand.nomeRua,
+										cota: cand.cota
+									};
+									distanciaPeMetros = Math.round(cand.distDestino);
+									break;
+								}
+							}
+						}
+					} catch (e) {
+						console.warn("Falha ao testar âncora segura:", e);
+					}
+					if (pontoAncoraSegura) break;
+				}
+			}
+
+			// 4. FALLBACK EM CASO EXTREMO DE CERCO TOTAL
 			if (!rotaEscolhida && data.routes && data.routes.length > 0) {
 				rotaEscolhida = data.routes[0];
 				rota100Segura = false;
@@ -1020,9 +1093,20 @@ const MapaInterativo = ({
 			const distanciaKm = (rotaEscolhida.distance / 1000).toFixed(1);
 			const tempoMin = Math.round(rotaEscolhida.duration / 60);
 
-			// 4. DIVISÃO: TRECHO DE CARRO + TRECHO A PÉ / BLOQUEIO
-			let indiceBloqueio = -1;
-			if (!rota100Segura) {
+			// 5. DIVISÃO: TRECHO DE CARRO + TRECHO A PÉ / BLOQUEIO
+			let coordsCarro = rotaCoords;
+			let coordsBloqueado = [];
+			let pontoParada = null;
+
+			if (pontoAncoraSegura) {
+				// Destino ilhado com Âncora Segura de Desembarque encontrada
+				coordsCarro = rotaCoords;
+				pontoParada = pontoAncoraSegura.coord;
+				// Caminho a pé em linha reta ou tracejado do ponto seguro até o destino
+				coordsBloqueado = [pontoAncoraSegura.coord, [latB, lonB]];
+			} else if (!rota100Segura) {
+				// Rota direta cortada no primeiro obstáculo
+				let indiceBloqueio = -1;
 				for (let i = 0; i < rotaCoords.length; i++) {
 					const pt = rotaCoords[i];
 					const pontoSubmerso = trechosPistas.some((pista) => {
@@ -1039,20 +1123,21 @@ const MapaInterativo = ({
 						break;
 					}
 				}
-			}
 
-			let coordsCarro = rotaCoords;
-			let coordsBloqueado = [];
-			let pontoParada = null;
-
-			if (!rota100Segura && indiceBloqueio > 0) {
-				coordsCarro = rotaCoords.slice(0, indiceBloqueio + 1);
-				coordsBloqueado = rotaCoords.slice(indiceBloqueio);
-				pontoParada = rotaCoords[indiceBloqueio];
-			} else if (!rota100Segura && indiceBloqueio === 0) {
-				coordsCarro = [];
-				coordsBloqueado = rotaCoords;
-				pontoParada = rotaCoords[0];
+				if (indiceBloqueio > 0) {
+					coordsCarro = rotaCoords.slice(0, indiceBloqueio + 1);
+					coordsBloqueado = rotaCoords.slice(indiceBloqueio);
+					pontoParada = rotaCoords[indiceBloqueio];
+				} else if (indiceBloqueio === 0) {
+					coordsCarro = [];
+					coordsBloqueado = rotaCoords;
+					pontoParada = rotaCoords[0];
+				}
+				if (pontoParada) {
+					const dLat = (pontoParada[0] - latB) * 110850;
+					const dLon = (pontoParada[1] - lonB) * 96700;
+					distanciaPeMetros = Math.round(Math.sqrt(dLat * dLat + dLon * dLon));
+				}
 			}
 
 			setDadosRota({
@@ -1060,6 +1145,8 @@ const MapaInterativo = ({
 				coordsCarro: coordsCarro,
 				coordsBloqueado: coordsBloqueado,
 				pontoParada: pontoParada,
+				pontoAncoraSegura: pontoAncoraSegura,
+				distanciaPeMetros: distanciaPeMetros,
 				distancia: distanciaKm,
 				tempo: tempoMin,
 				segura: rota100Segura,
@@ -1076,14 +1163,22 @@ const MapaInterativo = ({
 
 		const oLat = pontoOrigem[0].toFixed(5);
 		const oLon = pontoOrigem[1].toFixed(5);
-		const dLat = pontoDestino[0].toFixed(5);
-		const dLon = pontoDestino[1].toFixed(5);
+
+		// SE O DESTINO ESTÁ ILHADO E TEMOS PONTO DE PARADA / ÂNCORA SEGURA:
+		// Direciona o motorista para o ponto seguro onde o carro pode parar!
+		let destinoFinalGoogle = pontoDestino;
+		if (dadosRota && !dadosRota.segura && dadosRota.pontoParada) {
+			destinoFinalGoogle = dadosRota.pontoParada;
+		}
+
+		const dLat = destinoFinalGoogle[0].toFixed(5);
+		const dLon = destinoFinalGoogle[1].toFixed(5);
 
 		let paradasIntermediarias = [];
-		if (dadosRota?.coords?.length >= 6) {
-			const total = dadosRota.coords.length;
-			const p1 = dadosRota.coords[Math.floor(total * 0.35)];
-			const p2 = dadosRota.coords[Math.floor(total * 0.7)];
+		if (dadosRota?.coordsCarro?.length >= 6) {
+			const total = dadosRota.coordsCarro.length;
+			const p1 = dadosRota.coordsCarro[Math.floor(total * 0.35)];
+			const p2 = dadosRota.coordsCarro[Math.floor(total * 0.7)];
 			paradasIntermediarias = [
 				`${p1[0].toFixed(5)},${p1[1].toFixed(5)}`,
 				`${p2[0].toFixed(5)},${p2[1].toFixed(5)}`,
@@ -1102,7 +1197,11 @@ const MapaInterativo = ({
 
 	const abrirWaze = () => {
 		if (!pontoDestino) return;
-		const url = `https://waze.com/ul?ll=${pontoDestino[0]},${pontoDestino[1]}&navigate=yes`;
+		let alvo = pontoDestino;
+		if (dadosRota && !dadosRota.segura && dadosRota.pontoParada) {
+			alvo = dadosRota.pontoParada;
+		}
+		const url = `https://waze.com/ul?ll=${alvo[0]},${alvo[1]}&navigate=yes`;
 		window.open(url, "_blank");
 	};
 

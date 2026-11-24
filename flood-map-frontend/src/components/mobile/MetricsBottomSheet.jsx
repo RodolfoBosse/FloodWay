@@ -360,14 +360,22 @@ const MetricsBottomSheet = ({
 		if (!pontoOrigem || !pontoDestino) return;
 		const oLat = pontoOrigem[0].toFixed(5);
 		const oLon = pontoOrigem[1].toFixed(5);
-		const dLat = pontoDestino[0].toFixed(5);
-		const dLon = pontoDestino[1].toFixed(5);
+
+		// SE O DESTINO ESTIVER ILHADO:
+		// Navega até o Ponto Seguro de Parada / Desembarque para não levar o carro para a água!
+		let destinoFinal = pontoDestino;
+		if (dadosRota && !dadosRota.segura && dadosRota.pontoParada) {
+			destinoFinal = dadosRota.pontoParada;
+		}
+
+		const dLat = destinoFinal[0].toFixed(5);
+		const dLon = destinoFinal[1].toFixed(5);
 
 		let paradas = [];
-		if (dadosRota?.coords?.length >= 6) {
-			const total = dadosRota.coords.length;
-			const p1 = dadosRota.coords[Math.floor(total * 0.35)];
-			const p2 = dadosRota.coords[Math.floor(total * 0.70)];
+		if (dadosRota?.coordsCarro?.length >= 6) {
+			const total = dadosRota.coordsCarro.length;
+			const p1 = dadosRota.coordsCarro[Math.floor(total * 0.35)];
+			const p2 = dadosRota.coordsCarro[Math.floor(total * 0.70)];
 			paradas = [
 				`${p1[0].toFixed(5)},${p1[1].toFixed(5)}`,
 				`${p2[0].toFixed(5)},${p2[1].toFixed(5)}`,
@@ -1360,12 +1368,32 @@ const MetricsBottomSheet = ({
 											</button>
 										</div>
 										<div
-											className={`p-2 rounded-xl font-semibold text-center text-xs border ${
-												dadosRota.segura ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-rose-50 border-rose-200 text-rose-800"
+											className={`p-2.5 rounded-xl text-center text-xs border ${
+												dadosRota.segura 
+													? "bg-emerald-50 border-emerald-200 text-emerald-800" 
+													: "bg-amber-50 border-amber-200 text-amber-900"
 											}`}>
-											{dadosRota.segura
-												? "Trajeto Seguro (Desvio pelas Vias Altas)"
-												: "Atenção: Destino ou vias de acesso ilhadas"}
+											{dadosRota.segura ? (
+												<div className="font-semibold">
+													🛡️ Trajeto Seguro (Desvio pelas Vias Altas)
+												</div>
+											) : (
+												<div className="space-y-1">
+													<div className="font-bold text-amber-950 flex items-center justify-center gap-1">
+														<span>⚠️</span>
+														<span>Destino Ilhado: Acesso até o Ponto Seguro</span>
+													</div>
+													{dadosRota.pontoAncoraSegura ? (
+														<p className="text-[11px] text-amber-900 leading-tight">
+															Carro até <strong>{dadosRota.pontoAncoraSegura.nomeRua}</strong> (cota {dadosRota.pontoAncoraSegura.cota}m) + <strong>{dadosRota.distanciaPeMetros}m a pé</strong> até o destino.
+														</p>
+													) : (
+														<p className="text-[11px] text-amber-900 leading-tight">
+															Bloqueio na rota a <strong>{dadosRota.distanciaPeMetros || 150}m</strong> do destino.
+														</p>
+													)}
+												</div>
+											)}
 										</div>
 
 										{/* BOTÕES NAVEGAÇÃO EXTERNA (GOOGLE MAPS) & SALVAR FAVORITA */}
@@ -1375,7 +1403,11 @@ const MetricsBottomSheet = ({
 												onClick={abrirGoogleMaps}
 												className="w-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 font-semibold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition">
 												<Navigation size={13} className="text-slate-600" />
-												<span>Navegar no Google Maps</span>
+												<span>
+													{dadosRota.segura 
+														? "Navegar no Google Maps" 
+														: "Navegar até Ponto Seguro no Maps"}
+												</span>
 											</button>
 										</div>
 
