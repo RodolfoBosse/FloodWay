@@ -56,6 +56,7 @@ function App() {
 	const [modalCasaAberto, setModalCasaAberto] = useState(false);
 	const [modalClimaAberto, setModalClimaAberto] = useState(false);
 	const [dadosClima, setDadosClima] = useState(null);
+	const [dadosClimaBacia, setDadosClimaBacia] = useState(null);
 
 	// Estados de Simulação
 	const [cotaReal, setCotaReal] = useState(12.86);
@@ -88,12 +89,22 @@ function App() {
 
 	const carregarClima = async () => {
 		try {
+			// Consulta em lote na Open-Meteo: Lajeado (Baixo Taquari), Santa Tereza (Rio das Antas) e Guaporé (Cabeceira Norte)
 			const resp = await fetch(
-				"https://api.open-meteo.com/v1/forecast?latitude=-29.4669&longitude=-51.9611&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=America%2FSao_Paulo"
+				"https://api.open-meteo.com/v1/forecast?latitude=-29.4669,-29.1700,-28.8400&longitude=-51.9611,-51.7300,-51.8900&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m&hourly=temperature_2m,precipitation,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max&timezone=America%2FSao_Paulo"
 			);
 			if (resp.ok) {
 				const json = await resp.json();
-				setDadosClima(json);
+				if (Array.isArray(json) && json.length >= 3) {
+					setDadosClima(json[0]); // Lajeado mantém compatibilidade com o restante do app
+					setDadosClimaBacia({
+						lajeado: json[0],
+						santaTereza: json[1],
+						guapore: json[2],
+					});
+				} else {
+					setDadosClima(json);
+				}
 			}
 		} catch (e) {
 			console.warn("Erro ao buscar dados de previsão meteorológica:", e);
@@ -537,6 +548,7 @@ function App() {
 				isOpen={modalClimaAberto}
 				onClose={() => setModalClimaAberto(false)}
 				dadosClima={dadosClima}
+				dadosClimaBacia={dadosClimaBacia}
 			/>
 
 			{/* Banner de Consentimento de Cookies LGPD */}
