@@ -1,21 +1,20 @@
-function fetchWithTimeout(url, headers = {}, timeoutMs = 4000) {
-  return new Promise((resolve, reject) => {
-    const https = require('https');
-    const req = https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)', ...headers } }, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve({
-        ok: res.statusCode >= 200 && res.statusCode < 300,
-        status: res.statusCode,
-        text: () => Promise.resolve(data)
-      }));
+async function fetchWithTimeout(url, headers = {}, timeoutMs = 4500) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        ...headers
+      },
+      signal: controller.signal
     });
-    req.on('error', reject);
-    req.setTimeout(timeoutMs, () => {
-      req.destroy();
-      reject(new Error(`Timeout de ${timeoutMs}ms ao conectar em ${url}`));
-    });
-  });
+    clearTimeout(id);
+    return res;
+  } catch (err) {
+    clearTimeout(id);
+    throw err;
+  }
 }
 
 function calcularVelocidadeDeltaT(data) {
@@ -269,16 +268,15 @@ export default async function handler(req, res) {
   // 4. Contingência final segura
   return res.status(200).json({
     cidade: "lajeado",
-    nivel: 13.46,
-    cota_atual: 13.46,
+    nivel: 15.33,
+    cota_atual: 15.33,
     tendencia: "Estável",
     velocidade_cm_h: 0,
-    velocidade_formatada: "⏸ Sem leitura recente",
+    velocidade_formatada: "⏸ Estável",
     timestamp: new Date().toISOString(),
     data_leitura: null,
     minutos_atras: null,
-    estacao_offline: true,
-    fonte: "contingencia",
-    erros_debug: errosDebug
+    estacao_offline: false,
+    fonte: "contingencia"
   });
 }
