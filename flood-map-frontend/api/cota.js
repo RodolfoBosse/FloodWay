@@ -82,7 +82,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  // 1. Tentar scraping em nivelguaiba.com.br/lajeado (com parser resiliente para status normal e 'sem leitura recente')
+  const errosDebug = [];
   try {
     const pageResp = await fetchWithTimeout('https://nivelguaiba.com.br/lajeado', {}, 3500);
     if (pageResp.ok) {
@@ -165,6 +165,7 @@ export default async function handler(req, res) {
       }
     }
   } catch (errScrape) {
+    errosDebug.push(`Scrape: ${errScrape.message}`);
     console.warn("Falha no scraping HTML:", errScrape.message);
   }
 
@@ -231,6 +232,7 @@ export default async function handler(req, res) {
       }
     }
   } catch (errAna) {
+    errosDebug.push(`ANA: ${errAna.message}`);
     console.warn("Falha na consulta oficial ANA:", errAna.message);
   }
 
@@ -260,6 +262,7 @@ export default async function handler(req, res) {
       }
     }
   } catch (errJson) {
+    errosDebug.push(`JSON: ${errJson.message}`);
     console.warn("Falha no JSON secundário:", errJson.message);
   }
 
@@ -275,6 +278,7 @@ export default async function handler(req, res) {
     data_leitura: null,
     minutos_atras: null,
     estacao_offline: true,
-    fonte: "contingencia"
+    fonte: "contingencia",
+    erros_debug: errosDebug
   });
 }
