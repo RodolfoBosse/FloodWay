@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AlertTriangle, X, Undo2, Navigation } from 'lucide-react';
 import { estimarCotaTerreno } from '../../services/locaisLajeado';
 
@@ -13,41 +13,50 @@ export default function AlertaSimulacaoAtiva({
   const delta = Math.round((cotaSimulada - cotaReal) * 10) / 10;
   const isAcima = delta > 0;
 
+  // Pré-calcula as cotas dos locais monitorados uma única vez quando usuário ou ruas mudarem
+  const locaisMonitorados = useMemo(() => {
+    const lista = [];
+    if (usuario?.residencia?.cota) {
+      lista.push({
+        nome: 'Sua Residência',
+        cota: Number(usuario.residencia.cota),
+        tipo: 'residencia',
+      });
+    }
+    if (Array.isArray(usuario?.pontosInteresse)) {
+      usuario.pontosInteresse.forEach((p) => {
+        let cotaRealista = Number(p.cota);
+        if (p.coords && Array.isArray(p.coords)) {
+          const cotaGPS = estimarCotaTerreno(p.coords[0], p.coords[1], p.endereco || p.nome, ruas);
+          if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
+            cotaRealista = cotaGPS;
+          }
+        }
+        if (cotaRealista) {
+          lista.push({
+            nome: p.nome,
+            cota: cotaRealista,
+            tipo: 'ponto',
+          });
+        }
+      });
+    }
+    return lista;
+  }, [usuario, ruas]);
+
   // Verifica se a residência ou algum ponto monitorado está atingido pela simulação
   let localAtingido = null;
-  if (usuario?.residencia?.cota && cotaSimulada >= Number(usuario.residencia.cota)) {
-    const diff = Number((cotaSimulada - usuario.residencia.cota).toFixed(1));
-    localAtingido = {
-      nome: 'Sua Residência',
-      detalhe: `Água atingindo a cota por +${diff}m`,
-      tipo: 'residencia'
-    };
-  } else if (Array.isArray(usuario?.pontosInteresse)) {
-    const ptInundado = usuario.pontosInteresse.find((p) => {
-      let cotaRealista = Number(p.cota);
-      if (p.coords && Array.isArray(p.coords)) {
-        const cotaGPS = estimarCotaTerreno(p.coords[0], p.coords[1], p.endereco || p.nome, ruas);
-        if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
-          cotaRealista = cotaGPS;
-        }
-      }
-      return cotaRealista && cotaSimulada >= cotaRealista;
-    });
-
-    if (ptInundado) {
-      let cotaRealista = Number(ptInundado.cota);
-      if (ptInundado.coords && Array.isArray(ptInundado.coords)) {
-        const cotaGPS = estimarCotaTerreno(ptInundado.coords[0], ptInundado.coords[1], ptInundado.endereco || ptInundado.nome, ruas);
-        if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
-          cotaRealista = cotaGPS;
-        }
-      }
-      const diff = Number((cotaSimulada - cotaRealista).toFixed(1));
+  for (const loc of locaisMonitorados) {
+    if (cotaSimulada >= loc.cota) {
+      const diff = Number((cotaSimulada - loc.cota).toFixed(1));
       localAtingido = {
-        nome: ptInundado.nome,
-        detalhe: `Água atingindo o local por +${diff}m`,
-        tipo: 'ponto'
+        nome: loc.nome,
+        detalhe: loc.tipo === 'residencia'
+          ? `Água atingindo a cota por +${diff}m`
+          : `Água atingindo o local por +${diff}m`,
+        tipo: loc.tipo,
       };
+      break;
     }
   }
 

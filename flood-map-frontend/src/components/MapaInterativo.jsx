@@ -16,6 +16,98 @@ import { ptBR } from "date-fns/locale";
 import AuthLGPDModal from "./mobile/AuthLGPDModal";
 
 import { buscarDestinosCalibrados, estimarCotaTerreno, LOCAIS_OFICIAIS_LAJEADO } from "../services/locaisLajeado";
+
+const ESTILOS_RUA = {
+	alagada: { color: "#dc2626", weight: 5.5, opacity: 1.0, dashArray: "8,4" },
+	risco: { color: "#eab308", weight: 5.0, opacity: 0.95, dashArray: null },
+	livre: { color: "#16a34a", weight: 3.5, opacity: 0.8, dashArray: null },
+};
+
+const CamadaRuasOtimizada = React.memo(({ segmentosBase, nivelAtivo }) => {
+	const map = useMap();
+	const layerGroupRef = useRef(null);
+	const polylinesRef = useRef(new Map());
+	const nivelAtivoRef = useRef(nivelAtivo);
+	nivelAtivoRef.current = nivelAtivo;
+
+	// Cria as polylines uma única vez quando a malha de ruas carrega
+	useEffect(() => {
+		if (!map) return;
+		if (!layerGroupRef.current) {
+			layerGroupRef.current = L.layerGroup().addTo(map);
+		}
+		const group = layerGroupRef.current;
+		group.clearLayers();
+		polylinesRef.current.clear();
+
+		const nivel = nivelAtivoRef.current;
+		for (const seg of segmentosBase) {
+			const margem = seg.cota - nivel;
+			const estado = margem <= 0 ? "alagada" : margem <= 1.0 ? "risco" : "livre";
+			const poly = L.polyline(seg.coords, ESTILOS_RUA[estado]);
+
+			poly.on("click", (e) => {
+				const nv = nivelAtivoRef.current;
+				const m = seg.cota - nv;
+				const isBloqueado = m <= 0;
+				const isRisco = !isBloqueado && m <= 1.0;
+				const lamina = isBloqueado ? Math.max(nv - seg.cota, 0.1).toFixed(1) : "0";
+				const margemStr = m.toFixed(2);
+
+				const badgeHtml = seg.isCalibrado
+					? `<span style="background:#e0f2fe;color:#075985;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:800;white-space:nowrap;">🎯 ASFALTO REAL</span>`
+					: "";
+
+				const statusHtml = isBloqueado
+					? `<div style="margin-top:8px;padding:4px;border-radius:4px;font-weight:700;text-align:center;background:#fee2e2;color:#991b1b;">🌊 SUBMERSA (+${lamina}m)</div>`
+					: isRisco
+						? `<div style="margin-top:8px;padding:4px;border-radius:4px;font-weight:700;text-align:center;background:#fef9c3;color:#713f12;border:1px solid #fde047;">⚠️ ATENÇÃO / ALERTA (Folga de ${margemStr}m)</div>`
+						: seg.isCalibrado
+							? `<div style="margin-top:8px;padding:4px;border-radius:4px;font-weight:700;text-align:center;background:#e0f2fe;color:#0c4a6e;border:1px solid #7dd3fc;">🎯 ASFALTO LIVRE (CALIBRADO)</div>`
+							: `<div style="margin-top:8px;padding:4px;border-radius:4px;font-weight:700;text-align:center;background:#dcfce7;color:#166534;">✅ TRÂNSITO LIVRE</div>`;
+
+				const html = `
+					<div style="font-size:12px;padding:4px;font-family:sans-serif;min-width:210px;">
+						<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px;">
+							<h4 style="font-weight:700;color:#111827;font-size:14px;margin:0;">${seg.nome}</h4>
+							${badgeHtml}
+						</div>
+						<p style="color:#4b5563;margin:2px 0;">Altitude Asfalto: <strong style="color:#1d4ed8;">${seg.cota.toFixed(1)}m</strong></p>
+						<p style="color:#4b5563;margin:2px 0;">Nível do Rio: <strong>${Number(nv).toFixed(1)}m</strong></p>
+						<p style="color:#4b5563;margin:2px 0;">${isBloqueado ? "Lâmina de Água:" : "Margem de Segurança:"} <strong>${isBloqueado ? `+${lamina}m` : `+${margemStr}m`}</strong></p>
+						${statusHtml}
+					</div>
+				`;
+				L.popup().setLatLng(e.latlng).setContent(html).openOn(map);
+			});
+
+			poly.addTo(group);
+			polylinesRef.current.set(seg.id, { poly, estado, cota: seg.cota });
+		}
+
+		return () => {
+			group.clearLayers();
+			polylinesRef.current.clear();
+		};
+	}, [map, segmentosBase]);
+
+	// Atualiza apenas o estilo dos trechos que mudaram de estado durante a simulação
+	useEffect(() => {
+		for (const item of polylinesRef.current.values()) {
+			const margem = item.cota - nivelAtivo;
+			const novoEstado = margem <= 0 ? "alagada" : margem <= 1.0 ? "risco" : "livre";
+			if (novoEstado !== item.estado) {
+				item.estado = novoEstado;
+				item.poly.setStyle(ESTILOS_RUA[novoEstado]);
+				if (novoEstado === "alagada" || novoEstado === "risco") {
+					item.poly.bringToFront();
+				}
+			}
+		}
+	}, [nivelAtivo, segmentosBase]);
+
+	return null;
+});
 // Ícones Customizados
 const iconeBloqueio = new L.DivIcon({
 	html: '<div style="background-color: #dc2626; color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.35);">⛔</div>',
@@ -769,96 +861,101 @@ const MapaInterativo = ({
 
 	const status = getStatusCor(nivelAtivo);
 
+	// Pré-processamento único da malha de ruas (JSON.parse roda apenas quando listaRuas muda)
+	const segmentosBase = React.useMemo(() => {
+		const segs = [];
+		for (const rua of listaRuas) {
+			if (!rua.coordenadas_json) continue;
+			let rawCoords = rua.coordenadas_json;
+			if (typeof rawCoords === "string") {
+				try {
+					rawCoords = JSON.parse(rawCoords);
+				} catch (e) {
+					continue;
+				}
+			}
+			if (!Array.isArray(rawCoords)) continue;
+
+			let listaSegmentos = [];
+			if (
+				typeof rawCoords[0] === "object" &&
+				!Array.isArray(rawCoords[0]) &&
+				rawCoords[0]?.coords
+			) {
+				for (const seg of rawCoords) {
+					listaSegmentos.push({
+						cota: seg.cota || rua.cota_bloqueio,
+						coords: seg.coords,
+						calibrado_asfalto: Boolean(seg.calibrado_asfalto),
+					});
+				}
+			} else if (
+				Array.isArray(rawCoords[0]) &&
+				Array.isArray(rawCoords[0][0])
+			) {
+				for (const coords of rawCoords) {
+					listaSegmentos.push({
+						cota: rua.cota_bloqueio,
+						coords,
+						calibrado_asfalto: false,
+					});
+				}
+			} else {
+				listaSegmentos.push({
+					cota: rua.cota_bloqueio,
+					coords: rawCoords,
+					calibrado_asfalto: false,
+				});
+			}
+
+			listaSegmentos.forEach((t, sIdx) => {
+				if (!t.coords || !Array.isArray(t.coords) || t.coords.length < 2) return;
+				segs.push({
+					id: `pista-${rua.id}-${sIdx}`,
+					sIdx,
+					nome: rua.nome,
+					cota: Number(t.cota || rua.cota_bloqueio || 99.0),
+					coords: t.coords,
+					isCalibrado: Boolean(t.calibrado_asfalto),
+				});
+			});
+		}
+		return segs;
+	}, [listaRuas]);
+
 	const { trechosPistas, barricadas, pontosBloqueadosGeo } =
 		React.useMemo(() => {
-			let totalTrechos = 0;
-			let trechosAlagados = 0;
-			let trechosRiscoIminente = 0;
-			let trechosCalibradosAsfalto = 0;
 			const tPistas = [];
 			const bRicadas = [];
 			const pBloqueados = [];
 
-			for (const rua of listaRuas) {
-				if (!rua.coordenadas_json) continue;
-				let listaSegmentos = [];
-				let rawCoords = rua.coordenadas_json;
-				if (typeof rawCoords === "string") {
-					try {
-						rawCoords = JSON.parse(rawCoords);
-					} catch (e) {
-						continue;
-					}
-				}
-				if (!Array.isArray(rawCoords)) continue;
-				if (
-					typeof rawCoords[0] === "object" &&
-					!Array.isArray(rawCoords[0]) &&
-					rawCoords[0]?.coords
-				) {
-					for (const seg of rawCoords) {
-						listaSegmentos.push({
-							cota: seg.cota || rua.cota_bloqueio,
-							coords: seg.coords,
-							calibrado_asfalto: Boolean(seg.calibrado_asfalto),
-						});
-					}
-				} else if (
-					Array.isArray(rawCoords[0]) &&
-					Array.isArray(rawCoords[0][0])
-				) {
-					for (const coords of rawCoords) {
-						listaSegmentos.push({
-							cota: rua.cota_bloqueio,
-							coords,
-							calibrado_asfalto: false,
-						});
-					}
-				} else {
-					listaSegmentos.push({
-						cota: rua.cota_bloqueio,
-						coords: rawCoords,
-						calibrado_asfalto: false,
-					});
-				}
+			for (const seg of segmentosBase) {
+				const margemAgua = seg.cota - nivelAtivo;
+				const isBloqueado = margemAgua <= 0;
+				const isRiscoIminente = !isBloqueado && margemAgua <= 1.0;
 
-				listaSegmentos.forEach((t, sIdx) => {
-					if (!t.coords || !Array.isArray(t.coords) || t.coords.length < 2)
-						return;
-					totalTrechos++;
-					const cotaTrecho = Number(t.cota || rua.cota_bloqueio || 99.0);
-					const margemAgua = cotaTrecho - nivelAtivo;
-					const isBloqueado = margemAgua <= 0;
-					const isRiscoIminente = !isBloqueado && margemAgua <= 1.0;
-					const isCalibrado = Boolean(t.calibrado_asfalto);
-					if (isCalibrado) trechosCalibradosAsfalto++;
-					if (isBloqueado) trechosAlagados++;
-					else if (isRiscoIminente) trechosRiscoIminente++;
-					if (isBloqueado) {
-						const lamina = Math.max(nivelAtivo - cotaTrecho, 0.1);
-						for (const pt of t.coords) {
-							pBloqueados.push(pt);
-						}
-						if (sIdx === 0 && bRicadas.length < 35) {
-							bRicadas.push({
-								pos: t.coords[0],
-								rua: rua.nome,
-								cota: cotaTrecho,
-								lamina: lamina.toFixed(1),
-							});
-						}
+				if (isBloqueado) {
+					for (const pt of seg.coords) {
+						pBloqueados.push(pt);
 					}
-					tPistas.push({
-						id: `pista-${rua.id}-${sIdx}`,
-						coords: t.coords,
-						isBloqueado,
-						isRiscoIminente,
-						isCalibrado,
-						cota: cotaTrecho,
-						margem: margemAgua.toFixed(2),
-						nome: rua.nome,
-						lamina: isBloqueado ? (nivelAtivo - cotaTrecho).toFixed(1) : "0",
-					});
+					if (seg.sIdx === 0 && bRicadas.length < 35) {
+						const lamina = Math.max(nivelAtivo - seg.cota, 0.1);
+						bRicadas.push({
+							pos: seg.coords[0],
+							rua: seg.nome,
+							cota: seg.cota,
+							lamina: lamina.toFixed(1),
+						});
+					}
+				}
+				tPistas.push({
+					id: seg.id,
+					coords: seg.coords,
+					isBloqueado,
+					isRiscoIminente,
+					isCalibrado: seg.isCalibrado,
+					cota: seg.cota,
+					nome: seg.nome,
 				});
 			}
 			return {
@@ -866,7 +963,7 @@ const MapaInterativo = ({
 				barricadas: bRicadas,
 				pontosBloqueadosGeo: pBloqueados,
 			};
-		}, [listaRuas, nivelAtivo]);
+		}, [segmentosBase, nivelAtivo]);
 
 	const selecionarPontoNoMapa = (coords) => {
 		if (modoSelecao === "origem") {
@@ -1902,90 +1999,11 @@ const MapaInterativo = ({
 						</LayersControl.BaseLayer>
 					</LayersControl>
 
-					{/* Ruas */}
-					{/* Força a repintura das ruas sempre que o nível da água mudar */}
-					<React.Fragment key={`ruas-${nivelAtivo}`}>
-						{trechosPistas.map((p) => {
-							let cor = "#16a34a";
-							let peso = 3.5;
-							let opacidade = 0.8;
-							let tracejado = undefined;
-
-							if (p.isBloqueado) {
-								cor = "#dc2626";
-								peso = 5.5;
-								opacidade = 1.0;
-								tracejado = "8,4";
-							} else if (p.isRiscoIminente) {
-								cor = "#eab308"; // Amarelo vivo (alto contraste, sem confundir com vermelho)
-								peso = 5.0;
-								opacidade = 0.95;
-							}
-
-							return (
-								<Polyline
-									key={`${p.id}-${p.isBloqueado ? "alagada" : p.isRiscoIminente ? "risco" : p.isCalibrado ? "calibrada" : "livre"}`}
-									positions={p.coords}
-									color={cor}
-									weight={peso}
-									opacity={opacidade}
-									dashArray={tracejado}>
-									<Popup>
-										<div className="text-xs p-1 font-sans min-w-[210px]">
-											<div className="flex items-center justify-between gap-1 mb-1">
-												<h4 className="font-bold text-gray-900 text-sm truncate">
-													{p.nome}
-												</h4>
-												{p.isCalibrado && (
-													<span className="bg-sky-100 text-sky-800 text-[9px] px-1.5 py-0.5 rounded font-black tracking-tight whitespace-nowrap">
-														🎯 ASFALTO REAL
-													</span>
-												)}
-											</div>
-
-											<p className="text-gray-600">
-												Altitude Asfalto:{" "}
-												<strong className="text-blue-700">
-													{p.cota.toFixed(1)}m
-												</strong>
-											</p>
-											<p className="text-gray-600">
-												Nível do Rio:{" "}
-												<strong>{Number(nivelAtivo).toFixed(1)}m</strong>
-											</p>
-											<p className="text-gray-600">
-												{p.isBloqueado
-													? "Lâmina de Água:"
-													: "Margem de Segurança:"}{" "}
-												<strong>
-													{p.isBloqueado ? `+${p.lamina}m` : `+${p.margem}m`}
-												</strong>
-											</p>
-
-											<div
-												className={`mt-2 p-1 rounded font-bold text-center ${
-													p.isBloqueado
-														? "bg-red-100 text-red-800"
-														: p.isRiscoIminente
-															? "bg-yellow-100 text-yellow-900 border border-yellow-300"
-															: p.isCalibrado
-																? "bg-sky-100 text-sky-900 border border-sky-300"
-																: "bg-green-100 text-green-800"
-												}`}>
-												{p.isBloqueado
-													? `🌊 SUBMERSA (+${p.lamina}m)`
-													: p.isRiscoIminente
-														? `⚠️ ATENÇÃO / ALERTA (Folga de ${p.margem}m)`
-														: p.isCalibrado
-															? "🎯 ASFALTO LIVRE (CALIBRADO)"
-															: "✅ TRÂNSITO LIVRE"}
-											</div>
-										</div>
-									</Popup>
-								</Polyline>
-							);
-						})}
-					</React.Fragment>
+					{/* Ruas (Camada Canvas Imperativa com Atualização Diferencial Zero-Lag) */}
+					<CamadaRuasOtimizada
+						segmentosBase={segmentosBase}
+						nivelAtivo={nivelAtivo}
+					/>
 
 					{/* ROTA NAVEGÁVEL DE CARRO (ROXO VIBRANTE DE ALTO CONTRASTE) */}
 					{dadosRota &&

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo, startTransition } from "react";
 import { CloudRain, MoreHorizontal, Trash2, Bookmark, Star, Check, Navigation, X, Plus, Minus, Bell, BellRing, Play, Pause, RotateCcw } from "lucide-react";
 import BannerPatrocinador from "./BannerPatrocinador";
 import GoogleAdBlock from "./GoogleAdBlock";
@@ -62,33 +62,36 @@ const MetricsBottomSheet = ({
 	const animacaoIntervalRef = useRef(null);
 	const isDraggingSliderRef = useRef(false);
 
+	const animacaoCotaRef = useRef(cotaSimulada || 13.0);
+
 	// Sincroniza quando a cota externa muda por presets ou botões
 	useEffect(() => {
 		if (!isDraggingSliderRef.current) {
 			setCotaLocalSlider(cotaSimulada);
+			animacaoCotaRef.current = cotaSimulada;
 		}
 	}, [cotaSimulada]);
 
-	// Atualiza imediatamente o display visual a 60 FPS e propaga ao mapa apenas quando estável
+	// Atualiza imediatamente o display visual a 60 FPS e propaga ao mapa em baixa prioridade (startTransition)
 	const handleSliderChange = useCallback((novoValor, imediato = false) => {
 		const valNum = Math.min(36.0, Math.max(13.0, parseFloat(novoValor)));
 		setCotaLocalSlider(valNum);
+		animacaoCotaRef.current = valNum;
 
 		if (debounceSimulacaoRef.current) {
 			clearTimeout(debounceSimulacaoRef.current);
 		}
 
 		if (imediato) {
-			setCotaSimulada(valNum);
+			startTransition(() => {
+				setCotaSimulada(valNum);
+			});
 		} else {
-			// Durante o arrasto contínuo com o dedo, retém a sincronização pesada do Leaflet (200ms)
-			// para que o navegador mantenha a taxa de quadros (60fps) e o processador do celular não engasgue.
-			// Ao soltar o dedo (handleSliderRelease), a sincronização é imediata.
 			debounceSimulacaoRef.current = setTimeout(() => {
-				requestAnimationFrame(() => {
+				startTransition(() => {
 					setCotaSimulada(valNum);
 				});
-			}, 200);
+			}, 120);
 		}
 	}, [setCotaSimulada]);
 
@@ -98,33 +101,70 @@ const MetricsBottomSheet = ({
 		if (debounceSimulacaoRef.current) {
 			clearTimeout(debounceSimulacaoRef.current);
 		}
-		setCotaSimulada(cotaLocalSlider);
-	}, [cotaLocalSlider, setCotaSimulada]);
+		startTransition(() => {
+			setCotaSimulada(animacaoCotaRef.current);
+		});
+	}, [setCotaSimulada]);
 
-	// Controle de reprodução contínua (Play / Pause automático)
+	// Controle de reprodução contínua (Play / Pause automático) sem setState aninhado
 	useEffect(() => {
 		if (isTocandoAnimacao) {
 			animacaoIntervalRef.current = setInterval(() => {
-				setCotaLocalSlider((prev) => {
-					if (prev >= 32.0) {
-						setIsTocandoAnimacao(false);
-						setCotaSimulada(32.0);
-						return 32.0;
-					}
-					const proximo = Math.round((prev + 0.2) * 10) / 10;
-					setCotaSimulada(proximo);
-					return proximo;
-				});
-			}, 350);
-		} else {
-			if (animacaoIntervalRef.current) {
-				clearInterval(animacaoIntervalRef.current);
-			}
+				const atual = animacaoCotaRef.current || 13.0;
+				if (atual >= 32.0) {
+					animacaoCotaRef.current = 32.0;
+					setIsTocandoAnimacao(false);
+					setCotaLocalSlider(32.0);
+					startTransition(() => setCotaSimulada(32.0));
+					return;
+				}
+				const proximo = Math.round((atual + 0.2) * 10) / 10;
+				animacaoCotaRef.current = proximo;
+				setCotaLocalSlider(proximo);
+				startTransition(() => setCotaSimulada(proximo));
+			}, 300);
+		} else if (animacaoIntervalRef.current) {
+			clearInterval(animacaoIntervalRef.current);
 		}
 		return () => {
 			if (animacaoIntervalRef.current) clearInterval(animacaoIntervalRef.current);
 		};
 	}, [isTocandoAnimacao, setCotaSimulada]);
+
+	// Pré-calcula as cotas dos locais monitorados uma única vez quando usuário/ruas mudarem
+	const locaisMonitorados = useMemo(() => {
+		const lista = [];
+		if (usuario?.residencia) {
+			lista.push({
+				id: 'residencia-principal',
+				tipo: 'residencia',
+				nome: 'Residência Principal',
+				nomeNotificacao: 'Sua Residência',
+				endereco: usuario.residencia.endereco || 'Minha Casa',
+				cota: Number(usuario.residencia.cota || 24.0),
+			});
+		}
+		if (Array.isArray(usuario?.pontosInteresse)) {
+			usuario.pontosInteresse.forEach((pt) => {
+				let cotaRealista = Number(pt.cota);
+				if (pt.coords && Array.isArray(pt.coords)) {
+					const cotaGPS = estimarCotaTerreno(pt.coords[0], pt.coords[1], pt.endereco || pt.nome, ruas);
+					if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
+						cotaRealista = cotaGPS;
+					}
+				}
+				lista.push({
+					id: `pt-${pt.id}`,
+					tipo: 'ponto',
+					nome: pt.nome,
+					nomeNotificacao: pt.nome,
+					endereco: pt.endereco,
+					cota: cotaRealista || 19.5,
+				});
+			});
+		}
+		return lista;
+	}, [usuario, ruas]);
 
 	// Haptic feedback leve em dispositivos móveis compatíveis
 	const triggerHaptic = () => {
@@ -144,63 +184,36 @@ const MetricsBottomSheet = ({
 	const patamaresAlertadosRef = useRef(new Set());
 
 	useEffect(() => {
-		if (abaAtiva !== "simular" || !cotaSimulada) return;
-
-		// Identifica se a cota simulada atingiu a casa ou algum local monitorado
-		const locaisParaVerificar = [];
-		if (usuario?.residencia) {
-			locaisParaVerificar.push({
-				id: 'residencia',
-				nome: 'Sua Residência',
-				cota: Number(usuario.residencia.cota || 24.0),
-			});
-		}
-		if (Array.isArray(usuario?.pontosInteresse)) {
-			usuario.pontosInteresse.forEach((p) => {
-				let cotaRealista = Number(p.cota);
-				if (p.coords && Array.isArray(p.coords)) {
-					const cotaGPS = estimarCotaTerreno(p.coords[0], p.coords[1], p.endereco || p.nome, ruas);
-					if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
-						cotaRealista = cotaGPS;
-					}
-				}
-				locaisParaVerificar.push({
-					id: `ponto-${p.id}`,
-					nome: p.nome,
-					cota: cotaRealista || 19.5,
-				});
-			});
-		}
-
-		if (locaisParaVerificar.length === 0) return;
+		if (abaAtiva !== "simular" || !cotaSimulada || locaisMonitorados.length === 0) return;
 
 		// Encontra o local mais crítico atingido ou em alerta nos 4 patamares:
 		// 1) ATINGIU: margem <= 0
 		// 2) 0,5m: 0 < margem <= 0.5m
 		// 3) 1,0m: 0.5 < margem <= 1.0m
 		// 4) 2,0m: 1.0 < margem <= 2.0m
-		for (const loc of locaisParaVerificar) {
+		for (const loc of locaisMonitorados) {
 			const margem = Number((loc.cota - cotaSimulada).toFixed(1));
 
 			let patamar = null;
 			let titulo = '';
 			let corpo = '';
 
+			const nomeLocal = loc.nomeNotificacao || loc.nome;
 			if (margem <= 0) {
 				patamar = 'atingiu';
-				titulo = `🚨 ALERTA MÁXIMO: ${loc.nome} Atingido!`;
+				titulo = `🚨 ALERTA MÁXIMO: ${nomeLocal} Atingido!`;
 				corpo = `A cota do Rio Taquari (${cotaSimulada.toFixed(1)}m) superou a altitude do local (${loc.cota.toFixed(1)}m). Início de inundação!`;
 			} else if (margem <= 0.5) {
 				patamar = '0.5m';
-				titulo = `🚨 PERIGO IMINENTE: Rio a apenas ${margem}m de ${loc.nome}!`;
+				titulo = `🚨 PERIGO IMINENTE: Rio a apenas ${margem}m de ${nomeLocal}!`;
 				corpo = `Faltam apenas ${margem}m (50cm) para atingir a cota (${loc.cota.toFixed(1)}m). Prepare desocupação preventiva.`;
 			} else if (margem <= 1.0) {
 				patamar = '1.0m';
-				titulo = `⚠️ ALERTA GRAVE: Rio a ${margem}m de ${loc.nome}!`;
+				titulo = `⚠️ ALERTA GRAVE: Rio a ${margem}m de ${nomeLocal}!`;
 				corpo = `Nível do rio em ${cotaSimulada.toFixed(1)}m está a 1 metro da cota (${loc.cota.toFixed(1)}m). Mantenha rotas de fuga preparadas.`;
 			} else if (margem <= 2.0) {
 				patamar = '2.0m';
-				titulo = `⚠️ AVISO DE ATENÇÃO: Rio a ${margem}m de ${loc.nome}`;
+				titulo = `⚠️ AVISO DE ATENÇÃO: Rio a ${margem}m de ${nomeLocal}`;
 				corpo = `O Rio Taquari atingiu ${cotaSimulada.toFixed(1)}m e está a cerca de 2 metros da altitude do local (${loc.cota.toFixed(1)}m).`;
 			}
 
@@ -216,7 +229,7 @@ const MetricsBottomSheet = ({
 				break;
 			}
 		}
-	}, [cotaSimulada, abaAtiva, usuario]);
+	}, [cotaSimulada, abaAtiva, locaisMonitorados]);
 
 	// Carrega rotas salvas do LocalStorage e Backend
 	useEffect(() => {
@@ -979,36 +992,7 @@ const MetricsBottomSheet = ({
 
 								{/* MONITORAMENTO DE IMPACTO EM TEMPO REAL NOS LOCAIS DO USUÁRIO */}
 								{(() => {
-									const locaisParaVerificar = [];
-									if (usuario?.residencia) {
-										locaisParaVerificar.push({
-											id: 'residencia-principal',
-											tipo: 'residencia',
-											nome: 'Residência Principal',
-											endereco: usuario.residencia.endereco || 'Minha Casa',
-											cota: Number(usuario.residencia.cota || 24.0),
-										});
-									}
-									if (Array.isArray(usuario?.pontosInteresse)) {
-										usuario.pontosInteresse.forEach((pt) => {
-											let cotaRealista = Number(pt.cota);
-											if (pt.coords && Array.isArray(pt.coords)) {
-												const cotaGPS = estimarCotaTerreno(pt.coords[0], pt.coords[1], pt.endereco || pt.nome, ruas);
-												if (cotaGPS && (isNaN(cotaRealista) || cotaRealista === 29.2 || cotaRealista === 24.0)) {
-													cotaRealista = cotaGPS;
-												}
-											}
-											locaisParaVerificar.push({
-												id: `pt-${pt.id}`,
-												tipo: 'ponto',
-												nome: pt.nome,
-												endereco: pt.endereco,
-												cota: cotaRealista || 19.5,
-											});
-										});
-									}
-
-									if (locaisParaVerificar.length === 0) {
+									if (locaisMonitorados.length === 0) {
 										return (
 											<div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-500 text-center">
 												Cadastre sua casa ou pontos de interesse para monitorar alertas de cheia ao vivo no slider.
@@ -1016,16 +1000,18 @@ const MetricsBottomSheet = ({
 										);
 									}
 
+									const cotaDisplay = cotaLocalSlider !== undefined ? cotaLocalSlider : cotaSimulada;
+
 									return (
 										<div className="space-y-2">
 											<div className="flex items-center justify-between">
 												<span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-													Impacto nos Meus Locais ({locaisParaVerificar.length})
+													Impacto nos Meus Locais ({locaisMonitorados.length})
 												</span>
 											</div>
 											<div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-												{locaisParaVerificar.map((loc) => {
-													const margem = Number((loc.cota - cotaSimulada).toFixed(1));
+												{locaisMonitorados.map((loc) => {
+													const margem = Number((loc.cota - cotaDisplay).toFixed(1));
 													const isInundado = margem <= 0;
 													const isAlerta = margem > 0 && margem <= 1.5;
 
